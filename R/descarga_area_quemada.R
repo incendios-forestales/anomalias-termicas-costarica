@@ -57,16 +57,11 @@ cmr_solicitar <- function(url, search_after = NULL, max_intentos = 5L,
   resp
 }
 
-# Granulos MCD64A1 disponibles para la tesela dentro del rango de fechas.
+# Granulos disponibles para UNA tesela dentro del rango de fechas.
 # Pagina con CMR-Search-After hasta agotar los resultados (hoy ~300 granulos
 # caben en una página, pero el bucle evita un truncado silencioso futuro).
-# Los meses aún no publicados (el producto sale con ~1-2 meses de rezago)
-# simplemente no aparecen: el cue "always" del target los incorpora cuando
-# existan. Retorna un data frame agrupado por fila para branching dinámico,
-# con la clave de grupo `aniomes` (estable ante meses nuevos; si LP DAAC
-# reprocesa un granulo cambia su nombre/URL y solo esa rama se invalida).
-cmr_granulos_ba <- function(fecha_inicio, fecha_fin, short_name, version,
-                            tesela = TESELA_SINUSOIDAL) {
+cmr_granulos_ba_tesela <- function(fecha_inicio, fecha_fin, short_name,
+                                   version, tesela) {
   url <- glue::glue(
     "{CMR_BASE}/granules.json",
     "?short_name={short_name}&version={version}",
@@ -86,10 +81,10 @@ cmr_granulos_ba <- function(fecha_inicio, fecha_fin, short_name, version,
   }
   if (length(paginas) == 0) {
     stop("CMR no devolvió granulos ", short_name, " para la tesela ", tesela,
-         "; verifique TESELA_SINUSOIDAL.", call. = FALSE)
+         "; verifique TESELAS_SINUSOIDALES.", call. = FALSE)
   }
 
-  granulos <- purrr::list_rbind(purrr::map(paginas, function(entradas) {
+  purrr::list_rbind(purrr::map(paginas, function(entradas) {
     data.frame(
       aniomes = lubridate::floor_date(as.Date(substr(entradas$time_start, 1, 10)),
                                       "month"),
@@ -104,20 +99,39 @@ cmr_granulos_ba <- function(fecha_inicio, fecha_fin, short_name, version,
     )
   })) |>
     dplyr::filter(!is.na(url)) |>
-    dplyr::mutate(nombre = basename(url)) |>
+    dplyr::mutate(nombre = basename(url), tesela = tesela) |>
     dplyr::filter(aniomes >= lubridate::floor_date(fecha_inicio, "month"),
                   aniomes <= fecha_fin)
+}
+
+# Granulos de TODAS las teselas del área de estudio (Costa Rica necesita dos:
+# h09v07 y h09v08). Retorna un data frame agrupado por fila para branching
+# dinámico, con la clave de grupo `nombre` — UN GRANULO POR RAMA. La clave no
+# puede ser el mes: con dos teselas cada mes tiene dos granulos, y
+# descargar_granulo_ba() descarga exactamente uno por rama; una rama mensual
+# de dos filas perdería la segunda tesela en silencio. Si LP DAAC reprocesa un
+# granulo, cambia su nombre/URL y solo esa rama se invalida.
+cmr_granulos_ba <- function(fecha_inicio, fecha_fin, short_name, version,
+                            teselas = TESELAS_SINUSOIDALES) {
+  granulos <- purrr::map(
+    teselas,
+    \(t) cmr_granulos_ba_tesela(fecha_inicio, fecha_fin, short_name, version, t)
+  ) |>
+    purrr::list_rbind()
 
   if (nrow(granulos) == 0) {
     stop("Ningún granulo ", short_name, " en el rango ", fecha_inicio, " a ",
          fecha_fin, ".", call. = FALSE)
   }
   granulos |>
-    dplyr::group_by(aniomes) |>
+    dplyr::arrange(aniomes, tesela) |>
+    dplyr::group_by(nombre) |>
     targets::tar_group()
 }
 
-# Descarga UN granulo (data frame de 1 fila con columnas aniomes, nombre, url).
+# Descarga UN granulo (data frame de 1 fila con columnas aniomes, tesela,
+# nombre, url; la agrupación por `nombre` en cmr_granulos_ba() garantiza la
+# fila única y la aserción lo hace explícito).
 # Idempotente y atómica, como descargar_firms_fragmento():
 #   - si el HDF ya existe con contenido, lo retorna sin descargar;
 #   - escritura .part -> rename;
@@ -128,6 +142,7 @@ cmr_granulos_ba <- function(fecha_inicio, fecha_fin, short_name, version,
 # Retorna el path al HDF (target con format = "file").
 descargar_granulo_ba <- function(granulo, dir,
                                  max_intentos = 5L, espera_s = 30) {
+  stopifnot(nrow(granulo) == 1)
   destino <- file.path(dir, granulo$nombre[[1]])
   if (file.exists(destino) && file.info(destino)$size > 0) {
     message(glue::glue("[cache] {basename(destino)} ya existe"))

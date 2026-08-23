@@ -155,10 +155,21 @@ descargar_firms_fragmento <- function(fragmento, bbox,
 
   # El API puede devolver mensajes de error como texto con estatus 200:
   # un CSV válido siempre inicia con el encabezado (columna latitude).
-  primera_linea <- strsplit(cuerpo, "\n", fixed = TRUE)[[1]][1]
-  if (!grepl("latitude", primera_linea, fixed = TRUE)) {
+  lineas <- strsplit(cuerpo, "\n", fixed = TRUE)[[1]]
+  lineas <- lineas[nzchar(lineas)]
+  if (!grepl("latitude", lineas[1], fixed = TRUE)) {
     stop("Respuesta inesperada del API de FIRMS para ", basename(destino), ": ",
          substr(cuerpo, 1, 200), call. = FALSE)
+  }
+  # Defensa contra respuestas truncadas: a escala nacional un fragmento de
+  # temporada seca trae miles de filas y un corte a media transferencia debe
+  # fallar aquí y no quedar cacheado como válido. Toda fila debe tener el
+  # mismo número de campos que el encabezado.
+  n_campos <- lengths(regmatches(lineas, gregexpr(",", lineas, fixed = TRUE)))
+  if (length(unique(n_campos)) != 1) {
+    stop("Respuesta aparentemente truncada del API de FIRMS para ",
+         basename(destino), ": filas con número de campos desigual.",
+         call. = FALSE)
   }
 
   temporal <- paste0(destino, ".part")

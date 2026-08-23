@@ -1,5 +1,5 @@
 # Procesamiento de los datos de FIRMS: lectura y unión de fragmentos,
-# conversión a sf, recorte al parque y agregación mensual.
+# conversión a sf, recorte al área de estudio y agregación mensual.
 
 # Lee y une los CSV de todos los fragmentos. Fragmentos sin detecciones
 # contienen solo el encabezado y aportan 0 filas; se lee todo como carácter
@@ -52,7 +52,11 @@ leer_y_unir_csv <- function(paths, rangos) {
     )
 }
 
-# Convierte el data frame crudo a puntos sf en WGS84 y deriva campos temporales.
+# Convierte el data frame crudo a puntos sf en WGS84, deriva campos temporales
+# y asigna un `id_deteccion` estable (correlativo tras ordenar por fecha, hora
+# y coordenadas). Ese id es la llave que une cada detección con su cobertura,
+# el mapa temporal y los eventos; nada aguas abajo debe depender de la
+# posición de fila.
 a_sf_puntos <- function(df) {
   df |>
     dplyr::mutate(
@@ -61,16 +65,20 @@ a_sf_puntos <- function(df) {
       mes      = lubridate::month(acq_date),
       aniomes  = lubridate::floor_date(acq_date, "month")
     ) |>
+    dplyr::arrange(acq_date, acq_time, latitude, longitude) |>
+    dplyr::mutate(id_deteccion = dplyr::row_number()) |>
     sf::st_as_sf(coords = c("longitude", "latitude"), crs = CRS_WGS84,
                  remove = FALSE)
 }
 
-# Recorte ESTRICTO al polígono del parque (la descarga usa un bbox con buffer)
-# y reproyección a CRTM05 para análisis y mapas.
-recortar_al_parque <- function(puntos, parque) {
-  parque_4326 <- sf::st_transform(parque, CRS_WGS84)
+# Recorte ESTRICTO al polígono del área de estudio (la descarga usa un bbox
+# con buffer) y reproyección a CRTM05 para análisis y mapas. A escala nacional
+# el filtro descarta sobre todo las detecciones marinas del buffer (barcos que
+# VIIRS registra de noche) y las de países vecinos.
+recortar_al_area <- function(puntos, area) {
+  area_4326 <- sf::st_transform(area, CRS_WGS84)
   puntos |>
-    sf::st_filter(parque_4326, .predicate = sf::st_intersects) |>
+    sf::st_filter(area_4326, .predicate = sf::st_intersects) |>
     a_crtm05()
 }
 
@@ -79,10 +87,10 @@ recortar_al_parque <- function(puntos, parque) {
 #
 # La rejilla de meses sale de `rangos` (lo observado por el satélite) y no de
 # los meses con detecciones: si la cola en tiempo casi real no produce ninguna
-# detección dentro del parque —muy posible, porque el recorte estricto elimina
-# la quema agrícola del valle— la serie se acortaría en silencio y la cola
-# desaparecería del gráfico sin que nada lo advirtiera. Un mes sin detecciones
-# es un cero informativo, no una ausencia de dato.
+# detección dentro del área —posible en plena estación lluviosa— la serie se
+# acortaría en silencio y la cola desaparecería del gráfico sin que nada lo
+# advirtiera. Un mes sin detecciones es un cero informativo, no una ausencia
+# de dato.
 #
 # `nivel` distingue los meses cubiertos por el procesamiento estándar de los
 # provisionales, y marca como "mixto" el mes en que ocurre el corte (para

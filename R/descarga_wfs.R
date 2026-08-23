@@ -1,34 +1,60 @@
-# Descarga del polígono del Parque Nacional Palo Verde desde el WFS del SINAC.
+# Descarga del límite nacional (SNIT/IGN) y de capas del SINAC vía WFS.
 
-# Descarga idempotente: si el GPKG ya existe, lo reutiliza.
-# Retorna el path al GPKG (target con format = "file").
-descargar_parque_wfs <- function(dest = "data/raw/wfs/palo_verde.gpkg") {
+# Descarga idempotente de las 7 provincias de la cartografía oficial 1:5000
+# del IGN (SNIT). Si el GPKG ya existe, lo reutiliza. Retorna el path al GPKG
+# (target con format = "file").
+descargar_provincias_wfs <- function(dest = "data/raw/wfs/provincias.gpkg") {
   if (file.exists(dest) && file.info(dest)$size > 0) {
     message(glue::glue("[cache] {basename(dest)} ya existe"))
     return(dest)
   }
   consulta <- paste0(
-    WFS_SINAC,
+    WFS_SNIT,
     "?service=WFS&version=2.0.0&request=GetFeature",
-    "&typeNames=", utils::URLencode(WFS_CAPA_ASP, reserved = TRUE),
+    "&typeNames=", utils::URLencode(WFS_CAPA_PROVINCIAS, reserved = TRUE),
     "&outputFormat=", utils::URLencode("application/json", reserved = TRUE),
-    "&srsName=", utils::URLencode(CRS_CRTM05, reserved = TRUE),
-    "&cql_filter=", utils::URLencode(WFS_FILTRO_PARQUE, reserved = TRUE)
+    "&srsName=", utils::URLencode(CRS_CRTM05, reserved = TRUE)
   )
-  message(glue::glue("[descarga] polígono del parque desde el WFS del SINAC"))
-  parque <- sf::st_read(consulta, quiet = TRUE)
-  if (nrow(parque) != 1) {
-    stop("Se esperaba exactamente 1 feature del parque; el WFS devolvió ", nrow(parque),
-         call. = FALSE)
+  message(glue::glue("[descarga] provincias desde el WFS del SNIT (IGN 1:5000)"))
+  provincias <- sf::st_read(consulta, quiet = TRUE)
+  if (nrow(provincias) != N_PROVINCIAS) {
+    stop("Se esperaban ", N_PROVINCIAS, " provincias; el WFS devolvió ",
+         nrow(provincias), call. = FALSE)
   }
   dir.create(dirname(dest), recursive = TRUE, showWarnings = FALSE)
-  sf::st_write(parque, dest, delete_dsn = TRUE, quiet = TRUE)
+  sf::st_write(provincias, dest, delete_dsn = TRUE, quiet = TRUE)
   dest
 }
 
-# Lee el GPKG y garantiza CRS CRTM05.
-procesar_parque <- function(path) {
-  sf::st_read(path, quiet = TRUE) |> a_crtm05()
+# Construye el polígono del área de estudio: la unión de las provincias,
+# SIN la Isla del Coco (toda parte con centroide al sur de LAT_MIN_CONTINENTAL;
+# ver R/constantes.R). Devuelve un sf de una sola fila en CRTM05, análogo al
+# polígono de parque del proyecto original: todo el pipeline recorta contra él.
+construir_pais <- function(path) {
+  provincias <- sf::st_read(path, quiet = TRUE) |> a_crtm05()
+  partes <- provincias |>
+    sf::st_union() |>
+    sf::st_cast("POLYGON")
+  lat <- partes |>
+    sf::st_point_on_surface() |>
+    sf::st_transform(CRS_WGS84) |>
+    sf::st_coordinates()
+  continentales <- partes[lat[, "Y"] >= LAT_MIN_CONTINENTAL]
+  if (length(continentales) == length(partes)) {
+    warning("Ningún polígono quedó excluido: ¿la capa de provincias ya no ",
+            "incluye la Isla del Coco?", call. = FALSE)
+  }
+  sf::st_sf(
+    nombre = AREA_NOMBRE,
+    geometry = sf::st_combine(continentales)
+  )
+}
+
+# Versión simplificada del límite nacional para productos web y figuras a
+# escala nacional (en WGS84). El litoral 1:5000 completo pesa demasiado para
+# HTML autocontenidos y es invisible a ~430 m/px.
+pais_para_web <- function(pais) {
+  simplificar_para_web(pais, tolerancia_m = TOLERANCIA_WEB_M)
 }
 
 # Descarga idempotente de una capa del WFS del SINAC recortada a un bbox

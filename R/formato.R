@@ -8,10 +8,11 @@
 #
 # `decimales` fija la precisión Y los ceros a la derecha, de modo que una
 # serie de porcentajes se lea pareja ("54,0 %" junto a "58,2 %") en lugar de
-# alternar precisiones. Sin separador de miles: los valores del reporte son
-# de cuatro o cinco dígitos y la prosa ya los escribe sin él.
+# alternar precisiones. Separador de miles: espacio fino (SI), que no se
+# confunde con la coma decimal — los totales nacionales llegan a seis o
+# siete dígitos.
 num_es <- function(x, decimales = 1) {
-  format(round(x, decimales), decimal.mark = ",", big.mark = "",
+  format(round(x, decimales), decimal.mark = ",", big.mark = " ",
          nsmall = decimales, trim = TRUE, scientific = FALSE)
 }
 
@@ -33,7 +34,7 @@ fecha_es <- function(x, con_anio = TRUE) {
 # tabla sigue siendo numérico, no alfabético).
 formato_dt_es <- function(tabla, columnas, decimales = 1) {
   DT::formatRound(tabla, columns = columnas, digits = decimales,
-                  mark = "", dec.mark = ",")
+                  mark = " ", dec.mark = ",")
 }
 
 # Etiqueta legible para la confianza de una detección de FIRMS, que cambia de

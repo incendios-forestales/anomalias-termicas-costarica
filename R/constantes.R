@@ -7,18 +7,40 @@
 CRS_WGS84  <- "EPSG:4326"
 CRS_CRTM05 <- "EPSG:5367"
 
-# --- SINAC / WFS ---
-WFS_SINAC   <- "https://geos1pne.sirefor.go.cr/wfs"
-WFS_CAPA_ASP <- "PNE:areas_silvestres_protegidas"
-# El parque es una sola feature identificada por estos atributos
-WFS_FILTRO_PARQUE <- "nombre_asp='Palo Verde' AND cat_manejo='Parque Nacional'"
+# --- Área de estudio ---
+# Costa Rica continental + islas cercanas. La Isla del Coco (5,5 N, 87,1 O)
+# queda EXCLUIDA: su actividad de fuego es nula, estira el bbox de descarga a
+# un rectángulo dominado por océano (donde FIRMS detecta barcos) y queda fuera
+# de la zona de validez práctica de CRTM05. La exclusión se documenta en el
+# README y en los reportes.
+AREA_NOMBRE       <- "Costa Rica"
+AREA_TITULO       <- "Anomalías térmicas en Costa Rica"
+AREA_LIMITE_LABEL <- "Límite nacional"
 
-# Capas nacionales de contexto (mismo geoserver). Se descargan recortadas al
-# bbox del parque. La cobertura forestal solo mapea clases de BOSQUE (no es
-# cobertura completa: sin pastizal ni cultivos); se usa la versión 2023, que
-# es la más detallada — la de 2021 clasifica casi todo como bosque secundario.
-WFS_CAPA_BOSQUE   <- "PNE:cobertura_forestal_2023"
-WFS_CAPA_HUMEDALES <- "PNE:registro_nacional_humedales"
+# Umbral de latitud (grados N) para descartar las partes insulares lejanas al
+# construir el polígono continental: solo la Isla del Coco cae al sur de 7 N.
+LAT_MIN_CONTINENTAL <- 7
+
+# --- SNIT / IGN (límite nacional) ---
+# El límite nacional se construye como la unión de las 7 provincias de la
+# cartografía oficial 1:5000 del IGN, servida por el SNIT.
+WFS_SNIT            <- "https://geos.snitcr.go.cr/be/IGN_5_CO/wfs"
+WFS_CAPA_PROVINCIAS <- "IGN_5_CO:limiteprovincial_5k"
+N_PROVINCIAS        <- 7L
+
+# --- SINAC / WFS ---
+WFS_SINAC <- "https://geos1pne.sirefor.go.cr/wfs"
+
+# Capas nacionales de contexto y desagregación (mismo geoserver).
+# Las áreas de conservación son la unidad de desagregación espacial de los
+# reportes (10 features terrestres con nombre_ac / siglas_ac).
+WFS_CAPA_AREAS_CONSERVACION <- "PNE:areas_conservacion"
+WFS_CAPA_HUMEDALES          <- "PNE:registro_nacional_humedales"
+
+# Tolerancia de simplificación (m) para las capas que van embebidas en HTML o
+# se dibujan a escala nacional. A ~430 m/px de los productos nacionales, 100 m
+# es imperceptible y reduce el litoral 1:5000 a un peso manejable.
+TOLERANCIA_WEB_M <- 100
 
 # --- NASA FIRMS ---
 FIRMS_BASE <- "https://firms.modaps.eosdis.nasa.gov/api"
@@ -38,15 +60,11 @@ FIRMS_DIAS_FRAGMENTO <- 5L
 # extremos sin invalidar los ya descargados.
 ORIGEN_GRILLA <- as.Date("2000-11-01")
 
-# Buffer (km) alrededor del parque para el bbox de descarga: cubre de sobra la
+# Buffer (km) alrededor del país para el bbox de descarga: cubre de sobra la
 # geolocalización de los sensores (~1 km en MODIS, ~375 m en VIIRS) para
 # capturar detecciones de borde; el análisis recorta estrictamente al polígono.
 FIRMS_BUFFER_KM <- 5
 
-# Fuentes de FIRMS: cada fuente activa es una cadena explícita de targets en
-# _targets.R (hoy MODIS_SP y VIIRS_SNPP_SP; con una tercera fuente conviene
-# migrar a tarchetypes::tar_map). La capa de descarga ya separa la caché por
-# data_id (data/raw/firms/<data_id>/).
 # El área quemada (BA_MODIS/BA_VIIRS) NO se obtiene de FIRMS: su API acepta
 # esas colecciones pero responde vacío siempre; se usan los productos
 # originales MCD64A1 y VNP64A1 (ver abajo).
@@ -75,11 +93,12 @@ MCD64A1_VERSION    <- "061"
 VNP64A1_SHORT_NAME <- "VNP64A1"
 VNP64A1_VERSION    <- "002"
 
-# Tesela de la rejilla sinusoidal MODIS que cubre el PN Palo Verde.
-# Es común a MCD64A1 y VNP64A1: ambos productos usan la misma rejilla
-# (10.35 N, -85.35 O). extraer_quemas() verifica en tiempo de ejecución que
-# la tesela efectivamente cubra el parque.
-TESELA_SINUSOIDAL <- "h09v07"
+# Teselas de la rejilla sinusoidal MODIS que cubren Costa Rica continental:
+# h09v07 (10-20 N) para la mitad norte y h09v08 (0-10 N) para la mitad sur.
+# La rejilla es común a MCD64A1 y VNP64A1. extraer_quemas() verifica en tiempo
+# de ejecución que la UNIÓN de las teselas cubra el país; un granulo individual
+# legítimamente no lo cubre.
+TESELAS_SINUSOIDALES <- c("h09v07", "h09v08")
 
 # Token de Earthdata Login, desde .Renviron (no versionado). A diferencia de
 # la MAP_KEY de FIRMS, los tokens de Earthdata expiran (~60 días).

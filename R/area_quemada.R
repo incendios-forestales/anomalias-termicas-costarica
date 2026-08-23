@@ -1,5 +1,5 @@
 # Procesamiento del área quemada MCD64A1: lectura de la banda "Burn Date",
-# recorte al parque, serie mensual de hectáreas y visualizaciones.
+# recorte al área de estudio, serie mensual de hectáreas y visualizaciones.
 #
 # Cada granulo mensual etiqueta únicamente las quemas detectadas en su propio
 # mes: el valor del píxel es el día del año (del año del granulo) en que el
@@ -37,10 +37,10 @@ leer_burn_date <- function(path_hdf) {
   terra::rast(subdatasets$name[indice])
 }
 
-# Extrae los píxeles quemados de todos los granulos dentro del parque.
-# Recibe el vector completo de paths (como leer_y_unir_csv con los CSV):
-# recorrer ~300 HDF con recorte al parque toma minutos y no amerita una rama
-# de procesamiento por granulo, casi todas vacías.
+# Extrae los píxeles quemados de todos los granulos dentro del área de
+# estudio. Recibe el vector completo de paths (como leer_y_unir_csv con los
+# CSV): recorrer los HDF con recorte al área toma minutos y no amerita una
+# rama de procesamiento por granulo.
 #
 # Decisiones:
 #   - El recorte usa el criterio centro-de-píxel (mask de terra), coherente
@@ -50,18 +50,30 @@ leer_burn_date <- function(path_hdf) {
 #     depende de distorsiones de reproyección.
 #   - Se retornan polígonos de píxel (no centroides): a 500 m el píxel es un
 #     objeto de área real y el polígono comunica eso honestamente en el mapa.
+#   - Costa Rica cruza dos teselas sinusoidales (h09v07/h09v08): un granulo
+#     individual NO cubre el área completa y eso es legítimo; lo que se
+#     verifica es que la UNIÓN de las teselas presentes cubra el bbox del
+#     área (las teselas son adyacentes, así que el bbox de la unión no
+#     esconde huecos interiores).
 #
 # Retorna sf de polígonos de píxel en CRTM05 con columnas
 # fecha, anio, mes, aniomes, area_ha.
-extraer_quemas <- function(paths_hdf, parque) {
+extraer_quemas <- function(paths_hdf, area) {
   raster_inicial <- leer_burn_date(paths_hdf[[1]])
-  parque_sin <- terra::vect(sf::st_transform(parque, terra::crs(raster_inicial)))
-  ext_r <- terra::ext(raster_inicial)
-  ext_p <- terra::ext(parque_sin)
-  if (ext_p$xmin > ext_r$xmax || ext_p$xmax < ext_r$xmin ||
-      ext_p$ymin > ext_r$ymax || ext_p$ymax < ext_r$ymin) {
-    stop("El granulo ", basename(paths_hdf[[1]]), " no cubre el parque: ",
-         "revise TESELA_SINUSOIDAL en R/constantes.R.", call. = FALSE)
+  area_sin <- terra::vect(sf::st_transform(area, terra::crs(raster_inicial)))
+  ext_a <- terra::ext(area_sin)
+
+  tesela_de <- function(p) sub(".*\\.(h\\d{2}v\\d{2})\\..*", "\\1", basename(p))
+  paths_teselas <- paths_hdf[!duplicated(tesela_de(paths_hdf))]
+  ext_union <- Reduce(terra::union,
+                      purrr::map(paths_teselas,
+                                 \(p) terra::ext(leer_burn_date(p))))
+  if (ext_a$xmin < ext_union$xmin || ext_a$xmax > ext_union$xmax ||
+      ext_a$ymin < ext_union$ymin || ext_a$ymax > ext_union$ymax) {
+    stop("La unión de las teselas presentes (",
+         paste(tesela_de(paths_teselas), collapse = ", "),
+         ") no cubre el área de estudio: revise TESELAS_SINUSOIDALES en ",
+         "R/constantes.R.", call. = FALSE)
   }
 
   quemas <- purrr::map(paths_hdf, function(path) {
@@ -69,7 +81,13 @@ extraer_quemas <- function(paths_hdf, parque) {
     # del primer día del mes que cubre.
     fecha_granulo <- as.Date(sub(".*\\.A(\\d{7})\\..*", "\\1", basename(path)),
                              format = "%Y%j")
-    r <- terra::crop(leer_burn_date(path), parque_sin, mask = TRUE)
+    banda <- leer_burn_date(path)
+    ext_g <- terra::ext(banda)
+    if (ext_a$xmin > ext_g$xmax || ext_a$xmax < ext_g$xmin ||
+        ext_a$ymin > ext_g$ymax || ext_a$ymax < ext_g$ymin) {
+      return(NULL)  # tesela sin traslape con el área (terra::crop fallaría)
+    }
+    r <- terra::crop(banda, area_sin, mask = TRUE)
     r[r <= 0] <- NA
     if (all(is.na(terra::values(r)))) return(NULL)
     names(r) <- "dia"
@@ -126,7 +144,7 @@ extraer_quemas <- function(paths_hdf, parque) {
 # climatología promediaba esos meses vacíos y salía deflactada.
 #
 # `hasta` debe venir de la lista de granulos publicados, no del último mes con
-# píxeles quemados: un mes publicado sin fuego en el parque no aporta píxeles
+# píxeles quemados: un mes publicado sin fuego en el área no aporta píxeles
 # y desplazaría la frontera hacia atrás.
 agregar_mensual_quemas <- function(quemas, rango_meses = NULL, hasta = NULL) {
   mensual <- quemas |>
@@ -201,7 +219,7 @@ crear_serie_area_quemada <- function(quemas_mensual, etiqueta_ba, fuente) {
   plotly::ggplotly(p, tooltip = "text") |>
     configurar_plotly(
       "Área quemada mensual",
-      paste0("Parque Nacional Palo Verde — ", etiqueta_ba, " (píxeles de 500 m)"),
+      paste0(AREA_NOMBRE, " — ", etiqueta_ba, " (píxeles de 500 m)"),
       fuente = fuente
     )
 }
@@ -251,7 +269,7 @@ crear_comparacion_series <- function(firms_mensual, quemas_mensual,
   ) |>
     configurar_plotly(
       "Fuego activo y área quemada",
-      paste0("PN Palo Verde — detecciones FIRMS (arriba) y hectáreas ",
+      paste0(AREA_NOMBRE, " — detecciones FIRMS (arriba) y hectáreas ",
              etiqueta_ba, " (abajo)"),
       fuente = fuente
     )
@@ -319,7 +337,7 @@ grafico_area_quemada <- function(quemas_mensual, dest, etiqueta_ba, fuente) {
     ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = c(0, 0.05))) +
     ggplot2::labs(
       title = "Área quemada mensual",
-      subtitle = paste0("Parque Nacional Palo Verde — ", etiqueta_ba,
+      subtitle = paste0(AREA_NOMBRE, " — ", etiqueta_ba,
                         " (píxeles de 500 m)"),
       x = NULL, y = "Hectáreas quemadas por mes",
       caption = fuente
@@ -363,7 +381,7 @@ grafico_climatologia_comparada <- function(firms_mensual, quemas_mensual, dest,
     ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = c(0, 0.05))) +
     ggplot2::labs(
       title = "Climatología mensual: fuego activo y área quemada",
-      subtitle = "Promedios por mes calendario — PN Palo Verde",
+      subtitle = paste0("Promedios por mes calendario — ", AREA_NOMBRE),
       x = NULL, y = NULL,
       caption = fuente
     ) +
@@ -403,7 +421,7 @@ grafico_comparacion <- function(firms_mensual, quemas_mensual, dest,
     ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = c(0, 0.05))) +
     ggplot2::labs(
       title = "Fuego activo y área quemada",
-      subtitle = "Parque Nacional Palo Verde — series complementarias, no sumables",
+      subtitle = paste0(AREA_NOMBRE, " — series complementarias, no sumables"),
       x = NULL, y = NULL,
       caption = fuente
     ) +

@@ -7,14 +7,9 @@
 # valores hay que leerlos del objeto de origen (p. ej. borde$tabla), no del
 # texto formateado.
 
-# Ayudantes de la sección "¿El fuego bordea el bosque o lo rodea?".
-# Retorna una lista con:
-#   pct_paisaje(clase)      % del paisaje del parque en esa clase WorldCover
-#   pct_dominante(clase)    % de detecciones con esa clase dominante
-#   pct_ha_dominante(clase) % de hectáreas quemadas con esa clase dominante
-#   pct_situacion(i, col)   celda [i, col] de la tabla de situación de borde
-#   veces_menos_bosque      cociente azar/área quemada en interior de bosque
-ayudantes_borde <- function(borde, paisaje, cobertura, cobertura_quemas) {
+# Ayudantes de la sección de cobertura: composición del paisaje y clases
+# dominantes, para que la prosa interpole porcentajes en lugar de escribirlos.
+ayudantes_cobertura <- function(paisaje, cobertura, cobertura_quemas) {
   dominantes <- clase_dominante(cobertura) |>
     dplyr::count(clase) |>
     dplyr::mutate(pct = 100 * n / sum(n))
@@ -30,21 +25,17 @@ ayudantes_borde <- function(borde, paisaje, cobertura, cobertura_quemas) {
     },
     pct_ha_dominante = function(x) {
       num_es(ha_dominante$pct[match(x, ha_dominante$clase)])
-    },
-    pct_situacion = function(i, col) num_es(borde$tabla[[col]][i]),
-    veces_menos_bosque = num_es(
-      borde$tabla$pct_aleatorio[3] / borde$tabla$pct_area_quemada[3], 0
-    )
+    }
   )
 }
 
-# Cifras del hallazgo "las quemas del pastizal ocurren en la marisma": cuántas
-# detecciones tienen `clase` como cobertura dominante, qué porcentaje cae en
-# humedal registrado, cuánto del footprint cubre el humedal en promedio y
-# cuántas detecciones concentra el polígono más frecuente del registro (el
-# sector estuarino rotulado "Manglar" en el caso de Palo Verde). Se calculan
-# en vez de escribirse en la prosa: cambian con la fuente y al ampliar el
-# registro. Devuelve números formateados en español, salvo los conteos.
+# Cifras del contraste entre una clase de WorldCover y el Registro Nacional
+# de Humedales: cuántas detecciones tienen `clase` como cobertura dominante,
+# qué porcentaje cae en humedal registrado, cuánto del footprint cubre el
+# humedal en promedio y cuántas detecciones concentra el polígono más
+# frecuente del registro. Se calculan en vez de escribirse en la prosa:
+# cambian con la fuente y al ampliar el registro. Devuelve números
+# formateados en español, salvo los conteos.
 resumen_hallazgo_humedales <- function(cobertura, humedales_detecciones,
                                        clase_objetivo = "Pastizal") {
   cruce <- clase_dominante(cobertura) |>
@@ -66,8 +57,8 @@ resumen_hallazgo_humedales <- function(cobertura, humedales_detecciones,
 # desfasadas respecto del pipeline.
 resumen_multiplataforma <- function(claves, store) {
   purrr::map(claves, function(k) {
-    p <- targets::tar_read_raw(paste0("firms_parque_", k), store = store)
-    q <- targets::tar_read_raw(paste0("area_quemada_parque_", k), store = store)
+    p <- targets::tar_read_raw(paste0("firms_pais_", k), store = store)
+    q <- targets::tar_read_raw(paste0("area_quemada_pais_", k), store = store)
     r <- targets::tar_read_raw(paste0("rangos_", k), store = store)
     e <- etiquetas_plataforma(k)
     fechas <- sf::st_drop_geometry(p)$acq_date

@@ -42,10 +42,11 @@ crear_tabla_resumen <- function(puntos, etiqueta_fuente, etiqueta_ba,
                  if (!is.null(quemas)) "Hectáreas quemadas",
                  "FRP promedio (MW)", "FRP máximo (MW)"),
     caption = if (is.null(quemas)) {
-      paste0("Anomalías térmicas por año — PN Palo Verde, ", etiqueta_fuente)
+      paste0("Anomalías térmicas por año — ", AREA_NOMBRE, ", ",
+             etiqueta_fuente)
     } else {
-      paste0("Anomalías térmicas y área quemada por año — PN Palo Verde, ",
-             etiqueta_fuente, " y ", etiqueta_ba)
+      paste0("Anomalías térmicas y área quemada por año — ", AREA_NOMBRE,
+             ", ", etiqueta_fuente, " y ", etiqueta_ba)
     },
     options = list(pageLength = 30, dom = "t"),
     rownames = FALSE

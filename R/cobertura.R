@@ -60,12 +60,20 @@ recortar_worldcover <- function(archivos, bbox) {
 # Fondo de cobertura para el mapa animado: imagen RGBA pre-renderizada en
 # CRTM05 (una capa de celdas por cuadro haría lentísimo el render de ~300
 # cuadros de gganimate; annotation_raster dibuja un bitmap y es barato).
-# Se agrega a ~40 m (modal) — suficiente para un lienzo de 800 px — y se
-# atenúa con transparencia para no competir con los puntos de detección.
-fondo_cobertura_animacion <- function(archivos, bbox, alfa = 0.5) {
-  recorte <- recortar_worldcover(archivos, bbox) |>
-    terra::aggregate(fact = 4, fun = "modal", na.rm = TRUE) |>
-    terra::project(CRS_CRTM05, method = "near")
+# La agregación (modal) se calcula desde el ancho del bbox para que la matriz
+# resultante tenga ~ancho_px columnas: a escala nacional el recorte a 10 m
+# tiene ~46 000 columnas (~2·10⁹ celdas) y materializarlo como matriz de
+# colores agotaría la memoria. Se atenúa con transparencia para no competir
+# con los puntos de detección.
+fondo_cobertura_animacion <- function(archivos, bbox, alfa = 0.5,
+                                      ancho_px = 1000) {
+  recorte <- recortar_worldcover(archivos, bbox)
+  fact <- max(1, ceiling(terra::ncol(recorte) / ancho_px))
+  if (fact > 1) {
+    recorte <- terra::aggregate(recorte, fact = fact, fun = "modal",
+                                na.rm = TRUE)
+  }
+  recorte <- terra::project(recorte, CRS_CRTM05, method = "near")
   celdas <- terra::as.matrix(recorte, wide = TRUE)
   colores <- grDevices::adjustcolor(
     COLORES_WORLDCOVER[as.character(celdas)], alpha.f = alfa
@@ -77,6 +85,23 @@ fondo_cobertura_animacion <- function(archivos, bbox, alfa = 0.5) {
     xmin = extension$xmin, xmax = extension$xmax,
     ymin = extension$ymin, ymax = extension$ymax
   )
+}
+
+# Composición de clases WorldCover dentro del área de estudio: el paisaje
+# disponible contra el cual se comparan las detecciones. A escala nacional se
+# calcula sobre el raster agregado por moda a ~100 m: la composición
+# porcentual del país no cambia con la resolución y el mask a 10 m costaría
+# gigas de E/S por una cifra idéntica.
+composicion_paisaje <- function(area, archivos_worldcover, bbox) {
+  recorte <- recortar_worldcover(archivos_worldcover, bbox) |>
+    terra::aggregate(fact = 10, fun = "modal", na.rm = TRUE)
+  poligono <- terra::vect(sf::st_transform(area, terra::crs(recorte)))
+  conteo <- terra::freq(terra::mask(terra::crop(recorte, poligono), poligono))
+  tibble::tibble(
+    clase = unname(CLASES_WORLDCOVER[as.character(conteo$value)]),
+    pct_paisaje = 100 * conteo$count / sum(conteo$count)
+  ) |>
+    dplyr::arrange(dplyr::desc(pct_paisaje))
 }
 
 # Nombres de las teselas de 3x3 grados que intersecan un bbox WGS84
@@ -94,23 +119,52 @@ teselas_worldcover <- function(bbox) {
 }
 
 # Descarga cacheada de las teselas WorldCover que cubren el bbox.
-# Retorna los archivos locales.
+# ESA no publica teselas 100 % oceánicas: un HTTP 404 significa que la tesela
+# no existe (bbox que se asoma al mar) y se omite con un mensaje; cualquier
+# otro fallo de descarga sigue siendo un error. Retorna los archivos locales
+# de las teselas existentes.
 descargar_worldcover <- function(bbox_wgs84, dir_destino = "data/raw/worldcover") {
-  vapply(teselas_worldcover(bbox_wgs84), function(tesela) {
+  archivos <- lapply(teselas_worldcover(bbox_wgs84), function(tesela) {
     nombre <- glue::glue("ESA_WorldCover_10m_2021_v200_{tesela}_Map.tif")
-    download_if_missing(
-      glue::glue("{WORLDCOVER_BASE}/{nombre}"),
-      file.path(dir_destino, nombre)
+    url <- glue::glue("{WORLDCOVER_BASE}/{nombre}")
+    destino <- file.path(dir_destino, nombre)
+    tryCatch(
+      download_if_missing(url, destino),
+      error = function(e) {
+        estado <- tryCatch(
+          httr2::request(url) |>
+            httr2::req_method("HEAD") |>
+            httr2::req_error(is_error = function(r) FALSE) |>
+            httr2::req_perform() |>
+            httr2::resp_status(),
+          error = function(e2) NA_integer_
+        )
+        if (identical(estado, 404L)) {
+          message(glue::glue("[omitida] tesela {tesela} no existe (océano)"))
+          if (file.exists(destino)) unlink(destino)  # residuo de download.file
+          return(NULL)
+        }
+        stop(e)
+      }
     )
-  }, character(1), USE.NAMES = FALSE)
+  })
+  archivos <- unlist(Filter(Negate(is.null), archivos))
+  if (length(archivos) == 0) {
+    stop("Ninguna tesela WorldCover disponible para el bbox solicitado.",
+         call. = FALSE)
+  }
+  archivos
 }
 
 # Footprint elíptico de cada detección: ejes scan (E-O) x track (N-S) en km,
 # construido en CRTM05 (métrico) escalando un círculo unitario.
+# nQuadSegs = 8 (33 vértices por elipse): a escala nacional hay 10⁵-10⁶
+# detecciones y el default (~120 vértices) cuadruplicaría la memoria sin
+# ganar precisión frente a un ráster de 10 m.
 footprints_detecciones <- function(puntos) {
   centros <- sf::st_transform(puntos, CRS_CRTM05)
   geoms <- sf::st_geometry(centros)
-  circulos <- sf::st_buffer(geoms, dist = 1)  # radio 1 m, se escala por fila
+  circulos <- sf::st_buffer(geoms, dist = 1, nQuadSegs = 8)
   elipses <- mapply(function(circulo, centro, scan_km, track_km) {
     (circulo - centro) * diag(c(scan_km, track_km) * 1000 / 2) + centro
   }, circulos, geoms, centros$scan, centros$track, SIMPLIFY = FALSE)
@@ -120,31 +174,46 @@ footprints_detecciones <- function(puntos) {
   )
 }
 
+# Identificador de cada polígono para los joins de cobertura: la columna
+# id_deteccion si existe (detecciones, vía a_sf_puntos()); el número de fila
+# en su defecto (píxeles de área quemada). NUNCA se asume que id == fila.
+ids_de_poligonos <- function(poligonos) {
+  if ("id_deteccion" %in% names(poligonos)) {
+    poligonos$id_deteccion
+  } else {
+    seq_len(nrow(poligonos))
+  }
+}
+
 # Núcleo compartido: fracción de cada clase de cobertura dentro de cada
 # polígono (footprint elíptico de detección o píxel de área quemada).
-# id_deteccion es el NÚMERO DE FILA del sf de entrada — invariante que
-# explota crear_mapa_temporal() (join por fila antes de ordenar por fecha);
-# para el área quemada es simplemente el id del píxel.
-fracciones_cobertura <- function(poligonos, archivos_worldcover) {
+# exact_extract lee el VRT por bloques; se procesa por lotes para acotar el
+# data frame ancho intermedio con cientos de miles de polígonos.
+fracciones_cobertura <- function(poligonos, archivos_worldcover,
+                                 tamano_lote = 50000L) {
   capa <- if (length(archivos_worldcover) > 1) {
     terra::vrt(archivos_worldcover)
   } else {
     terra::rast(archivos_worldcover)
   }
+  ids <- ids_de_poligonos(poligonos)
   poligonos <- sf::st_transform(poligonos, sf::st_crs(capa))
 
-  fracciones <- exactextractr::exact_extract(
-    capa, poligonos, fun = "frac", progress = FALSE
-  )
-  # exact_extract("frac") retorna una columna frac_<valor> por clase presente
-  fracciones |>
-    dplyr::mutate(id_deteccion = dplyr::row_number()) |>
-    tidyr::pivot_longer(
-      cols = dplyr::starts_with("frac_"),
-      names_to = "clase_valor", names_prefix = "frac_",
-      values_to = "fraccion"
+  lotes <- split(seq_len(nrow(poligonos)),
+                 ceiling(seq_len(nrow(poligonos)) / tamano_lote))
+  purrr::map(lotes, function(filas) {
+    exactextractr::exact_extract(
+      capa, poligonos[filas, ], fun = "frac", progress = FALSE
     ) |>
-    dplyr::filter(fraccion > 0) |>
+      dplyr::mutate(id_deteccion = ids[filas]) |>
+      tidyr::pivot_longer(
+        cols = dplyr::starts_with("frac_"),
+        names_to = "clase_valor", names_prefix = "frac_",
+        values_to = "fraccion"
+      ) |>
+      dplyr::filter(fraccion > 0)
+  }) |>
+    purrr::list_rbind() |>
     dplyr::mutate(clase = CLASES_WORLDCOVER[clase_valor])
 }
 
@@ -153,7 +222,7 @@ fracciones_cobertura <- function(poligonos, archivos_worldcover) {
 extraer_cobertura <- function(puntos, archivos_worldcover) {
   fracciones_cobertura(footprints_detecciones(puntos), archivos_worldcover) |>
     dplyr::left_join(
-      tibble::tibble(id_deteccion = seq_len(nrow(puntos)),
+      tibble::tibble(id_deteccion = puntos$id_deteccion,
                      acq_date = puntos$acq_date, frp = puntos$frp),
       by = "id_deteccion"
     ) |>
@@ -206,30 +275,35 @@ resumen_cobertura <- function(cobertura) {
 }
 
 # --- Contraste con las capas nacionales del SINAC ---------------------------
-# WorldCover clasifica como "Pastizal" buena parte de la marisma de Palo Verde.
-# Se contrasta cada footprint contra el Registro Nacional de Humedales para
-# verificar si esas detecciones ocurren en humedal registrado.
+# WorldCover clasifica como "Pastizal" buena parte de la vegetación herbácea
+# inundable (p. ej. las marismas del Tempisque). Se contrasta cada footprint
+# contra el Registro Nacional de Humedales para verificar si esas detecciones
+# ocurren en humedal registrado.
 #
 # Criterio: mismo footprint elíptico del análisis WorldCover (no el punto), y
 # se considera "en humedal" si el footprint interseca algún polígono del
 # registro; se reporta además la fracción del footprint cubierta por humedal.
 #
-# Limitación: las capas nacionales también son fotos fijas (cobertura forestal
-# 2023; registro de humedales sin fecha uniforme) frente a 2001-2026.
-# Núcleo del cruce: solo usa la geometría y el número de fila de `poligonos`
-# (footprints elípticos o píxeles de quema, cualquier CRS proyectable).
+# Limitación: las capas nacionales también son fotos fijas (registro de
+# humedales sin fecha uniforme) frente a 2001-2026.
+# Núcleo del cruce: solo usa la geometría y el id de `poligonos` (footprints
+# elípticos o píxeles de quema, cualquier CRS proyectable). A escala nacional
+# los footprints son cientos de miles y los humedales miles de polígonos:
+# la intersección geométrica (costosa) se calcula solo para los footprints
+# que el índice espacial marca como candidatos.
 cruce_humedales <- function(poligonos, humedales) {
+  ids <- ids_de_poligonos(poligonos)
   poligonos <- a_crtm05(poligonos)
-  humedales <- a_crtm05(humedales)
-
-  interseccion <- sf::st_intersection(
-    sf::st_make_valid(poligonos |>
-                        dplyr::transmute(id_deteccion = dplyr::row_number())),
-    sf::st_make_valid(humedales[, c("nom_hum", "tipo_hum", "clase_hum")])
+  humedales <- sf::st_make_valid(
+    a_crtm05(humedales)[, c("nom_hum", "tipo_hum", "clase_hum")]
   )
-  areas <- poligonos |>
-    sf::st_area() |>
-    as.numeric()
+  geoms <- sf::st_make_valid(
+    sf::st_sf(id_deteccion = ids, geometry = sf::st_geometry(poligonos))
+  )
+
+  candidatos <- lengths(sf::st_intersects(geoms, humedales)) > 0
+  interseccion <- sf::st_intersection(geoms[candidatos, ], humedales)
+  areas <- as.numeric(sf::st_area(geoms))
 
   resumen <- interseccion |>
     dplyr::mutate(area_humedal = as.numeric(sf::st_area(interseccion))) |>
@@ -242,9 +316,11 @@ cruce_humedales <- function(poligonos, humedales) {
       area_humedal = sum(area_humedal),
       .by = id_deteccion
     ) |>
-    dplyr::mutate(fraccion_humedal = pmin(area_humedal / areas[id_deteccion], 1))
+    dplyr::mutate(
+      fraccion_humedal = pmin(area_humedal / areas[match(id_deteccion, ids)], 1)
+    )
 
-  data.frame(id_deteccion = seq_len(nrow(poligonos))) |>
+  data.frame(id_deteccion = ids) |>
     dplyr::left_join(resumen, by = "id_deteccion") |>
     dplyr::mutate(
       en_humedal = !is.na(clase_hum),

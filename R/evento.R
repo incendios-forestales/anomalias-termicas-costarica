@@ -50,13 +50,13 @@ evento <- function(clave) {
 }
 
 # Detecciones de la plataforma atribuidas al evento: las que caen dentro del
-# parque en la ventana de fechas. El recorte espacial ya lo hizo
-# recortar_al_parque(); no se restringe además al polígono del sector, porque
+# área de estudio en la ventana de fechas. El recorte espacial ya lo hizo
+# recortar_al_area(); no se restringe además al polígono del sector, porque
 # saber qué proporción cayó fuera de él es justamente uno de los resultados.
-detecciones_evento <- function(clave_evento, firms_parque) {
+detecciones_evento <- function(clave_evento, firms_pais) {
   e <- evento(clave_evento)
-  firms_parque[firms_parque$acq_date >= e$inicio &
-                 firms_parque$acq_date <= e$fin, ]
+  firms_pais[firms_pais$acq_date >= e$inicio &
+                 firms_pais$acq_date <= e$fin, ]
 }
 
 # Píxeles de área quemada atribuidos al evento. A diferencia de las
@@ -65,11 +65,11 @@ detecciones_evento <- function(clave_evento, firms_parque) {
 # cambio de reflectancia, con incertidumbre de varios días —en Palo Verde 2026
 # hay píxeles fechados antes de la ignición reportada—, así que recortar al día
 # exacto descartaría parte de la misma cicatriz.
-quemas_evento <- function(clave_evento, area_quemada_parque) {
+quemas_evento <- function(clave_evento, area_quemada_pais) {
   e <- evento(clave_evento)
   meses <- seq(lubridate::floor_date(e$inicio, "month"),
                lubridate::floor_date(e$fin, "month"), by = "month")
-  area_quemada_parque[lubridate::floor_date(area_quemada_parque$fecha,
+  area_quemada_pais[lubridate::floor_date(area_quemada_pais$fecha,
                                             "month") %in% meses, ]
 }
 
@@ -79,24 +79,24 @@ quemas_evento <- function(clave_evento, area_quemada_parque) {
 # estándar. Los porcentajes vienen formateados en español (num_es); los
 # conteos, las hectáreas y las fechas van crudos para que la prosa los componga.
 #
-# `cobertura` y `humedales_detecciones` se indexan por id_deteccion, que es la
-# posición de la fila en firms_parque: de ahí el which() sobre la ventana en
-# lugar de un join por fecha.
-resumen_evento <- function(clave_evento, firms_parque, firms_mensual,
-                           area_quemada_parque, cobertura,
+# `cobertura` y `humedales_detecciones` se unen por id_deteccion, la llave
+# estable que asigna a_sf_puntos(): nada aquí depende de la posición de fila.
+resumen_evento <- function(clave_evento, firms_pais, firms_mensual,
+                           area_quemada_pais, cobertura,
                            humedales_detecciones, clase_objetivo = "Pastizal") {
   e <- evento(clave_evento)
-  fechas <- sf::st_drop_geometry(firms_parque)$acq_date
-  ids <- which(fechas >= e$inicio & fechas <= e$fin)
-  detecciones <- sf::st_drop_geometry(firms_parque)[ids, ]
+  d_todas <- sf::st_drop_geometry(firms_pais)
+  detecciones <- d_todas[d_todas$acq_date >= e$inicio &
+                           d_todas$acq_date <= e$fin, ]
+  ids <- detecciones$id_deteccion
   quemas <- sf::st_drop_geometry(quemas_evento(clave_evento,
-                                               area_quemada_parque))
+                                               area_quemada_pais))
 
   # Sector del evento según el Registro Nacional de Humedales. nom_hum es el
   # polígono con mayor traslape del footprint (ver cruce_humedales()), así que
   # esto cuenta detecciones cuyo footprint está DOMINADO por el sector.
-  en_sector <- humedales_detecciones$nom_hum[ids]
-  en_sector <- !is.na(en_sector) & grepl(e$sector, en_sector, fixed = TRUE)
+  hum <- humedales_detecciones[match(ids, humedales_detecciones$id_deteccion), ]
+  en_sector <- !is.na(hum$nom_hum) & grepl(e$sector, hum$nom_hum, fixed = TRUE)
 
   # Clase dominante de WorldCover bajo los footprints del evento.
   clases <- clase_dominante(cobertura)
@@ -156,8 +156,8 @@ resumen_evento <- function(clave_evento, firms_parque, firms_mensual,
 # R/ayudantes_reporte.R, incluido leer los targets con tar_read_raw.
 resumen_evento_plataformas <- function(clave_evento, claves, store) {
   purrr::map(claves, function(k) {
-    fp <- targets::tar_read_raw(paste0("firms_parque_", k), store = store)
-    aq <- targets::tar_read_raw(paste0("area_quemada_parque_", k),
+    fp <- targets::tar_read_raw(paste0("firms_pais_", k), store = store)
+    aq <- targets::tar_read_raw(paste0("area_quemada_pais_", k),
                                 store = store)
     e <- evento(clave_evento)
     d <- sf::st_drop_geometry(fp)
@@ -222,28 +222,42 @@ meses_en_prosa <- function(fechas) {
 }
 
 # Mapa del evento: detecciones por fecha y píxeles de área quemada sobre el
-# sector, con el resto del parque como contexto. Encuadra el sector y no el
-# parque completo —el evento ocupa una fracción del área protegida y a escala
-# de parque los puntos se apelotonan— pero dibuja el límite completo para que
-# se lea dónde ocurrió.
-grafico_evento <- function(clave_evento, firms_parque, area_quemada_parque,
-                           parque, humedales, archivos_worldcover, bbox, dest,
+# sector. Encuadra el sector y no el país —el evento ocupa una fracción
+# mínima del territorio y a escala nacional los puntos se apelotonan— y el
+# fondo de cobertura se calcula SOLO para esa ventana local (el fondo
+# nacional, agregado a ~430 m/px, sería una mancha borrosa a esta escala).
+# El límite nacional cae normalmente fuera del encuadre; el contexto lo dan
+# la cobertura y el polígono del sector.
+grafico_evento <- function(clave_evento, firms_pais, area_quemada_pais,
+                           area, humedales, archivos_worldcover, bbox, dest,
                            etiqueta_fuente, etiqueta_ba, fuente_datos) {
   e <- evento(clave_evento)
-  detecciones <- detecciones_evento(clave_evento, firms_parque)
-  quemas <- quemas_evento(clave_evento, area_quemada_parque)
+  detecciones <- detecciones_evento(clave_evento, firms_pais)
+  quemas <- quemas_evento(clave_evento, area_quemada_pais)
   sector <- humedales[grepl(e$sector, humedales$nom_hum, fixed = TRUE), ]
 
   # Encuadre: el sector con un margen del 12 % de su lado mayor.
   caja <- sf::st_bbox(sector)
   margen <- 0.12 * max(caja["xmax"] - caja["xmin"], caja["ymax"] - caja["ymin"])
-  fondo <- fondo_cobertura_animacion(archivos_worldcover, bbox)
+
+  # Fondo local: bbox del encuadre en WGS84, en el formato de
+  # bbox_con_buffer() que espera fondo_cobertura_animacion().
+  caja_wgs <- sf::st_bbox(sf::st_transform(
+    sf::st_as_sfc(sf::st_bbox(c(
+      xmin = unname(caja["xmin"] - margen), ymin = unname(caja["ymin"] - margen),
+      xmax = unname(caja["xmax"] + margen), ymax = unname(caja["ymax"] + margen)
+    ), crs = sf::st_crs(CRS_CRTM05))),
+    CRS_WGS84
+  ))
+  bbox_local <- c(oeste = unname(caja_wgs["xmin"]), sur = unname(caja_wgs["ymin"]),
+                  este = unname(caja_wgs["xmax"]), norte = unname(caja_wgs["ymax"]))
+  fondo <- fondo_cobertura_animacion(archivos_worldcover, bbox_local)
 
   p <- ggplot2::ggplot() +
     ggplot2::annotation_raster(fondo$imagen, xmin = fondo$xmin,
                                xmax = fondo$xmax, ymin = fondo$ymin,
                                ymax = fondo$ymax) +
-    ggplot2::geom_sf(data = parque, fill = NA, color = "grey30",
+    ggplot2::geom_sf(data = area, fill = NA, color = "grey30",
                      linewidth = 0.5) +
     ggplot2::geom_sf(data = sf::st_union(sector), fill = NA, color = "grey15",
                      linewidth = 0.7, linetype = "22") +

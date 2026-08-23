@@ -1,4 +1,4 @@
-# Pipeline de anomalías térmicas y área quemada en el PN Palo Verde.
+# Pipeline de anomalías térmicas y área quemada en Costa Rica (continental).
 #
 # Cuatro plataformas satelitales HERMANAS —MODIS, VIIRS S-NPP, VIIRS NOAA-20 y
 # VIIRS NOAA-21— con juegos de productos equivalentes e independientes. Sus
@@ -15,8 +15,8 @@
 # Las cuatro cadenas se generan con tarchetypes::tar_map a partir de
 # PLATAFORMAS (R/plataformas.R): cada target del bloque `tar_map` existe
 # cuatro veces, con el sufijo de la clave de plataforma (_modis, _snpp,
-# _noaa20, _noaa21). Es decir, `firms_parque` no existe como tal; existen
-# `firms_parque_modis`, `firms_parque_snpp`, etc.
+# _noaa20, _noaa21). Es decir, `firms_pais` no existe como tal; existen
+# `firms_pais_modis`, `firms_pais_snpp`, etc.
 #
 # La descarga es reanudable: cada fragmento de fechas es una rama dinámica
 # respaldada por un CSV en data/raw/firms/; si la ejecución se interrumpe,
@@ -30,9 +30,9 @@ tar_source("R")
 tar_option_set(
   packages = c(
     "sf", "dplyr", "tidyr", "purrr", "readr", "lubridate", "glue", "httr2",
-    "ggplot2", "gganimate", "gifski", "av", "plotly", "leaflet", "leaflet.extras2",
-    "yyjsonr", "htmlwidgets", "DT", "here", "quarto", "terra", "exactextractr",
-    "tibble"
+    "ggplot2", "gganimate", "gifski", "av", "plotly", "leaflet",
+    "leaflet.extras2", "leafgl", "yyjsonr", "htmlwidgets", "DT", "here",
+    "quarto", "terra", "exactextractr", "tibble"
   ),
   format = "rds"
 )
@@ -55,39 +55,48 @@ list(
   tar_target(fecha_fin,    as.Date("2100-01-01")),
 
   # --- Contexto compartido por las cuatro plataformas ----------------------
-  # Nada de esto depende del sensor: el polígono del parque, las capas
-  # nacionales, la cobertura de la tierra y el relieve del video.
-  tar_target(archivo_parque, descargar_parque_wfs("data/raw/wfs/palo_verde.gpkg"),
+  # Nada de esto depende del sensor: el límite nacional (unión de provincias
+  # IGN 1:5000, sin Isla del Coco), las capas del SINAC, la cobertura de la
+  # tierra y el relieve del video. `pais` conserva el detalle 1:5000 para los
+  # recortes; `pais_web` (WGS84) y `pais_mapa` (CRTM05) son la versión
+  # simplificada para productos web y figuras a escala nacional.
+  tar_target(archivo_provincias,
+             descargar_provincias_wfs("data/raw/wfs/provincias.gpkg"),
              format = "file"),
-  tar_target(parque, procesar_parque(archivo_parque)),
-  tar_target(bbox_descarga, bbox_con_buffer(parque)),
-  tar_target(bbox_parque, sf::st_bbox(parque)),
+  tar_target(pais, construir_pais(archivo_provincias)),
+  tar_target(pais_web, pais_para_web(pais)),
+  tar_target(pais_mapa, a_crtm05(pais_web)),
+  tar_target(bbox_descarga, bbox_con_buffer(pais)),
+  tar_target(bbox_pais, sf::st_bbox(pais)),
   tar_target(archivos_worldcover, descargar_worldcover(bbox_descarga),
              format = "file"),
   tar_target(archivo_humedales,
-             descargar_capa_wfs(WFS_CAPA_HUMEDALES, bbox_parque,
+             descargar_capa_wfs(WFS_CAPA_HUMEDALES, bbox_pais,
                                 "data/raw/wfs/humedales.gpkg"),
              format = "file"),
-  tar_target(archivo_bosque,
-             descargar_capa_wfs(WFS_CAPA_BOSQUE, bbox_parque,
-                                "data/raw/wfs/cobertura_forestal.gpkg"),
+  tar_target(archivo_ac,
+             descargar_capa_wfs(WFS_CAPA_AREAS_CONSERVACION, bbox_pais,
+                                "data/raw/wfs/areas_conservacion.gpkg"),
              format = "file"),
   tar_target(humedales, sf::st_read(archivo_humedales, quiet = TRUE)),
-  tar_target(bosque, sf::st_read(archivo_bosque, quiet = TRUE)),
-  tar_target(paisaje_parque,
-             composicion_paisaje(parque, archivos_worldcover, bbox_descarga)),
+  tar_target(areas_conservacion, sf::st_read(archivo_ac, quiet = TRUE)),
+  tar_target(ac_web, simplificar_para_web(preparar_ac(areas_conservacion))),
+  tar_target(paisaje_pais,
+             composicion_paisaje(pais, archivos_worldcover, bbox_descarga)),
   tar_target(archivos_dem, descargar_dem_terrarium(bbox_descarga),
              format = "file"),
-  tar_target(relieve_video, fondo_relieve_video(archivos_dem, parque,
+  tar_target(relieve_video, fondo_relieve_video(archivos_dem, pais_mapa,
                                                 bbox_descarga,
                                                 archivos_worldcover)),
 
   # --- Área quemada, por PRODUCTO y no por plataforma ----------------------
   # Hay exactamente dos productos y son un recurso compartido: VNP64A1
-  # alimenta a tres plataformas. Nombrarlos por producto evita un target
-  # llamado "granulos_ba_noaa21" que contendría granulos de Suomi-NPP, y evita
-  # repetir la consulta al catálogo CMR (que corre en cada ejecución) una vez
-  # por plataforma.
+  # alimenta a tres plataformas. Nombrarlos por producto evita repetir la
+  # consulta al catálogo CMR (que corre en cada ejecución) una vez por
+  # plataforma. Costa Rica cruza dos teselas sinusoidales (h09v07/h09v08),
+  # así que cada rama dinámica es UN GRANULO (mes x tesela), no un mes:
+  # con ramas mensuales de dos filas, descargar_granulo_ba() perdería la
+  # segunda tesela en silencio.
   tar_target(granulos_mcd64a1,
              cmr_granulos_ba(fecha_inicio, fecha_fin,
                              MCD64A1_SHORT_NAME, MCD64A1_VERSION),
@@ -95,9 +104,9 @@ list(
   tar_target(hdf_mcd64a1,
              descargar_granulo_ba(granulos_mcd64a1, "data/raw/mcd64a1"),
              pattern = map(granulos_mcd64a1), format = "file"),
-  tar_target(quemas_mcd64a1, extraer_quemas(hdf_mcd64a1, parque)),
+  tar_target(quemas_mcd64a1, extraer_quemas(hdf_mcd64a1, pais)),
   # Frontera de PUBLICACIÓN del producto, tomada de la lista de granulos y no
-  # de los píxeles: un mes publicado sin fuego en el parque no aporta píxeles
+  # de los píxeles: un mes publicado sin fuego en el país no aporta píxeles
   # y correría la frontera hacia atrás.
   tar_target(ultimo_mes_mcd64a1, max(granulos_mcd64a1$aniomes)),
   tar_target(granulos_vnp64a1,
@@ -107,7 +116,7 @@ list(
   tar_target(hdf_vnp64a1,
              descargar_granulo_ba(granulos_vnp64a1, "data/raw/vnp64a1"),
              pattern = map(granulos_vnp64a1), format = "file"),
-  tar_target(quemas_vnp64a1, extraer_quemas(hdf_vnp64a1, parque)),
+  tar_target(quemas_vnp64a1, extraer_quemas(hdf_vnp64a1, pais)),
   tar_target(ultimo_mes_vnp64a1, max(granulos_vnp64a1$aniomes)),
 
   # --- Una cadena por plataforma -------------------------------------------
@@ -131,25 +140,26 @@ list(
                pattern = map(fragmentos), format = "file"),
     tar_target(firms_crudo,   leer_y_unir_csv(csv_fragmentos, rangos)),
     tar_target(firms_puntos,  a_sf_puntos(firms_crudo)),
-    tar_target(firms_parque,  recortar_al_parque(firms_puntos, parque)),
-    tar_target(firms_mensual, agregar_mensual(firms_parque, rangos)),
-    tar_target(cobertura, extraer_cobertura(firms_parque, archivos_worldcover)),
+    tar_target(firms_pais,    recortar_al_area(firms_puntos, pais)),
+    tar_target(firms_mensual, agregar_mensual(firms_pais, rangos)),
+    tar_target(cobertura, extraer_cobertura(firms_pais, archivos_worldcover)),
     tar_target(humedales_detecciones,
-               cruzar_con_humedales(firms_parque, humedales)),
-    tar_target(area_quemada_parque,
+               cruzar_con_humedales(firms_pais, humedales)),
+    tar_target(ac_detecciones,
+               detecciones_por_ac(firms_pais, areas_conservacion)),
+    tar_target(area_quemada_pais,
                recortar_quemas_al_periodo(quemas_origen, firms_mensual)),
     tar_target(area_quemada_mensual,
-               agregar_mensual_quemas(area_quemada_parque,
+               agregar_mensual_quemas(area_quemada_pais,
                                       rango_meses = range(firms_mensual$aniomes),
                                       hasta = ultimo_ba)),
+    tar_target(ac_quemas,
+               quemas_por_ac(area_quemada_pais, areas_conservacion)),
     tar_target(cobertura_quemas,
-               extraer_cobertura_quemas(area_quemada_parque,
+               extraer_cobertura_quemas(area_quemada_pais,
                                         archivos_worldcover)),
     tar_target(humedales_quemas,
-               cruzar_quemas_con_humedales(area_quemada_parque, humedales)),
-    tar_target(borde_bosque,
-               contexto_borde(firms_parque, parque, archivos_worldcover,
-                              bbox_descarga, quemas = area_quemada_parque)),
+               cruzar_quemas_con_humedales(area_quemada_pais, humedales)),
 
     tar_target(cartel_resumen,
                generar_cartel_resumen(firms_mensual, area_quemada_mensual,
@@ -160,9 +170,9 @@ list(
                                       etiquetas$fuentes_video),
                format = "file"),
     tar_target(video_anomalias,
-               generar_video_anomalias(firms_parque, area_quemada_parque,
+               generar_video_anomalias(firms_pais, area_quemada_pais,
                                        firms_mensual, area_quemada_mensual,
-                                       parque, relieve_video,
+                                       pais_mapa, relieve_video,
                                        file.path("outputs/figs", clave,
                                                  "video_anomalias_termicas.mp4"),
                                        etiquetas$corta, etiquetas$ids_fuente,
@@ -170,27 +180,27 @@ list(
                                        etiquetas$fuentes_video, fps = 5),
                format = "file"),
     tar_target(anim_gif,
-               animar_detecciones(firms_parque, parque, firms_mensual,
+               animar_detecciones(firms_pais, pais_mapa, firms_mensual,
                                   archivos_worldcover, bbox_descarga,
                                   file.path("outputs/figs", clave,
                                             "animacion_mensual.gif"),
                                   etiquetas$fuente_fig, etiquetas$pie_animacion),
                format = "file"),
     tar_target(anim_mp4,
-               animar_detecciones(firms_parque, parque, firms_mensual,
+               animar_detecciones(firms_pais, pais_mapa, firms_mensual,
                                   archivos_worldcover, bbox_descarga,
                                   file.path("outputs/figs", clave,
                                             "animacion_mensual.mp4"),
                                   etiquetas$fuente_fig, etiquetas$pie_animacion),
                format = "file"),
     tar_target(mapa_html,
-               mapa_leaflet_temporal(firms_parque, parque, cobertura,
+               mapa_leaflet_temporal(firms_pais, pais_web, cobertura,
                                      archivos_worldcover, bbox_descarga,
-                                     humedales, bosque,
+                                     ac_web,
                                      file.path("outputs/maps", clave,
                                                "mapa_temporal.html"),
                                      etiquetas$etiqueta_quemas,
-                                     quemas = area_quemada_parque),
+                                     quemas = area_quemada_pais),
                format = "file"),
     tar_target(fig_serie,
                grafico_serie_temporal(firms_mensual,
@@ -249,12 +259,18 @@ list(
                                            "cobertura_detecciones.png"),
                                  etiquetas$pie_cobertura),
                format = "file"),
+    tar_target(fig_ac,
+               grafico_ac(ac_detecciones, ac_quemas,
+                          file.path("outputs/figs", clave,
+                                    "detecciones_por_ac.png"),
+                          etiquetas$pie_ambos),
+               format = "file"),
     # Mapa del incendio del humedal Catalina (mayo-junio de 2026), el único
     # evento del registro con una cifra oficial de superficie contra la cual
     # contrastar el producto de área quemada. Ver R/evento.R.
     tar_target(fig_evento,
-               grafico_evento("catalina_2026", firms_parque,
-                              area_quemada_parque, parque, humedales,
+               grafico_evento("catalina_2026", firms_pais,
+                              area_quemada_pais, pais_mapa, humedales,
                               archivos_worldcover, bbox_descarga,
                               file.path("outputs/figs", clave,
                                         "evento_catalina_2026.png"),
@@ -262,7 +278,7 @@ list(
                               etiquetas$pie_animacion),
                format = "file"),
     tar_target(tabla_area_quemada,
-               tabla_area_quemada_csv(area_quemada_parque,
+               tabla_area_quemada_csv(area_quemada_pais,
                                       file.path("outputs/tables", clave,
                                                 "area_quemada_anual.csv")),
                format = "file"),
@@ -277,18 +293,18 @@ list(
                                    file.path("outputs/tables", clave,
                                              "contraste_humedales.csv")),
                format = "file"),
-    tar_target(tabla_borde,
-               tabla_borde_csv(borde_bosque,
-                               file.path("outputs/tables", clave,
-                                         "contexto_borde.csv")),
+    tar_target(tabla_ac,
+               tabla_ac_csv(ac_detecciones, ac_quemas,
+                            file.path("outputs/tables", clave,
+                                      "detecciones_por_ac.csv")),
                format = "file"),
     tar_target(tabla_csv,
-               tabla_resumen_csv(firms_parque, area_quemada_parque,
+               tabla_resumen_csv(firms_pais, area_quemada_pais,
                                  file.path("outputs/tables", clave,
                                            "resumen_anual.csv")),
                format = "file"),
     tar_target(tabla_html,
-               tabla_resumen_html(firms_parque, area_quemada_parque,
+               tabla_resumen_html(firms_pais, area_quemada_pais,
                                   file.path("outputs/tables", clave,
                                             "resumen_anual.html"),
                                   etiquetas$fuente_fig, etiquetas$etiqueta_ba),
@@ -348,9 +364,8 @@ list(
   }, format = "file"),
 
   # --- Portada: entrada común en la raíz del sitio -------------------------
-  # Conserva la URL raíz ya publicada, que hasta ahora mostraba el reporte de
-  # MODIS. Depende de los targets de las cuatro plataformas porque calcula su
-  # tabla comparativa leyéndolos.
+  # Depende de los targets de las cuatro plataformas porque calcula su tabla
+  # comparativa leyéndolos.
   tar_quarto(portada, "analysis/portada.qmd",
              extra_files = list.files("R", pattern = "[.][Rr]$",
                                       full.names = TRUE)),
