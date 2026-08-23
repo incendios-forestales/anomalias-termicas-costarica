@@ -7,6 +7,15 @@
 CRS_WGS84  <- "EPSG:4326"
 CRS_CRTM05 <- "EPSG:5367"
 
+# Sin barras de progreso de terra: a escala nacional aggregate()/project()
+# las imprimen, y dentro de un chunk de Quarto esa salida de texto termina
+# renderizada en el reporte como líneas "|---------|====". Se fija aquí
+# porque este archivo se carga siempre (tar_source), tanto en el pipeline
+# como en los qmd.
+if (requireNamespace("terra", quietly = TRUE)) {
+  terra::terraOptions(progress = 0)
+}
+
 # --- Área de estudio ---
 # Costa Rica continental + islas cercanas. La Isla del Coco (5,5 N, 87,1 O)
 # queda EXCLUIDA: su actividad de fuego es nula, estira el bbox de descarga a
