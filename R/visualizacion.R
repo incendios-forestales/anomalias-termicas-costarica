@@ -40,6 +40,8 @@ animar_detecciones <- function(puntos, area, mensual, archivos_worldcover,
   proporcion <- as.numeric((b["ymax"] - b["ymin"]) / (b["xmax"] - b["xmin"]))
   ancho_px <- 1000L
   alto_px <- as.integer(round(ancho_px * proporcion)) + 160L
+  # libx264 (renderizador MP4 de av) exige dimensiones pares.
+  if (alto_px %% 2L == 1L) alto_px <- alto_px + 1L
 
   fondo <- fondo_cobertura_animacion(archivos_worldcover, bbox,
                                      ancho_px = ancho_px)

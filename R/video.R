@@ -153,6 +153,11 @@ layout_video <- function(area) {
   alto_mapa_px <- ceiling(
     (as.numeric(b["ymax"] - b["ymin"]) + 2 * margen) / m_por_px
   )
+  # libx264 exige dimensiones PARES: un lienzo de altura impar aborta el
+  # render de av::av_encode_video con "height not divisible by 2".
+  if ((alto_mapa_px + ENCABEZADO_PX) %% 2 == 1) {
+    alto_mapa_px <- alto_mapa_px + 1
+  }
   alto_px <- alto_mapa_px + ENCABEZADO_PX
   ymin <- as.numeric(b["ymin"]) - margen
   ymax <- ymin + m_por_px * alto_px
