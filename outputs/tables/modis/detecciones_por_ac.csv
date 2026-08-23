@@ -1,0 +1,283 @@
+siglas_ac,nombre_ac,anio,detecciones,hectareas
+ACAHN,Huetar Norte,2001,61,492
+ACAHN,Huetar Norte,2002,52,21
+ACAHN,Huetar Norte,2003,199,3335
+ACAHN,Huetar Norte,2004,73,214
+ACAHN,Huetar Norte,2005,141,235
+ACAHN,Huetar Norte,2006,101,299
+ACAHN,Huetar Norte,2007,89,214
+ACAHN,Huetar Norte,2008,192,4062
+ACAHN,Huetar Norte,2009,61,599
+ACAHN,Huetar Norte,2010,77,1069
+ACAHN,Huetar Norte,2011,54,962
+ACAHN,Huetar Norte,2012,45,278
+ACAHN,Huetar Norte,2013,62,1261
+ACAHN,Huetar Norte,2014,73,1219
+ACAHN,Huetar Norte,2015,40,321
+ACAHN,Huetar Norte,2016,150,11417
+ACAHN,Huetar Norte,2017,52,192
+ACAHN,Huetar Norte,2018,30,21
+ACAHN,Huetar Norte,2019,55,855
+ACAHN,Huetar Norte,2020,53,898
+ACAHN,Huetar Norte,2021,31,0
+ACAHN,Huetar Norte,2022,29,0
+ACAHN,Huetar Norte,2023,72,150
+ACAHN,Huetar Norte,2024,127,941
+ACAHN,Huetar Norte,2025,51,86
+ACAHN,Huetar Norte,2026,60,64
+ACAT,Arenal Tempisque,2001,159,9236
+ACAT,Arenal Tempisque,2002,171,4810
+ACAT,Arenal Tempisque,2003,368,9621
+ACAT,Arenal Tempisque,2004,331,6841
+ACAT,Arenal Tempisque,2005,216,3357
+ACAT,Arenal Tempisque,2006,142,2394
+ACAT,Arenal Tempisque,2007,173,4190
+ACAT,Arenal Tempisque,2008,159,5259
+ACAT,Arenal Tempisque,2009,145,5024
+ACAT,Arenal Tempisque,2010,215,8616
+ACAT,Arenal Tempisque,2011,184,4917
+ACAT,Arenal Tempisque,2012,205,7248
+ACAT,Arenal Tempisque,2013,446,18878
+ACAT,Arenal Tempisque,2014,261,10754
+ACAT,Arenal Tempisque,2015,347,14645
+ACAT,Arenal Tempisque,2016,352,11502
+ACAT,Arenal Tempisque,2017,229,9193
+ACAT,Arenal Tempisque,2018,265,12464
+ACAT,Arenal Tempisque,2019,231,11566
+ACAT,Arenal Tempisque,2020,196,10027
+ACAT,Arenal Tempisque,2021,138,5879
+ACAT,Arenal Tempisque,2022,270,10818
+ACAT,Arenal Tempisque,2023,148,7119
+ACAT,Arenal Tempisque,2024,271,8509
+ACAT,Arenal Tempisque,2025,161,8701
+ACAT,Arenal Tempisque,2026,284,11139
+ACC,Central,2001,54,321
+ACC,Central,2002,26,0
+ACC,Central,2003,67,428
+ACC,Central,2004,49,0
+ACC,Central,2005,33,171
+ACC,Central,2006,35,0
+ACC,Central,2007,56,192
+ACC,Central,2008,24,0
+ACC,Central,2009,52,342
+ACC,Central,2010,20,0
+ACC,Central,2011,14,0
+ACC,Central,2012,61,1026
+ACC,Central,2013,48,128
+ACC,Central,2014,59,0
+ACC,Central,2015,49,0
+ACC,Central,2016,72,0
+ACC,Central,2017,73,941
+ACC,Central,2018,51,0
+ACC,Central,2019,70,43
+ACC,Central,2020,60,21
+ACC,Central,2021,33,0
+ACC,Central,2022,72,0
+ACC,Central,2023,78,0
+ACC,Central,2024,55,0
+ACC,Central,2025,20,0
+ACC,Central,2026,18,0
+ACG,Guanacaste,2001,134,11631
+ACG,Guanacaste,2002,121,8701
+ACG,Guanacaste,2003,341,12764
+ACG,Guanacaste,2004,283,11182
+ACG,Guanacaste,2005,292,10497
+ACG,Guanacaste,2006,151,7632
+ACG,Guanacaste,2007,215,10562
+ACG,Guanacaste,2008,178,6735
+ACG,Guanacaste,2009,194,10305
+ACG,Guanacaste,2010,214,6157
+ACG,Guanacaste,2011,243,6264
+ACG,Guanacaste,2012,154,7248
+ACG,Guanacaste,2013,385,17553
+ACG,Guanacaste,2014,293,18857
+ACG,Guanacaste,2015,215,10733
+ACG,Guanacaste,2016,260,9386
+ACG,Guanacaste,2017,184,9706
+ACG,Guanacaste,2018,267,14560
+ACG,Guanacaste,2019,276,12635
+ACG,Guanacaste,2020,250,10989
+ACG,Guanacaste,2021,155,9428
+ACG,Guanacaste,2022,199,14410
+ACG,Guanacaste,2023,204,10113
+ACG,Guanacaste,2024,199,5965
+ACG,Guanacaste,2025,74,5110
+ACG,Guanacaste,2026,289,11780
+ACLAC,La Amistad Caribe,2002,2,0
+ACLAC,La Amistad Caribe,2003,4,0
+ACLAC,La Amistad Caribe,2004,6,0
+ACLAC,La Amistad Caribe,2005,5,0
+ACLAC,La Amistad Caribe,2006,7,0
+ACLAC,La Amistad Caribe,2007,23,21
+ACLAC,La Amistad Caribe,2008,21,0
+ACLAC,La Amistad Caribe,2009,7,64
+ACLAC,La Amistad Caribe,2010,9,0
+ACLAC,La Amistad Caribe,2011,12,0
+ACLAC,La Amistad Caribe,2012,12,43
+ACLAC,La Amistad Caribe,2013,11,0
+ACLAC,La Amistad Caribe,2014,19,0
+ACLAC,La Amistad Caribe,2015,12,0
+ACLAC,La Amistad Caribe,2016,11,0
+ACLAC,La Amistad Caribe,2017,15,0
+ACLAC,La Amistad Caribe,2018,13,0
+ACLAC,La Amistad Caribe,2019,18,0
+ACLAC,La Amistad Caribe,2020,29,0
+ACLAC,La Amistad Caribe,2021,14,0
+ACLAC,La Amistad Caribe,2022,17,0
+ACLAC,La Amistad Caribe,2023,20,0
+ACLAC,La Amistad Caribe,2024,48,257
+ACLAC,La Amistad Caribe,2025,10,0
+ACLAC,La Amistad Caribe,2026,4,21
+ACLAP,La Amistad Pacifico,2001,121,6435
+ACLAP,La Amistad Pacifico,2002,78,2330
+ACLAP,La Amistad Pacifico,2003,182,21
+ACLAP,La Amistad Pacifico,2004,285,5515
+ACLAP,La Amistad Pacifico,2005,103,21
+ACLAP,La Amistad Pacifico,2006,222,2309
+ACLAP,La Amistad Pacifico,2007,160,1005
+ACLAP,La Amistad Pacifico,2008,76,64
+ACLAP,La Amistad Pacifico,2009,239,3784
+ACLAP,La Amistad Pacifico,2010,60,0
+ACLAP,La Amistad Pacifico,2011,65,0
+ACLAP,La Amistad Pacifico,2012,197,3271
+ACLAP,La Amistad Pacifico,2013,128,1732
+ACLAP,La Amistad Pacifico,2014,108,21
+ACLAP,La Amistad Pacifico,2015,189,6221
+ACLAP,La Amistad Pacifico,2016,116,1561
+ACLAP,La Amistad Pacifico,2017,114,385
+ACLAP,La Amistad Pacifico,2018,89,684
+ACLAP,La Amistad Pacifico,2019,86,21
+ACLAP,La Amistad Pacifico,2020,102,171
+ACLAP,La Amistad Pacifico,2021,32,0
+ACLAP,La Amistad Pacifico,2022,57,385
+ACLAP,La Amistad Pacifico,2023,81,663
+ACLAP,La Amistad Pacifico,2024,64,0
+ACLAP,La Amistad Pacifico,2025,37,0
+ACLAP,La Amistad Pacifico,2026,50,64
+ACOPAC,Pacifico Central,2001,84,2437
+ACOPAC,Pacifico Central,2002,67,3848
+ACOPAC,Pacifico Central,2003,108,727
+ACOPAC,Pacifico Central,2004,94,727
+ACOPAC,Pacifico Central,2005,49,0
+ACOPAC,Pacifico Central,2006,50,214
+ACOPAC,Pacifico Central,2007,99,812
+ACOPAC,Pacifico Central,2008,45,214
+ACOPAC,Pacifico Central,2009,99,1454
+ACOPAC,Pacifico Central,2010,82,3164
+ACOPAC,Pacifico Central,2011,48,150
+ACOPAC,Pacifico Central,2012,102,705
+ACOPAC,Pacifico Central,2013,132,1347
+ACOPAC,Pacifico Central,2014,119,406
+ACOPAC,Pacifico Central,2015,161,1860
+ACOPAC,Pacifico Central,2016,166,4233
+ACOPAC,Pacifico Central,2017,83,1304
+ACOPAC,Pacifico Central,2018,133,2758
+ACOPAC,Pacifico Central,2019,120,1839
+ACOPAC,Pacifico Central,2020,142,1988
+ACOPAC,Pacifico Central,2021,64,1475
+ACOPAC,Pacifico Central,2022,127,2116
+ACOPAC,Pacifico Central,2023,73,1518
+ACOPAC,Pacifico Central,2024,77,1069
+ACOPAC,Pacifico Central,2025,24,64
+ACOPAC,Pacifico Central,2026,48,1945
+ACOSA,Osa,2001,17,727
+ACOSA,Osa,2002,9,0
+ACOSA,Osa,2003,68,128
+ACOSA,Osa,2004,63,64
+ACOSA,Osa,2005,14,0
+ACOSA,Osa,2006,58,107
+ACOSA,Osa,2007,57,128
+ACOSA,Osa,2008,16,0
+ACOSA,Osa,2009,93,128
+ACOSA,Osa,2010,20,0
+ACOSA,Osa,2011,30,0
+ACOSA,Osa,2012,73,107
+ACOSA,Osa,2013,38,257
+ACOSA,Osa,2014,55,342
+ACOSA,Osa,2015,51,171
+ACOSA,Osa,2016,73,342
+ACOSA,Osa,2017,59,0
+ACOSA,Osa,2018,26,0
+ACOSA,Osa,2019,79,406
+ACOSA,Osa,2020,33,0
+ACOSA,Osa,2021,14,0
+ACOSA,Osa,2022,16,0
+ACOSA,Osa,2023,16,64
+ACOSA,Osa,2024,31,0
+ACOSA,Osa,2025,3,0
+ACOSA,Osa,2026,10,0
+ACT,Tempisque,2001,205,10283
+ACT,Tempisque,2002,205,8017
+ACT,Tempisque,2003,333,12015
+ACT,Tempisque,2004,309,7376
+ACT,Tempisque,2005,221,3207
+ACT,Tempisque,2006,173,3250
+ACT,Tempisque,2007,255,13533
+ACT,Tempisque,2008,132,2480
+ACT,Tempisque,2009,192,6179
+ACT,Tempisque,2010,275,9236
+ACT,Tempisque,2011,155,3506
+ACT,Tempisque,2012,378,13939
+ACT,Tempisque,2013,488,16163
+ACT,Tempisque,2014,376,11395
+ACT,Tempisque,2015,507,15585
+ACT,Tempisque,2016,483,15500
+ACT,Tempisque,2017,243,11246
+ACT,Tempisque,2018,257,10861
+ACT,Tempisque,2019,392,18407
+ACT,Tempisque,2020,354,11245
+ACT,Tempisque,2021,179,4703
+ACT,Tempisque,2022,429,24116
+ACT,Tempisque,2023,137,6093
+ACT,Tempisque,2024,374,13191
+ACT,Tempisque,2025,78,3634
+ACT,Tempisque,2026,299,9792
+ACTo,Tortuguero,2003,1,0
+ACTo,Tortuguero,2004,4,0
+ACTo,Tortuguero,2005,7,0
+ACTo,Tortuguero,2006,8,0
+ACTo,Tortuguero,2007,7,0
+ACTo,Tortuguero,2008,4,0
+ACTo,Tortuguero,2009,9,0
+ACTo,Tortuguero,2010,8,0
+ACTo,Tortuguero,2011,5,0
+ACTo,Tortuguero,2012,9,0
+ACTo,Tortuguero,2013,5,0
+ACTo,Tortuguero,2014,6,0
+ACTo,Tortuguero,2015,5,0
+ACTo,Tortuguero,2016,4,0
+ACTo,Tortuguero,2017,6,0
+ACTo,Tortuguero,2018,6,0
+ACTo,Tortuguero,2019,7,0
+ACTo,Tortuguero,2020,11,128
+ACTo,Tortuguero,2021,9,43
+ACTo,Tortuguero,2022,5,0
+ACTo,Tortuguero,2023,6,0
+ACTo,Tortuguero,2024,4,0
+ACTo,Tortuguero,2025,4,0
+ACTo,Tortuguero,2026,6,86
+Sin asignar,Sin asignar,2001,1,21
+Sin asignar,Sin asignar,2002,2,64
+Sin asignar,Sin asignar,2003,0,278
+Sin asignar,Sin asignar,2004,2,107
+Sin asignar,Sin asignar,2005,1,43
+Sin asignar,Sin asignar,2006,0,43
+Sin asignar,Sin asignar,2007,0,150
+Sin asignar,Sin asignar,2008,1,150
+Sin asignar,Sin asignar,2009,0,43
+Sin asignar,Sin asignar,2010,0,64
+Sin asignar,Sin asignar,2011,1,0
+Sin asignar,Sin asignar,2012,0,21
+Sin asignar,Sin asignar,2013,2,342
+Sin asignar,Sin asignar,2014,1,363
+Sin asignar,Sin asignar,2015,3,0
+Sin asignar,Sin asignar,2016,3,620
+Sin asignar,Sin asignar,2017,1,43
+Sin asignar,Sin asignar,2019,0,171
+Sin asignar,Sin asignar,2020,1,86
+Sin asignar,Sin asignar,2021,1,21
+Sin asignar,Sin asignar,2022,0,21
+Sin asignar,Sin asignar,2023,0,64
+Sin asignar,Sin asignar,2024,0,150
+Sin asignar,Sin asignar,2025,0,86
+Sin asignar,Sin asignar,2026,0,128
