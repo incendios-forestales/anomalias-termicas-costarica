@@ -126,7 +126,13 @@ crear_mapa_temporal <- function(puntos, area_web, cobertura, archivos_worldcover
     from = lubridate::floor_date(max(puntos_wgs84$aniomes), "month"),
     by = "-1 month", length.out = meses_recientes
   ))
-  recientes <- puntos_wgs84[puntos_wgs84$aniomes >= corte_reciente, ]
+  # Solo las columnas que usa el popup: el plugin serializa TODOS los
+  # atributos de cada punto en el HTML y las columnas crudas de FIRMS
+  # duplicarían el peso sin aportar nada.
+  recientes <- puntos_wgs84[puntos_wgs84$aniomes >= corte_reciente,
+                            c("acq_date", "acq_time", "frp", "confidence",
+                              "nivel", "satellite", "clase_cobertura",
+                              "fraccion_cobertura", "time")]
 
   # Capa de cobertura: raster categórico (method = "ngb" para no interpolar
   # entre códigos de clase), oculta al inicio y conmutable desde el control.
