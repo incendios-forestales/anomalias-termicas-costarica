@@ -1,5 +1,5 @@
 ---
-title: "Anomalías térmicas en el Parque Nacional Palo Verde"
+title: "Anomalías térmicas en Costa Rica"
 subtitle: "Detecciones del sensor MODIS (MODIS_SP de NASA FIRMS) y área quemada (MCD64A1)"
 author: "Organización Incendios Forestales"
 date: today
@@ -28,38 +28,50 @@ etq <- etiquetas_plataforma("modis")
 ## Introducción
 
 Este reporte presenta las anomalías térmicas (detecciones de fuego activo)
-registradas por el sensor MODIS en el
-[Parque Nacional Palo Verde](https://www.sinac.go.cr/), Costa Rica.
-Los datos provienen del producto **MODIS_SP** (procesamiento estándar) del
-sistema [FIRMS](https://firms.modaps.eosdis.nasa.gov/) de la NASA, y el
-límite del parque del
-[WFS del SINAC](https://geos1pne.sirefor.go.cr/wfs).
+registradas por el sensor MODIS en el territorio continental de
+**Costa Rica**. Los datos provienen del producto **MODIS_SP** (procesamiento
+estándar) del sistema [FIRMS](https://firms.modaps.eosdis.nasa.gov/) de la
+NASA, y el límite nacional se construye como la unión de las siete provincias
+de la cartografía oficial 1:5000 del Instituto Geográfico Nacional, servida
+por el [SNIT](https://www.snitcr.go.cr/).
 
-Existen dos reportes análogos, con los mismos productos y metodología, basados
-en el sensor VIIRS (375 m): uno en la plataforma
+El ámbito es **continental**: la Isla del Coco queda fuera del análisis. Su
+actividad de fuego es prácticamente nula y de incluirla el rectángulo de
+descarga se extendería sobre cientos de kilómetros de océano, donde los
+sensores registran sobre todo barcos como anomalías térmicas nocturnas.
+
+Existen tres reportes análogos, con los mismos productos y metodología,
+basados en el sensor VIIRS (375 m): uno en la plataforma
 [Suomi-NPP](../snpp/) (desde 2012), otro en [NOAA-20](../noaa20/) (desde 2018)
-y otro en [NOAA-21](../noaa21/) (desde 2024). Las series de cada plataforma se publican por
-separado y no deben sumarse: VIIRS detecta muchos más fuegos que MODIS sobre
-el mismo territorio, y dos satélites observan más veces que uno, así que
-unirlas produciría saltos artificiales —en 2012 y en 2018— que reflejarían el
-instrumental disponible y no el régimen de fuego.
+y otro en [NOAA-21](../noaa21/) (desde 2024). Las series de cada plataforma se
+publican por separado y no deben sumarse: VIIRS detecta muchos más fuegos que
+MODIS sobre el mismo territorio, y dos satélites observan más veces que uno,
+así que unirlas produciría saltos artificiales —en 2012 y en 2018— que
+reflejarían el instrumental disponible y no el régimen de fuego.
 
 ```{r}
 #| label: datos
-firms_parque <- tar_read(firms_parque_modis, store = almacen)
+firms_pais <- tar_read(firms_pais_modis, store = almacen)
 firms_mensual <- tar_read(firms_mensual_modis, store = almacen)
-area_quemada_parque <- tar_read(area_quemada_parque_modis, store = almacen)
+area_quemada_pais <- tar_read(area_quemada_pais_modis, store = almacen)
 area_quemada_mensual <- tar_read(area_quemada_mensual_modis, store = almacen)
-rango <- range(firms_parque$acq_date)
+rango <- range(firms_pais$acq_date)
 ```
 
 El período analizado va del **`r format(rango[1], "%d/%m/%Y")`** al
 **`r format(rango[2], "%d/%m/%Y")`**, con un total de
-**`r nrow(firms_parque)`** detecciones dentro del parque. El límite del parque
-proviene de la capa oficial de áreas silvestres protegidas del SINAC (escala
-1:5000, publicada en 2019): está delimitado con una precisión muy superior a la
-de los píxeles MODIS (~1 km), así que el recorte no introduce error apreciable
-por la geometría del límite.
+**`r num_es(nrow(firms_pais), 0)`** detecciones dentro del país. El límite
+nacional está delimitado a escala 1:5000, una precisión muy superior a la de
+los píxeles MODIS (~1 km), así que el recorte no introduce error apreciable
+por la geometría del límite; las detecciones descartadas por él son sobre
+todo marinas (barcos) o de los países vecinos.
+
+Una advertencia de interpretación que a escala nacional pesa más que en un
+área protegida: una **anomalía térmica no es necesariamente un incendio
+forestal**. El sensor registra cualquier fuente de calor suficientemente
+intensa, y en Costa Rica eso incluye las quemas agrícolas (caña de azúcar,
+pastos) y ocasionalmente fuentes industriales, además de los incendios de
+vegetación.
 
 ## Mapa animado
 
@@ -72,12 +84,12 @@ radiativa del fuego (FRP).
 
 Resumen mensual 2001--2026 en formato de video: detecciones de fuego activo
 (MODIS) con su estela de los meses recientes y píxeles de área quemada
-(MCD64A1), sobre el relieve del parque teñido por la cobertura de la tierra
+(MCD64A1), sobre el relieve del país teñido por la cobertura de la tierra
 (WorldCover 2021). Los contadores muestran el acumulado desde 2001 y, debajo,
 el mes en curso con sus valores, cada serie por separado: son magnitudes
 complementarias y no sumables.
 
-<video controls muted playsinline style="width: 100%; max-width: 540px;" src="`r file.path("..", tar_read(video_anomalias_modis, store = almacen))`"></video>
+<video controls muted playsinline style="width: 100%; max-width: 720px;" src="`r file.path("..", tar_read(video_anomalias_modis, store = almacen))`"></video>
 
 El cartel estático resume las dos series mensuales del video: los acumulados
 arriba y, en paneles separados —son magnitudes complementarias y no
@@ -88,29 +100,33 @@ máximo de cada serie rotulado.
 
 ## Mapa interactivo
 
-Use el deslizador temporal para explorar las detecciones a través del tiempo;
-cada punto muestra sus atributos al pulsarlo, incluida la cobertura de la
-tierra dominante en su footprint. El botón ⛶ de la esquina superior izquierda
-abre el mapa en pantalla completa.
+A escala nacional el registro completo suma demasiadas detecciones para
+mostrar cada una con su ficha, así que el mapa las divide en dos capas:
 
-Desde el control de capas pueden apagarse las capas de detecciones y del
-límite del parque —útil para examinar el fondo— y activarse el área quemada
-(píxeles de MCD64A1, con su fecha de quema en el popup), que el deslizador
-filtra igual que las detecciones, la cobertura
-([ESA WorldCover 2021](https://esa-worldcover.org/)) y las capas nacionales del
-SINAC: el Registro Nacional de Humedales y la cobertura forestal 2023.
+- **Los últimos 24 meses** —la ventana de monitoreo— con el deslizador
+  temporal y una ficha por detección (pulse un punto para ver sus atributos,
+  incluida la cobertura de la tierra dominante en su footprint).
+- **El registro completo** como una capa de puntos ligera (WebGL), sin
+  fichas, apagada al inicio: actívela desde el control de capas para ver el
+  patrón espacial acumulado de todo el período.
+
+El botón ⛶ de la esquina superior izquierda abre el mapa en pantalla
+completa. Desde el control de capas pueden activarse además el área quemada
+reciente (píxeles de MCD64A1, con su fecha de quema en el popup, filtrados
+por el deslizador igual que las detecciones), la cobertura
+([ESA WorldCover 2021](https://esa-worldcover.org/)) y las
+áreas de conservación del SINAC.
 
 ```{r}
 #| label: mapa-interactivo
-parque <- tar_read(parque, store = almacen)
+pais_web <- tar_read(pais_web, store = almacen)
 cobertura_mapa <- tar_read(cobertura_modis, store = almacen)
 worldcover <- tar_read(archivos_worldcover, store = almacen)
 bbox <- tar_read(bbox_descarga, store = almacen)
-humedales <- tar_read(humedales, store = almacen)
-bosque <- tar_read(bosque, store = almacen)
-crear_mapa_temporal(firms_parque, parque, cobertura_mapa, worldcover, bbox,
-                    etq$etiqueta_quemas, humedales, bosque,
-                    quemas = area_quemada_parque)
+ac_web <- tar_read(ac_web, store = almacen)
+crear_mapa_temporal(firms_pais, pais_web, cobertura_mapa, worldcover, bbox,
+                    etq$etiqueta_quemas, ac_web,
+                    quemas = area_quemada_pais)
 ```
 
 ## Área quemada (MCD64A1)
@@ -121,8 +137,10 @@ el **área quemada**: para cada píxel de 500 m (~21,5 ha) registra el día en
 que la superficie quedó marcada por el fuego, a partir del cambio persistente
 de reflectancia. Aunque FIRMS lista este producto (`BA_MODIS`) y lo dibuja en
 su visor, su API no lo entrega como datos, por lo que el pipeline lo descarga
-del archivo original de la NASA (LP DAAC). El producto se publica con uno o
-dos meses de rezago: su serie puede terminar antes que la de detecciones.
+del archivo original de la NASA (LP DAAC). Costa Rica cruza dos teselas de la
+rejilla sinusoidal del producto (h09v07 y h09v08), de modo que cada mes
+requiere dos gránulos. El producto se publica con uno o dos meses de rezago:
+su serie puede terminar antes que la de detecciones.
 
 Las estadísticas de las secciones siguientes presentan ambas magnitudes lado
 a lado. **Limitación**: la unidad mínima de MCD64A1 es el píxel de 500 m —
@@ -154,9 +172,10 @@ crear_comparacion_series(firms_mensual, area_quemada_mensual,
 
 ### Climatología mensual (estacionalidad)
 
-Promedios por mes calendario de ambas magnitudes. El promedio de hectáreas de
-los meses más recientes puede estar levemente subestimado por el rezago de
-publicación de MCD64A1.
+Promedios por mes calendario de ambas magnitudes. La concentración en la
+estación seca (enero--abril) es el rasgo dominante del régimen de fuego
+costarricense. El promedio de hectáreas de los meses más recientes puede
+estar levemente subestimado por el rezago de publicación de MCD64A1.
 
 ```{r}
 #| label: climatologia-interactiva
@@ -172,9 +191,35 @@ año.
 
 ```{r}
 #| label: tabla-resumen
-crear_tabla_resumen(firms_parque, etq$fuente_fig, etq$etiqueta_ba,
-                    area_quemada_parque)
+crear_tabla_resumen(firms_pais, etq$fuente_fig, etq$etiqueta_ba,
+                    area_quemada_pais)
 ```
+
+## Detecciones por área de conservación
+
+A escala nacional interesa no solo cuándo ocurre el fuego sino dónde. La
+unidad de desagregación es el **área de conservación**: la división con que
+el [SINAC](https://www.sinac.go.cr/) administra el territorio (y gestiona el
+fuego). Cada detección se asigna al área de conservación donde cae su punto;
+cada píxel de área quemada, a la del centroide del píxel. Las pocas
+detecciones que no caen en ninguna —desajustes de borde entre la capa del
+SINAC y el límite IGN 1:5000, típicamente en la línea de costa— se agrupan
+como *Sin asignar*.
+
+```{r}
+#| label: ac
+ac_detecciones <- tar_read(ac_detecciones_modis, store = almacen)
+ac_quemas <- tar_read(ac_quemas_modis, store = almacen)
+crear_grafico_ac(ac_detecciones, ac_quemas, etq$pie_ambos, interactivo = TRUE)
+```
+
+```{r}
+#| label: tabla-ac
+crear_tabla_ac(ac_detecciones, ac_quemas, etq$fuente_fig, etq$etiqueta_ba)
+```
+
+La distribución por año y área de conservación está disponible como
+[CSV](`r file.path("..", tar_read(tabla_ac_modis, store = almacen))`).
 
 ## Cobertura de la tierra
 
@@ -189,18 +234,35 @@ detecciones tienen cada clase de [ESA WorldCover 2021](https://esa-worldcover.or
 registro de detecciones abarca 2001–2026; los cambios de cobertura en ese
 período no están representados.
 
+```{r}
+#| label: composicion
+paisaje <- tar_read(paisaje_pais, store = almacen)
+cobertura <- tar_read(cobertura_modis, store = almacen)
+cobertura_quemas <- tar_read(cobertura_quemas_modis, store = almacen)
+humedales_detecciones <- tar_read(humedales_detecciones_modis, store = almacen)
+humedales_quemas <- tar_read(humedales_quemas_modis, store = almacen)
+ayud <- ayudantes_cobertura(paisaje, cobertura, cobertura_quemas)
+```
+
+El contraste con la composición del paisaje es informativo: según WorldCover
+el país es **`r ayud$pct_paisaje("Bosque")` %** bosque y
+**`r ayud$pct_paisaje("Pastizal")` %** pastizal, pero solo el
+**`r ayud$pct_dominante("Bosque")` %** de las detecciones tiene bosque como
+clase dominante de su footprint, frente al
+**`r ayud$pct_dominante("Pastizal")` %** con pastizal. El fuego está
+sobrerrepresentado en la vegetación herbácea y los cultivos, y
+subrepresentado en el bosque.
+
 Cada barra se divide además según la detección caiga o no dentro de un
 humedal del [Registro Nacional de Humedales](https://geos1pne.sirefor.go.cr/wfs)
-del SINAC (actualización 2016–2018 del Inventario Nacional de Humedales). El humedal no es un tipo de vegetación que compita con *pastizal* o
-*bosque*, sino una condición del sitio: las capas del SINAC inventarían rasgos
-específicos (humedales, bosque) y no cubren todo el territorio, por lo que no
-pueden sustituir a WorldCover como clasificación exhaustiva, pero sí
-complementarla.
+del SINAC (actualización 2016–2018 del Inventario Nacional de Humedales). El
+humedal no es un tipo de vegetación que compita con *pastizal* o *bosque*,
+sino una condición del sitio: las capas del SINAC inventarían rasgos
+específicos y no cubren todo el territorio, por lo que no pueden sustituir a
+WorldCover como clasificación exhaustiva, pero sí complementarla.
 
 ```{r}
 #| label: cobertura-interactiva
-cobertura <- tar_read(cobertura_modis, store = almacen)
-humedales_detecciones <- tar_read(humedales_detecciones_modis, store = almacen)
 crear_grafico_cobertura(cobertura, humedales_detecciones, etq$pie_cobertura,
                         interactivo = TRUE)
 ```
@@ -211,17 +273,17 @@ footprint elíptico— y aplica la misma limitación de la foto fija de 2021.
 
 ```{r}
 #| label: cobertura-quemas-interactiva
-cobertura_quemas <- tar_read(cobertura_quemas_modis, store = almacen)
-humedales_quemas <- tar_read(humedales_quemas_modis, store = almacen)
 crear_grafico_cobertura_quemas(cobertura_quemas, humedales_quemas,
                                etq$pie_cobertura_ba, interactivo = TRUE)
 ```
 
 ### Contraste con el Registro Nacional de Humedales
 
-La clase más frecuente, *pastizal*, merece una advertencia: WorldCover es un
-producto global y clasifica como pastizal buena parte de la marisma del
-parque.
+WorldCover es un producto global y clasifica como *pastizal* buena parte de
+la vegetación herbácea inundable del país (las marismas del Tempisque, los
+humedales del Caribe norte). El contraste con el registro de humedales
+permite distinguir cuánto del fuego "en pastizal" ocurre en realidad en
+humedales estacionales.
 
 ```{r}
 #| label: tabla-contraste
@@ -233,34 +295,30 @@ Las dos últimas columnas extienden el contraste al área quemada: hectáreas
 por clase dominante del píxel y qué porcentaje de esas hectáreas cae dentro
 de un humedal registrado.
 
-El resultado confirma la sospecha: el **95,5 %** de las detecciones cuyo
-footprint domina el *pastizal* de WorldCover caen dentro de un humedal
-registrado, y en promedio el **81 %** del footprint está cubierto por
-humedal. Es decir, esas quemas no ocurren en potreros sino en el complejo de
-humedales del parque.
+```{r}
+#| label: hallazgo-humedales
+hh <- resumen_hallazgo_humedales(cobertura, humedales_detecciones)
+```
+
+De las **`r num_es(hh$n, 0)`** detecciones cuyo footprint domina el
+*pastizal* de WorldCover, el **`r hh$pct_en_humedal` %** cae dentro de un
+humedal registrado (con un **`r hh$pct_footprint` %** del footprint cubierto
+por humedal, en promedio). El polígono del registro que más detecciones
+concentra es *`r hh$poligono_nombre`*, con `r num_es(hh$poligono_n, 0)`.
 
 **Advertencia sobre la clase de humedal**: el registro asigna una sola clase
-por polígono, y el polígono *Sector Catalina 1* (4 453 ha, clasificado como
-*Manglar*) cubre casi todo el sector estuarino del parque, por lo que
-concentra 148 detecciones. Eso **no** significa que esas quemas ocurran en
-manglar. Dentro de ese polígono, el manglar cubre apenas el **11,6 %** de la
-superficie según WorldCover —el 74 % es pastizal— y solo el **4,1 %** según
-la propia capa de Cobertura Forestal 2023 del SINAC, que sí mapea el manglar
-como una de sus clases.
-
-Es decir, `clase_hum` describe el tipo de humedal *como sitio* —un complejo
-estuarino cuyo rasgo distintivo es el manglar— y no la cobertura en cada
-punto de su extensión. El cruce con el registro es por tanto concluyente
-para responder si las detecciones ocurren en humedal, pero no para
-determinar qué tipo de vegetación se quemó; para eso siguen siendo
+por polígono. La columna `clase_hum` describe el tipo de humedal *como
+sitio* y no la cobertura en cada punto de su extensión, de modo que el cruce
+es concluyente para responder si las detecciones ocurren en humedal, pero no
+para determinar qué tipo de vegetación se quemó; para eso siguen siendo
 preferibles los productos con detalle espacial fino.
 
 ## El episodio del humedal Catalina, mayo de 2026 {#sec-evento}
 
 ```{r}
 #| label: evento
-ev <- resumen_evento("catalina_2026", firms_parque, firms_mensual,
-                     area_quemada_parque, cobertura, humedales_detecciones)
+ev <- resumen_evento("catalina_2026", firms_pais, firms_mensual,
+                     area_quemada_pais, cobertura, humedales_detecciones)
 ev_ba <- cobertura_ba_evento("catalina_2026", area_quemada_mensual)
 ev_nivel <- nivel_evento("catalina_2026",
                          tar_read(rangos_modis, store = almacen))
@@ -268,24 +326,25 @@ e <- ev$evento
 ```
 
 Casi todo lo que este reporte mide carece de contraparte en tierra: nadie
-levantó un inventario de las quemas de 2004 para comparar. El episodio de mayo
-de 2026 es la excepción, y por eso merece una sección propia. El
-`r fecha_es(e$ignicion)` la caída de un rayo encendió el interior del humedal
-Catalina —el mismo polígono que la sección anterior identifica como el gran
-sector estuarino del registro—, y una semana después `r e$fuente_medio`
-reportaba, con cifras del `r e$fuente_cifra`, que el fuego había afectado
+levantó un inventario de las quemas de 2004 para comparar. El episodio de
+mayo de 2026 en el humedal Catalina (Parque Nacional Palo Verde, cuenca baja
+del Tempisque) es la excepción, y por eso merece una sección propia. El
+`r fecha_es(e$ignicion)` la caída de un rayo encendió el interior del
+humedal, y una semana después `r e$fuente_medio` reportaba, con cifras del
+`r e$fuente_cifra`, que el fuego había afectado
 **cerca de `r format(e$ha_oficial, big.mark = " ")` hectáreas**
 ([nota del `r fecha_es(e$fuente_fecha)`](`r e$fuente_url`)). El combustible
 principal fue la `r e$combustible`, una planta invasora que arde incluso sobre
 el agua. Hay entonces una fecha de ignición, una causa y una superficie
 oficial: tres cosas con las que auditar los productos satelitales.
 
-**Lo que vio esta plataforma.** MODIS registró **`r ev$n` detecciones** dentro
-del parque en `r ev$n_dias` días, del
+**Lo que vio esta plataforma.** MODIS registró **`r ev$n` detecciones** en la
+ventana del evento, en `r ev$n_dias` días, del
 `r fecha_es(ev$primera, con_anio = FALSE)` al `r fecha_es(ev$ultima)` —el fuego
 apareció en las imágenes `r ev$latencia_prosa` después de la ignición
-reportada—, con una potencia radiativa acumulada de `r ev$frp_total` MW y un
-máximo de `r num_es(ev$frp_maximo)` MW en un solo píxel.
+reportada—, con una potencia radiativa acumulada de
+`r num_es(ev$frp_total, 0)` MW y un máximo de `r num_es(ev$frp_maximo)` MW en
+un solo píxel.
 
 ![](`r file.path("..", tar_read(fig_evento_modis, store = almacen))`)
 
@@ -329,16 +388,17 @@ desapercibido. **Un incendio de miles de hectáreas puede reducirse a un puñado
 de píxeles en MODIS**, y ese es el argumento más concreto a favor de mantener
 las cuatro plataformas en paralelo en lugar de confiar en la serie más larga.
 
-**Dónde ardió.** El **`r ev$pct_sector` %** de las detecciones tiene como
-polígono dominante el *`r e$sector`*, y el **`r ev$pct_clase` %** cae en
-footprints donde WorldCover ve *`r tolower(ev$clase_objetivo)`*. Es la
-confirmación externa del hallazgo de la sección anterior: el "pastizal" que
-arde en Palo Verde no es potrero sino marisma, y esta vez sabemos por la fuente
-periodística que lo que ardió fue un typhal sobre agua.
+**Dónde ardió.** El **`r ev$pct_sector` %** de las detecciones del episodio
+tiene como polígono dominante el *`r e$sector`* del Registro Nacional de
+Humedales, y el **`r ev$pct_clase` %** cae en footprints donde WorldCover ve
+*`r tolower(ev$clase_objetivo)`*. Es un ejemplo concreto del hallazgo de la
+sección anterior: parte del "pastizal" que arde en Costa Rica no es potrero
+sino humedal estacional, y esta vez sabemos por la fuente periodística que lo
+que ardió fue un typhal sobre agua.
 
 **Lo que el área quemada no vio.** Para `r meses_en_prosa(ev$meses_quemas)`,
-`r etq$etiqueta_ba` marca **`r ev$hectareas` hectáreas** quemadas dentro del
-parque, frente a las `r format(e$ha_oficial, big.mark = " ")` reportadas
+`r etq$etiqueta_ba` marca **`r ev$hectareas` hectáreas** quemadas en la zona
+del evento, frente a las `r format(e$ha_oficial, big.mark = " ")` reportadas
 oficialmente. `r prosa_brecha`
 
 La explicación está en cómo funciona el producto. `r etq$etiqueta_ba` declara
@@ -358,118 +418,6 @@ procesamiento en `r ev_nivel$prosa`, que se refina cuando la NASA lo reprocesa
 a estándar, de modo que los conteos de esta sección pueden cambiar
 retroactivamente.
 
-## ¿El fuego bordea el bosque o lo rodea?
-
-En el mapa interactivo las detecciones parecen dibujar el contorno del bloque
-forestal. Conviene distinguir dos situaciones que se ven igual sobre el mapa:
-que el fuego busque la línea de contacto con el bosque —que lo *bordee*— o que
-simplemente ocurra en las áreas abiertas que lo circundan —que lo *rodee*—. En
-un parque cuyo bosque forma un bloque compacto, cualquier concentración en
-terreno abierto traza su silueta sin que exista preferencia alguna por el
-borde.
-
-```{r}
-#| label: contexto-paisaje
-borde <- tar_read(borde_bosque_modis, store = almacen)
-paisaje <- tar_read(paisaje_parque, store = almacen)
-# Los ayudantes (R/ayudantes_reporte.R) devuelven el número ya formateado en
-# español (coma decimal); para operar con los valores hay que leerlos de
-# borde$tabla, no de aquí.
-ayudantes <- ayudantes_borde(borde, paisaje, cobertura, cobertura_quemas)
-pct_paisaje <- ayudantes$pct_paisaje
-pct_dominante <- ayudantes$pct_dominante
-pct_ha_dominante <- ayudantes$pct_ha_dominante
-pct_situacion <- ayudantes$pct_situacion
-veces_menos_bosque <- ayudantes$veces_menos_bosque
-```
-
-El primer indicio está en la composición: el parque es
-**`r pct_paisaje("Bosque")` %** bosque y **`r pct_paisaje("Pastizal")` %**
-pastizal según WorldCover, pero solo el **`r pct_dominante("Bosque")` %** de
-las detecciones tiene bosque como clase dominante de su footprint, frente al
-**`r pct_dominante("Pastizal")` %** con pastizal. El área quemada apunta en la
-misma dirección y con más fuerza: apenas el **`r pct_ha_dominante("Bosque")` %**
-de las hectáreas quemadas cae en píxeles dominados por bosque, contra el
-**`r pct_ha_dominante("Pastizal")` %** en pastizal. El fuego está
-sobrerrepresentado en la vegetación herbácea —que, como muestra la sección
-anterior, corresponde en su gran mayoría a la marisma del parque— y
-subrepresentado en el bosque.
-
-Para separar el "efecto de borde" de la ilusión geométrica se compara cada
-detección contra un modelo nulo: **`r borde$n_aleatorios`** puntos aleatorios
-dentro del parque, es decir, la hipótesis de que el fuego se distribuye como el
-paisaje disponible. De cada punto se calcula la fracción de bosque en
-**`r borde$radio_m` m** a la redonda, que tiende a 1 en el interior del bosque
-y a 0 en terreno abierto; los valores intermedios son justamente los bordes.
-
-```{r}
-#| label: tabla-borde
-crear_tabla_borde(borde)
-```
-
-La tabla contrasta tres repartos: el de las detecciones, el del área quemada
-—medida sobre los centroides de los **`r borde$n_pixeles_quemas`** píxeles de
-MCD64A1 y ponderada por su superficie— y el esperado por azar. La prueba
-estadística se aplica solo a las detecciones; la columna del área quemada se
-lee contra la misma referencia aleatoria.
-
-Si los incendios prefirieran el borde, la fila central estaría
-sobrerrepresentada. No lo está: **`r pct_situacion(2, "pct_detecciones")` %**
-de las detecciones contra **`r pct_situacion(2, "pct_aleatorio")` %** esperado
-por azar, una diferencia no significativa
-(prueba de proporciones, *p* = `r num_es(borde$p_borde, 2)`). Lo que sí está
-fuertemente desplazado son los extremos: las detecciones ocurren en terreno
-abierto casi al doble de lo esperado
-(**`r pct_situacion(1, "pct_detecciones")` %** contra
-**`r pct_situacion(1, "pct_aleatorio")` %**) y en interior de bosque a menos de
-la mitad (**`r pct_situacion(3, "pct_detecciones")` %** contra
-**`r pct_situacion(3, "pct_aleatorio")` %**). La mediana de bosque circundante
-es **`r num_es(borde$mediana_detecciones, 2)`** en las detecciones y
-**`r num_es(borde$mediana_aleatorios, 2)`** en los puntos aleatorios.
-
-### El área quemada agudiza el patrón
-
-El segundo instrumento no solo confirma el resultado: lo vuelve más nítido.
-El **`r pct_situacion(1, "pct_area_quemada")` %** de las hectáreas quemadas
-está en terreno abierto —frente al `r pct_situacion(1, "pct_detecciones")` %
-de las detecciones y al `r pct_situacion(1, "pct_aleatorio")` % esperado por
-azar— y en el interior del bosque el fuego prácticamente desaparece:
-**`r pct_situacion(3, "pct_area_quemada")` %** de las hectáreas contra un
-`r pct_situacion(3, "pct_aleatorio")` % esperado, es decir, cerca de
-`r veces_menos_bosque` veces menos. La mediana de bosque circundante baja de
-`r num_es(borde$mediana_detecciones, 2)` en las detecciones a
-**`r num_es(borde$mediana_quemas, 3)`** en los píxeles quemados.
-
-La diferencia entre ambos instrumentos es en sí misma informativa, y apunta al
-tamaño del píxel. Una detección es el centro de un footprint cuya mediana
-supera 1 km²: cuando un fuego arde en la marisma contigua al bosque, ese
-footprint invade el bosque y la detección puede quedar clasificada como
-interior forestal. MCD64A1 no tiene ese desborde —sitúa la cicatriz en un
-píxel de 500 m— y al medir con él, el interior de bosque se reduce a una
-fracción mínima. Buena parte del `r pct_situacion(3, "pct_detecciones")` % de
-detecciones en interior de bosque es, entonces, un artefacto de resolución más
-que fuego de dosel.
-
-La conclusión es que **el fuego no bordea el bosque: lo rodea**. Ocurre en las
-áreas abiertas y, como el bosque es un bloque continuo, lo abierto es
-justamente lo que lo circunda. La distinción no es de matiz: bordearlo
-supondría que el fuego busca la línea de contacto, y eso es lo que los datos
-descartan, ahora con dos productos independientes que coinciden.
-
-El patrón es coherente con quemas en la marisma y el pastizal estacionalmente
-secos, que se detienen al llegar al bosque, más que con incendios de dosel: el
-bosque seco cerrado retiene humedad y carece de un combustible fino continuo.
-Que el área quemada casi no registre superficie en el interior del bosque
-respalda esa lectura: el fuego no solo se enciende fuera del bosque, tampoco
-avanza dentro de él. Para el manejo del parque esto ubica el riesgo en la
-interfaz entre la marisma y el bosque, aunque el fuego mismo no muestre
-preferencia por esa interfaz.
-
-**Limitación**: el modelo nulo supone que cualquier punto del parque tiene la
-misma probabilidad de arder, lo que ignora factores como la accesibilidad o la
-cercanía a caminos y linderos. Descarta la explicación geométrica del patrón,
-pero no identifica la causa de las igniciones.
-
 ## Fuentes de datos
 
 - **NASA FIRMS** — Fire Information for Resource Management System,
@@ -480,14 +428,17 @@ pero no identifica la causa de las igniciones.
   Terra+Aqua, mensual, 500 m), descubierto vía el API CMR de Earthdata.
   Giglio, L., et al. (2021). *MCD64A1 MODIS/Terra+Aqua Burned Area Monthly
   L3 Global 500m SIN Grid V061*, DOI: 10.5067/MODIS/MCD64A1.061.
+- **IGN / SNIT** — Instituto Geográfico Nacional, cartografía oficial
+  1:5000: límite provincial (la unión de las siete provincias es el límite
+  nacional del análisis), descargado del Sistema Nacional de Información
+  Territorial. <https://www.snitcr.go.cr/>.
 - **SINAC** — Sistema Nacional de Áreas de Conservación de Costa Rica.
-  Capas de áreas silvestres protegidas (capa oficial 1:5000, publicada en
-  2019), Registro Nacional de Humedales (actualización 2016–2018) y
-  Cobertura Forestal 2023, descargadas de su servicio WFS.
+  Capas de áreas de conservación y Registro Nacional de Humedales
+  (actualización 2016–2018), descargadas de su servicio WFS.
   <https://geos1pne.sirefor.go.cr/wfs>.
 - **ESA WorldCover** — mapa global de cobertura de la tierra 2021 a 10 m,
   v200. <https://esa-worldcover.org/>. Zanaga, D., et al. (2022).
   *ESA WorldCover 10 m 2021 v200*, DOI: 10.5281/zenodo.7254221.
 
 El código de este análisis está disponible en
-<https://github.com/incendios-forestales/anomalias-termicas-paloverde>.
+<https://github.com/incendios-forestales/anomalias-termicas-costarica>.

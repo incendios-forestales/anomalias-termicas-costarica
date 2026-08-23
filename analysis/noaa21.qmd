@@ -1,5 +1,5 @@
 ---
-title: "Anomalías térmicas en el Parque Nacional Palo Verde — VIIRS NOAA-21"
+title: "Anomalías térmicas en Costa Rica — VIIRS NOAA-21"
 subtitle: "Detecciones del sensor VIIRS a bordo de NOAA-21 (VIIRS_NOAA21_NRT de NASA FIRMS)"
 author: "Organización Incendios Forestales"
 date: today
@@ -29,10 +29,12 @@ etq <- etiquetas_plataforma("noaa21")
 
 Este reporte presenta las anomalías térmicas (detecciones de fuego activo)
 registradas por el sensor **VIIRS** a bordo del satélite **NOAA-21** en el
-[Parque Nacional Palo Verde](https://www.sinac.go.cr/), Costa Rica. Es el
-cuarto de una serie de reportes equivalentes, junto con los de
-[MODIS](../modis/), [VIIRS en Suomi-NPP](../snpp/) y
-[VIIRS en NOAA-20](../noaa20/).
+territorio continental de **Costa Rica**. Es el cuarto de una serie de
+reportes equivalentes, junto con los de [MODIS](../modis/),
+[VIIRS en Suomi-NPP](../snpp/) y [VIIRS en NOAA-20](../noaa20/). El ámbito es
+**continental** (sin la Isla del Coco) y el límite nacional es la unión de
+las siete provincias de la cartografía oficial 1:5000 del IGN; los detalles
+están en el [reporte MODIS](../modis/).
 
 NOAA-21 es la plataforma más reciente de la constelación VIIRS y lleva el
 mismo instrumento que Suomi-NPP y NOAA-20, con píxel de 375 m en las bandas de
@@ -43,17 +45,16 @@ salto que refleja el instrumental disponible y no el régimen de fuego.
 
 ```{r}
 #| label: datos
-firms_parque <- tar_read(firms_parque_noaa21, store = almacen)
+firms_pais <- tar_read(firms_pais_noaa21, store = almacen)
 firms_mensual <- tar_read(firms_mensual_noaa21, store = almacen)
-area_quemada_parque <- tar_read(area_quemada_parque_noaa21, store = almacen)
+area_quemada_pais <- tar_read(area_quemada_pais_noaa21, store = almacen)
 area_quemada_mensual <- tar_read(area_quemada_mensual_noaa21, store = almacen)
-rango <- range(firms_parque$acq_date)
-anios_activos <- length(unique(format(firms_parque$acq_date, "%Y")))
+rango <- range(firms_pais$acq_date)
 ```
 
 El período analizado va del **`r format(rango[1], "%d/%m/%Y")`** al
 **`r format(rango[2], "%d/%m/%Y")`**, con un total de
-**`r nrow(firms_parque)`** detecciones dentro del parque.
+**`r num_es(nrow(firms_pais), 0)`** detecciones dentro del país.
 
 ### Tres advertencias propias de esta plataforma
 
@@ -70,14 +71,13 @@ consecuencia, **las cifras de este reporte pueden cambiar entre corridas** y
 no son estrictamente reproducibles. Las de los otros tres reportes sí lo son,
 salvo en su tramo final.
 
-**Segunda: el registro es corto y muy desigual.** Arranca en enero de 2024 y
-cubre dos estaciones secas y media, con
+**Segunda: el registro es corto.** Arranca en 2024 y cubre apenas dos
+estaciones secas y media, con
 **`r sum(firms_mensual$detecciones > 0)`** meses activos de
-`r nrow(firms_mensual)`. La mayor parte de las detecciones se concentra en
-2026. Con un registro así, un solo episodio mueve cualquier porcentaje, de
-modo que aquí las cifras se acompañan siempre de su número de casos y la
-climatología mensual —que en los otros reportes promedia sobre una o dos
-décadas— se apoya en apenas dos o tres años por mes.
+`r nrow(firms_mensual)`. Con un registro así, un episodio grande mueve
+cualquier porcentaje, de modo que aquí las cifras se acompañan siempre de su
+número de casos y la climatología mensual —que en los otros reportes promedia
+sobre una o dos décadas— se apoya en apenas dos o tres años por mes.
 
 **Tercera: el área quemada es prestada.** NOAA-21 tampoco tiene producto de
 área quemada propio, así que este reporte usa **VNP64A1, derivado de
@@ -99,12 +99,12 @@ radiativa del fuego (FRP).
 
 Resumen mensual en formato de video: detecciones de fuego activo (VIIRS
 NOAA-21) con su estela de los meses recientes y píxeles de área quemada
-(VNP64A1, de Suomi-NPP), sobre el relieve del parque teñido por la cobertura
+(VNP64A1, de Suomi-NPP), sobre el relieve del país teñido por la cobertura
 de la tierra (WorldCover 2021). El video termina en el último mes con producto
 de área quemada, porque sus dos contadores son acumulados sincronizados; el
 mapa interactivo y las series sí llegan hasta el final del registro.
 
-<video controls muted playsinline style="width: 100%; max-width: 540px;" src="`r file.path("..", tar_read(video_anomalias_noaa21, store = almacen))`"></video>
+<video controls muted playsinline style="width: 100%; max-width: 720px;" src="`r file.path("..", tar_read(video_anomalias_noaa21, store = almacen))`"></video>
 
 El cartel estático resume las dos series mensuales. A diferencia del video,
 conserva el eje completo y marca con una banda el tramo que todavía no tiene
@@ -114,23 +114,24 @@ producto de área quemada.
 
 ## Mapa interactivo
 
-Use el deslizador temporal para explorar las detecciones a través del tiempo.
-El botón ⛶ de la esquina superior izquierda abre el mapa en pantalla completa.
-Cada punto indica su confianza —categórica, como en todos los productos
-VIIRS— y su nivel de procesamiento, que aquí es siempre «tiempo casi real
-(provisional)».
+El mapa divide las detecciones en dos capas: los **últimos 24 meses** con el
+deslizador temporal y una ficha por detección, y el **registro completo**
+como una capa de puntos ligera (WebGL), apagada al inicio (en esta plataforma
+ambos conjuntos casi coinciden: el registro entero es reciente). El botón ⛶
+abre el mapa en pantalla completa. Cada punto indica su confianza
+—categórica, como en todos los productos VIIRS— y su nivel de procesamiento,
+que aquí es siempre «tiempo casi real (provisional)».
 
 ```{r}
 #| label: mapa-interactivo
-parque <- tar_read(parque, store = almacen)
+pais_web <- tar_read(pais_web, store = almacen)
 cobertura_mapa <- tar_read(cobertura_noaa21, store = almacen)
 worldcover <- tar_read(archivos_worldcover, store = almacen)
 bbox <- tar_read(bbox_descarga, store = almacen)
-humedales <- tar_read(humedales, store = almacen)
-bosque <- tar_read(bosque, store = almacen)
-crear_mapa_temporal(firms_parque, parque, cobertura_mapa, worldcover, bbox,
-                    etq$etiqueta_quemas, humedales, bosque,
-                    quemas = area_quemada_parque)
+ac_web <- tar_read(ac_web, store = almacen)
+crear_mapa_temporal(firms_pais, pais_web, cobertura_mapa, worldcover, bbox,
+                    etq$etiqueta_quemas, ac_web,
+                    quemas = area_quemada_pais)
 ```
 
 ## Estadísticas
@@ -164,13 +165,32 @@ crear_climatologia_comparada(firms_mensual, area_quemada_mensual,
 
 ```{r}
 #| label: tabla-resumen
-crear_tabla_resumen(firms_parque, etq$fuente_fig, etq$etiqueta_ba,
-                    area_quemada_parque)
+crear_tabla_resumen(firms_pais, etq$fuente_fig, etq$etiqueta_ba,
+                    area_quemada_pais)
 ```
 
-La distribución por año es la que impone la cautela: el registro está
-dominado por 2026, mientras que 2024 —cubierto solo desde finales de marzo—
-apenas aporta detecciones dentro del parque.
+## Detecciones por área de conservación
+
+Cada detección se asigna al **área de conservación** del
+[SINAC](https://www.sinac.go.cr/) donde cae su punto; cada píxel de área
+quemada, a la del centroide del píxel. Con un registro tan corto, la
+distribución refleja las estaciones secas de 2024–2026 y no un patrón de
+largo plazo.
+
+```{r}
+#| label: ac
+ac_detecciones <- tar_read(ac_detecciones_noaa21, store = almacen)
+ac_quemas <- tar_read(ac_quemas_noaa21, store = almacen)
+crear_grafico_ac(ac_detecciones, ac_quemas, etq$pie_ambos, interactivo = TRUE)
+```
+
+```{r}
+#| label: tabla-ac
+crear_tabla_ac(ac_detecciones, ac_quemas, etq$fuente_fig, etq$etiqueta_ba)
+```
+
+La distribución por año y área de conservación está disponible como
+[CSV](`r file.path("..", tar_read(tabla_ac_noaa21, store = almacen))`).
 
 ## Cobertura de la tierra
 
@@ -210,32 +230,27 @@ crear_tabla_contraste(cobertura, humedales_detecciones,
 
 ```{r}
 #| label: hallazgo-humedales
-hallazgo <- resumen_hallazgo_humedales(cobertura, humedales_detecciones)
+hh <- resumen_hallazgo_humedales(cobertura, humedales_detecciones)
 ```
 
-El resultado coincide con el de las otras tres plataformas y es el más marcado
-de las cuatro: el **`r hallazgo$pct_en_humedal` %** de las `r hallazgo$n`
-detecciones cuyo footprint domina el *pastizal* de WorldCover caen dentro de
-un humedal registrado, con un **`r hallazgo$pct_footprint` %** del footprint
-cubierto por humedal en promedio. Cuatro plataformas independientes, con dos
-resoluciones distintas y registros que van de dos a veinticinco años,
-coinciden en lo mismo: **las quemas del «pastizal» ocurren en la marisma, no
-en potreros.**
+De las **`r num_es(hh$n, 0)`** detecciones cuyo footprint domina el
+*pastizal* de WorldCover, el **`r hh$pct_en_humedal` %** cae dentro de un
+humedal registrado (con un **`r hh$pct_footprint` %** del footprint cubierto
+por humedal, en promedio). El polígono del registro que más detecciones
+concentra es *`r hh$poligono_nombre`*, con `r num_es(hh$poligono_n, 0)`. Con
+un registro corto, estas cifras dependen mucho de los episodios que tocó
+observar.
 
-Vale la advertencia habitual sobre la clase de humedal: el registro asigna una
-sola clase por polígono, y *`r hallazgo$poligono_nombre`* (4 453 ha,
-clasificado como *Manglar*) cubre casi todo el sector estuarino, por lo que
-concentra `r hallazgo$poligono_n` detecciones. Eso **no** significa que esas
-quemas ocurran en manglar: dentro de ese polígono el manglar cubre el 11,6 %
-de la superficie según WorldCover y el 4,1 % según la Cobertura Forestal 2023
-del SINAC.
+Vale la advertencia habitual sobre la clase de humedal: el registro asigna
+una sola clase por polígono; `clase_hum` describe el tipo de humedal *como
+sitio* y no la cobertura en cada punto de su extensión.
 
 ## El episodio del humedal Catalina, mayo de 2026 {#sec-evento}
 
 ```{r}
 #| label: evento
-ev <- resumen_evento("catalina_2026", firms_parque, firms_mensual,
-                     area_quemada_parque, cobertura, humedales_detecciones)
+ev <- resumen_evento("catalina_2026", firms_pais, firms_mensual,
+                     area_quemada_pais, cobertura, humedales_detecciones)
 ev_ba <- cobertura_ba_evento("catalina_2026", area_quemada_mensual)
 e <- ev$evento
 # El episodio es el mismo para las cuatro plataformas, así que las
@@ -246,10 +261,10 @@ frp_lider <- ev_plat$clave[which.max(ev_plat$frp_maximo)] == "noaa21"
 noche_lider <- ev_plat$clave[which.max(ev_plat$pct_nocturnas)] == "noaa21"
 ```
 
-Un registro tan corto como el de NOAA-21 se entiende mejor a través del
-episodio que lo domina. El `r fecha_es(e$ignicion)` la caída de un rayo
-encendió el interior del humedal Catalina —el sector estuarino de la sección
-anterior— y una semana después `r e$fuente_medio` reportaba, con cifras del
+Un registro tan corto como el de NOAA-21 se entiende mejor a través de un
+episodio concreto. El `r fecha_es(e$ignicion)` la caída de un rayo encendió
+el interior del humedal Catalina (Parque Nacional Palo Verde, cuenca baja del
+Tempisque) y una semana después `r e$fuente_medio` reportaba, con cifras del
 `r e$fuente_cifra`, que el fuego había afectado **cerca de
 `r format(e$ha_oficial, big.mark = " ")` hectáreas**
 ([nota del `r fecha_es(e$fuente_fecha)`](`r e$fuente_url`)). El combustible
@@ -258,32 +273,31 @@ el agua. Es el único episodio del registro con una fecha de ignición, una caus
 y una superficie oficial conocidas: la ocasión de contrastar el satélite contra
 algo medido en tierra.
 
-**Lo que vio esta plataforma.** NOAA-21 registró **`r ev$n` detecciones**
-dentro del parque en `r ev$n_dias` días, del
+**Lo que vio esta plataforma.** NOAA-21 registró **`r ev$n` detecciones** en
+la ventana del evento, en `r ev$n_dias` días, del
 `r fecha_es(ev$primera, con_anio = FALSE)` al `r fecha_es(ev$ultima)` —el fuego
 apareció en las imágenes `r ev$latencia_prosa` después de la ignición
-reportada—, con una potencia radiativa acumulada de `r ev$frp_total` MW y un
-máximo de **`r num_es(ev$frp_maximo)` MW**`r if (frp_lider) ", el valor más alto que registró cualquiera de las cuatro plataformas durante el incendio" else ""`.
+reportada—, con una potencia radiativa acumulada de
+`r num_es(ev$frp_total, 0)` MW y un máximo de
+**`r num_es(ev$frp_maximo)` MW**`r if (frp_lider) ", el valor más alto que registró cualquiera de las cuatro plataformas durante el incendio" else ""`.
 `r ev$n_nocturnas` de esas detecciones son
 nocturnas`r if (noche_lider) ", la proporción más alta de las cuatro" else ""`:
 el fuego no se apagaba de noche y NOAA-21 quedó bien situada para verlo.
 
 ![](`r file.path("..", tar_read(fig_evento_noaa21, store = almacen))`)
 
-**Dónde ardió.** El **`r ev$pct_sector` %** de las detecciones tiene como
-polígono dominante el *`r e$sector`*, y el **`r ev$pct_clase` %** cae en
-footprints donde WorldCover ve *`r tolower(ev$clase_objetivo)`*. Es la
-confirmación externa del hallazgo de la sección anterior: el "pastizal" que
-arde en Palo Verde no es potrero sino marisma, y esta vez la fuente
-periodística precisa que lo que ardió fue un typhal sobre agua.
+**Dónde ardió.** El **`r ev$pct_sector` %** de las detecciones del episodio
+tiene como polígono dominante el *`r e$sector`* del Registro Nacional de
+Humedales, y el **`r ev$pct_clase` %** cae en footprints donde WorldCover ve
+*`r tolower(ev$clase_objetivo)`*: un ejemplo concreto de que parte del
+"pastizal" que arde en Costa Rica es humedal estacional y no potrero, y esta
+vez la fuente periodística precisa que lo que ardió fue un typhal sobre agua.
 
 **Lo que el área quemada no vio.** Para `r meses_en_prosa(ev$meses_quemas)`,
-`r etq$etiqueta_ba` marca **`r ev$hectareas` hectáreas** quemadas dentro del
-parque, frente a las `r format(e$ha_oficial, big.mark = " ")` reportadas
+`r etq$etiqueta_ba` marca **`r ev$hectareas` hectáreas** quemadas en la zona
+del evento, frente a las `r format(e$ha_oficial, big.mark = " ")` reportadas
 oficialmente: el producto satelital ve **`r ev$veces_menos` veces menos
-superficie** que la contabilizada en tierra. El mapa lo muestra sin necesidad
-de cifras: las detecciones cubren buena parte del sector, mientras que los
-píxeles de área quemada forman unas pocas manchas sueltas.
+superficie** que la contabilizada en tierra.
 
 `r etq$etiqueta_ba` declara quemado un píxel de 500 m cuando detecta un
 **cambio persistente de reflectancia**, y una quema de *Typha* sobre lámina de
@@ -296,68 +310,11 @@ advierte contra leer las hectáreas de la tabla anual como una medida de la
 superficie realmente afectada: **sirven para comparar años entre sí, no para
 responder cuántas hectáreas se quemaron.**
 
-**Qué tan excepcional es.** Con `r ev$n_mes` detecciones, mayo de 2026 es el
-mes más intenso de los `r ev$n_meses_serie` del registro. Es también la
-ilustración de la segunda advertencia de la introducción: un solo episodio
-aporta el `r num_es(100 * ev$n / nrow(firms_parque))` % de todas las
-detecciones de esta plataforma, así que buena parte de lo que este reporte
-describe como "el patrón de NOAA-21" es, en realidad, el patrón de este
-incendio. Vale la pena releerlo con eso en mente.
-
-## ¿El fuego bordea el bosque o lo rodea?
-
-```{r}
-#| label: contexto-paisaje
-borde <- tar_read(borde_bosque_noaa21, store = almacen)
-paisaje <- tar_read(paisaje_parque, store = almacen)
-ayudantes <- ayudantes_borde(borde, paisaje, cobertura, cobertura_quemas)
-pct_paisaje <- ayudantes$pct_paisaje
-pct_dominante <- ayudantes$pct_dominante
-pct_ha_dominante <- ayudantes$pct_ha_dominante
-pct_situacion <- ayudantes$pct_situacion
-```
-
-El parque es **`r pct_paisaje("Bosque")` %** bosque y
-**`r pct_paisaje("Pastizal")` %** pastizal según WorldCover, pero solo el
-**`r pct_dominante("Bosque")` %** de las detecciones tiene bosque como clase
-dominante de su footprint, frente al **`r pct_dominante("Pastizal")` %** con
-pastizal.
-
-Para separar el «efecto de borde» de una ilusión geométrica se compara cada
-detección contra un modelo nulo de **`r borde$n_aleatorios`** puntos
-aleatorios dentro del parque, calculando la fracción de bosque en
-**`r borde$radio_m` m** a la redonda.
-
-```{r}
-#| label: tabla-borde
-crear_tabla_borde(borde)
-```
-
-Sobre las `r nrow(firms_parque)` detecciones del registro, el
-**`r pct_situacion(1, "pct_detecciones")` %** ocurre en terreno abierto contra
-un `r pct_situacion(1, "pct_aleatorio")` % esperado por azar, y en el interior
-del bosque **no hay ninguna**, frente a un
-`r pct_situacion(3, "pct_aleatorio")` % esperado. La mediana de bosque
-circundante es **`r num_es(borde$mediana_detecciones, 3)`** en las detecciones
-y `r num_es(borde$mediana_aleatorios, 2)` en los puntos aleatorios.
-
-La categoría de borde reúne el **`r pct_situacion(2, "pct_detecciones")` %**
-de las detecciones contra un `r pct_situacion(2, "pct_aleatorio")` % esperado:
-prácticamente idéntico, sin rastro de preferencia por la línea de contacto con
-el bosque. La conclusión de los otros tres reportes se sostiene también aquí:
-**el fuego no bordea el bosque, lo rodea.**
-
-Conviene no leer el cero del interior de bosque como una precisión superior de
-esta plataforma. NOAA-21 comparte instrumento y píxel de 375 m con Suomi-NPP y
-NOAA-20, así que la diferencia con ellas no puede atribuirse a la resolución;
-con `r nrow(firms_parque)` detecciones concentradas en pocos episodios, un
-cero es perfectamente compatible con el 1,7 % de NOAA-20 o el 7,9 % de
-Suomi-NPP. El argumento sobre resolución solo aplica a la comparación con
-MODIS, cuyo footprint supera 1 km².
-
-**Limitación**: el modelo nulo supone que cualquier punto del parque tiene la
-misma probabilidad de arder, lo que ignora factores como la accesibilidad o la
-cercanía a caminos y linderos.
+**Qué tan excepcional es.** Con `r ev$n_mes` detecciones, mayo de 2026 está
+entre los meses más intensos de los `r ev$n_meses_serie` del registro de esta
+plataforma. Es también la ilustración de la segunda advertencia de la
+introducción: con un registro de dos años y medio, los episodios grandes
+dominan los porcentajes, así que conviene releer el reporte con eso en mente.
 
 ## Fuentes de datos
 
@@ -369,9 +326,11 @@ cercanía a caminos y linderos.
   mensual, 500 m), **derivado de Suomi-NPP**: no existe equivalente de
   NOAA-21. Giglio, L., y Justice, C. (2021). *VNP64A1 VIIRS/NPP Burned Area
   Monthly L4 Global 500m SIN Grid V002*, DOI: 10.5067/VIIRS/VNP64A1.002.
-- **SINAC** — Capas de áreas silvestres protegidas (1:5000, 2019), Registro
-  Nacional de Humedales (2016–2018) y Cobertura Forestal 2023, de su servicio
-  WFS. <https://geos1pne.sirefor.go.cr/wfs>.
+- **IGN / SNIT** — cartografía oficial 1:5000: límite provincial (la unión de
+  las siete provincias es el límite nacional del análisis).
+  <https://www.snitcr.go.cr/>.
+- **SINAC** — capas de áreas de conservación y Registro Nacional de Humedales
+  (2016–2018), de su servicio WFS. <https://geos1pne.sirefor.go.cr/wfs>.
 - **ESA WorldCover** — cobertura de la tierra 2021 a 10 m, v200.
   <https://esa-worldcover.org/>. Zanaga, D., et al. (2022).
   *ESA WorldCover 10 m 2021 v200*, DOI: 10.5281/zenodo.7254221.
@@ -380,4 +339,4 @@ Los reportes análogos: [MODIS](../modis/), [VIIRS en Suomi-NPP](../snpp/) y
 [VIIRS en NOAA-20](../noaa20/).
 
 El código de este análisis está disponible en
-<https://github.com/incendios-forestales/anomalias-termicas-paloverde>.
+<https://github.com/incendios-forestales/anomalias-termicas-costarica>.

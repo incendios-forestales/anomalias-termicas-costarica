@@ -18,7 +18,8 @@ RUN bash -lc "echo \"options(Ncpus = max(1L, parallel::detectCores()-1L))\" \
 
 RUN R -q -e "install.packages(c('renv','here','httr2','glue','scales','DT', \
     'targets','tarchetypes','visNetwork','gganimate','gifski','transformr','av', \
-    'leaflet','leaflet.extras2','yyjsonr','htmlwidgets','knitr','kableExtra','quarto'))"
+    'leaflet','leaflet.extras2','leafgl','yyjsonr','htmlwidgets','knitr', \
+    'kableExtra','quarto'))"
 
 # Pre-crear el punto de montaje de la caché de renv con el dueño correcto,
 # para que las ejecuciones sin RStudio (docker compose run --user 1000) puedan

@@ -1,11 +1,11 @@
-name: anomalias-termicas-paloverde
+name: anomalias-termicas-costarica
 services:
   rstudio:
     build:
       context: .
       dockerfile: Dockerfile
-    image: anomalias-termicas-paloverde:local
-    container_name: anomalias-termicas-paloverde-rstudio
+    image: anomalias-termicas-costarica:local
+    container_name: anomalias-termicas-costarica-rstudio
     ports:
       - "8787:8787"
     environment:
