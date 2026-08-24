@@ -212,10 +212,14 @@ renv::restore()      # instala las versiones fijadas de los paquetes
 targets::tar_make()  # ejecuta el pipeline completo
 ```
 
-También puede ejecutarse sin RStudio:
+También puede ejecutarse sin RStudio. Importante: **con `--user 1000:1000`**,
+porque `docker compose run` ejecuta como root por defecto y renv enlazaría los
+paquetes a la caché de root (`/root/.cache`), que se pierde al salir el
+contenedor y deja la biblioteca del proyecto con enlaces rotos:
 
 ```bash
-docker compose run --rm rstudio Rscript -e "renv::restore(); targets::tar_make()"
+docker compose run --rm --user 1000:1000 -e HOME=/home/rstudio rstudio \
+  Rscript -e "renv::restore(); targets::tar_make()"
 ```
 
 La primera corrida completa descarga el registro histórico entero (~1860
