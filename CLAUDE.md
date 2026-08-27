@@ -22,7 +22,10 @@ Credenciales en `.Renviron` (no versionado): `FIRMS_MAP_KEY` y
 
 La descarga es idempotente y reanudable (caché en `data/raw/`, ~1,8 GB);
 interrumpir y relanzar `tar_make()` es seguro. Una corrida incremental típica
-toma minutos; la histórica completa desde cero, ~2 horas.
+(unos días de FIRMS nuevos, sin gránulos nuevos de área quemada) toma ~15-20
+minutos, casi todo en regenerar videos y reportes Quarto de las plataformas
+con detecciones nuevas (corrida del 2026-08-27: 16 min, 113 targets
+recomputados, 4 778 saltados); la histórica completa desde cero, ~2 horas.
 
 ## Publicación
 
