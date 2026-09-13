@@ -185,6 +185,154 @@ orden de magnitud menos detecciones que VIIRS sobre el mismo fuego) y **el
 área quemada se queda muy corta** en humedales (el algoritmo exige un cambio
 persistente de reflectancia que una quema de *Typha* sobre agua no produce).
 
+## Año de fuego e índices anuales
+
+El proyecto incorpora, paso a paso, **índices anuales de la temporada de
+fuego** inspirados en los índices de extremos del ETCCDI para precipitación
+(Zhang et al. 2011). Las definiciones se escriben aquí antes que el código y
+son el contrato de lo que se calcula. Cada índice se agrega cuando el
+anterior está publicado; esta sección documenta el primero, la **longitud
+de la temporada**, y solo lo necesario para calcularlo. Nada de esta sección
+altera las series mensuales, los videos ni los mapas ya publicados.
+
+### Año de fuego
+
+Los índices se calculan por **año de fuego**, del 1 de septiembre al 31 de
+agosto, **nombrado por el año calendario en que termina**, que es el año en
+que ocurre la temporada. El corte sigue el criterio de Boschetti y Roy
+(2008) de situar el inicio del año en el mínimo de actividad, de modo que
+ninguna temporada quede partida y el total anual no dependa del mes elegido:
+en la serie MODIS 2001–2026 el 94 % de las detecciones ocurre entre enero y
+mayo, entre junio y octubre ocurre menos del 2 % y septiembre es el centro
+de ese mínimo. El año calendario no cumple la condición porque parte
+diciembre (3,5 % de las detecciones, hasta ~100 en un solo diciembre) de la
+temporada a la que pertenece.
+
+El año de fuego es un **periodo de cómputo, no una definición de
+temporada**, y no choca con las que usan las instituciones nacionales,
+porque las contiene enteras:
+
+- El IMN describe la **época seca** del Pacífico como el periodo «que se
+  extiende de diciembre a abril en la Vertiente Pacífica» y «en el que se
+  concentra la mayor cantidad de incendios forestales» (Villalobos, Retana y
+  Acuña, s. f.).
+- El SINAC define la **temporada de incendios** como la «época de menor
+  precipitación, que comprende los meses de enero a mayo de cada año,
+  pudiéndose adelantar o postergar dependiendo del comportamiento climático»
+  (SINAC 2012), y reporta sus estadísticas por temporada nombrada con un
+  solo año («temporada 2011», «temporadas 1998–2012»).
+
+Así, el año de fuego 2024 contiene la temporada 2024 del SINAC y la época
+seca 2023–2024 del IMN. La temporada *observada* de cada año se estima con
+los índices `INI` y `FIN` (abajo), que responden con una fecha al
+«pudiéndose adelantar o postergar» del SINAC y miden el rezago entre la
+estación seca y el fuego.
+
+Dos consecuencias: el año de fuego 2001 está **incompleto** (la serie
+empieza el 1 de enero de 2001 y faltan septiembre a diciembre de 2000) y se
+marca como parcial; y el año en curso, cubierto en parte por la cola en
+tiempo casi real, se marca como **provisional** con el mismo `nivel` de la
+serie mensual.
+
+### Detecciones incluidas
+
+Los índices usan solo detecciones de **vegetación**: `type` igual a 0 o
+ausente. Se excluyen los tipos 1 (volcán activo: Turrialba, Poás, Rincón de
+la Vieja), 2 (otra fuente estática en tierra, típicamente industrial) y 3
+(mar, que el recorte al polígono ya elimina). La cola en tiempo casi real de
+FIRMS **no trae el campo `type`**, por lo que «ausente» cuenta como
+vegetación y en el año provisional pueden colarse fuentes que el
+procesamiento estándar sí etiquetaría. Las detecciones excluidas se reportan
+en una tabla aparte por tipo y año. Ferreira et al. (2020) documentan el
+mismo problema a escala global: volcanes y quemadores de gas producen
+«temporadas» anómalamente largas si no se apartan antes de calcular la
+estacionalidad.
+
+Las series mensuales, los videos y los mapas publicados siguen incluyendo
+todos los tipos: son anomalías térmicas en sentido amplio.
+
+### Serie diaria
+
+Base de los índices: una fila por día del año de fuego con el número de
+detecciones, con **ceros explícitos** en los días sin detección, construida
+desde `rangos` (lo observado por el satélite) y no desde las fechas con
+detecciones, por la misma razón que la serie mensual.
+
+### Primer índice: longitud de la temporada (`LON`)
+
+| Código | Definición | Unidad |
+|---|---|---|
+| `DTOT` | Detecciones del año de fuego (auxiliar) | n |
+| `INI` | Primer día del año de fuego en que la suma acumulada de detecciones alcanza el 10 % de `DTOT` | día 1–366 y fecha |
+| `FIN` | Primer día en que alcanza el 90 % | ídem |
+| `LON` | `FIN` − `INI` + 1 | días |
+
+Definir inicio y fin como percentiles de la distribución acumulada de
+fechas tiene precedente: percentil 5 (10 o 15 en regiones con quemas de
+hombro de temporada) para el inicio de la temporada en California (Science
+Advances 2025), intervalo 5–95 como longitud de temporada para evitar que
+un fuego aislado la infle (Frontiers in Forests and Global Change 2024), y
+los meses que contienen el 80 % central del área quemada en Archibald et
+al. (2013). Aquí se usa 10–90 y no 5–95 porque con 700–2000 detecciones
+anuales el 5 % son unas pocas decenas y la fecha saltaría con un solo día
+de quemas agrícolas. Los años con `DTOT` < 300 se marcan para que su
+temporalidad no se interprete.
+
+Al depender de fracciones del total anual y no del conteo absoluto, `LON`
+es insensible a los cambios de detectabilidad de la serie MODIS: los años
+2001 y 2002 con solo Terra, y la deriva de las horas de paso de Terra y
+Aqua desde 2020 y 2022. Los índices por percentil, que sí dependen del
+conteo, vendrán después con un periodo base explícito.
+
+Una definición alternativa sin umbrales, el mínimo y máximo de la anomalía
+diaria acumulada (Liebmann et al. 2012; Dunning et al. 2016 para regímenes
+bimodales), queda como comprobación futura.
+
+### Salidas
+
+- Tabla con una fila por año de fuego: año, marca de parcial/provisional,
+  `DTOT`, `INI`, `FIN` (día y fecha) y `LON`. Es el CSV publicado.
+- Tabla de detecciones excluidas por tipo y año.
+- Figura de temporada: un segmento por año de `INI` a `FIN`, ordenado
+  cronológicamente, con enero a mayo (SINAC) y diciembre a abril (IMN) como
+  bandas de referencia.
+
+### Referencias
+
+- Archibald, S., Lehmann, C. E. R., Gómez-Dans, J. L. y Bradstock, R. A.
+  (2013). Defining pyromes and global syndromes of fire regimes. *PNAS*,
+  110(16), 6442–6447. <https://doi.org/10.1073/pnas.1211466110>
+- Boschetti, L. y Roy, D. P. (2008). Defining a fire year for reporting and
+  analysis of global interannual fire variability. *Journal of Geophysical
+  Research: Biogeosciences*, 113, G03020.
+  <https://doi.org/10.1029/2008JG000686>
+- Dunning, C. M., Black, E. C. L. y Allan, R. P. (2016). The onset and
+  cessation of seasonal rainfall over Africa. *Journal of Geophysical
+  Research: Atmospheres*, 121.
+  <https://doi.org/10.1002/2016JD025428>
+- Ferreira, L. N., Vega-Oliveros, D. A., Zhao, L., Cardoso, M. F. y Macau,
+  E. E. N. (2020). Global fire season severity analysis and forecasting.
+  *Computers & Geosciences*.
+  <https://www.sciencedirect.com/science/article/abs/pii/S0098300419302808>
+- Liebmann, B. et al. (2012). Seasonality of African precipitation from 1996
+  to 2009. *Journal of Climate*, 25, 4304–4322.
+  <https://doi.org/10.1175/JCLI-D-11-00157.1>
+- SINAC (2012). *Estrategia Nacional de Manejo Integral del Fuego en Costa
+  Rica 2012–2021*. Sistema Nacional de Áreas de Conservación, MINAE.
+  <https://www.sinac.go.cr/ES/partciudygober/Documents/Estrategia%20Nacional%20Manejo%20del%20Fuego.pdf>
+- Villalobos Flores, R., Retana, J. A. y Acuña, A. (s. f.). *El Niño y los
+  incendios forestales en Costa Rica*. Instituto Meteorológico Nacional,
+  Gestión de Desarrollo (datos hasta 2000).
+  <https://www.imn.ac.cr/documents/10179/20911/El+Ni%C3%B1o+y+los+incendios+forestales>
+- Zhang, X. et al. (2011). Indices for monitoring changes in extremes based
+  on daily temperature and precipitation data. *WIREs Climate Change*, 2,
+  851–870. <https://doi.org/10.1002/wcc.147>
+- Anthropogenic warming drives earlier wildfire season onset in California
+  (2025). *Science Advances*. <https://doi.org/10.1126/sciadv.adt2041>
+- Biogeographic patterns of daily wildfire spread and extremes across North
+  America (2024). *Frontiers in Forests and Global Change*, 7.
+  <https://doi.org/10.3389/ffgc.2024.1355361>
+
 ## Requisitos
 
 - Una clave (MAP_KEY) gratuita del API de FIRMS:
