@@ -120,3 +120,36 @@ earthdata_token <- function() {
   }
   token
 }
+
+# --- Año de fuego e índices anuales de temporada ---
+# Ver README, sección «Año de fuego e índices anuales». El año de fuego va del
+# 1 de septiembre al 31 de agosto y se nombra por el año en que termina (el de
+# la temporada). Septiembre es el centro del mínimo de actividad (junio a
+# octubre concentra < 2 % de las detecciones MODIS), criterio de Boschetti y
+# Roy (2008). NO cambiar sin recalcular y redocumentar los índices.
+MES_INICIO_ANIO_FUEGO <- 9L
+
+# Fracciones de la suma acumulada de detecciones que definen el inicio (INI) y
+# el fin (FIN) de la temporada observada. 10-90 y no 5-95: con 700-2000
+# detecciones anuales, el 5 % son unas decenas y la fecha saltaría con un solo
+# día de quemas agrícolas.
+TEMPORADA_FRACCION_INI <- 0.10
+TEMPORADA_FRACCION_FIN <- 0.90
+
+# Años con menos detecciones que esto se marcan: su temporalidad no se
+# interpreta (INI y FIN dependerían de un puñado de días).
+TEMPORADA_MIN_DETECCIONES <- 300L
+
+# Tipo de fuente de la columna `type` de FIRMS (solo el procesamiento estándar
+# la trae; en la cola NRT viene vacía). Los índices usan solo vegetación.
+TIPOS_FIRMS <- c(
+  `0` = "Vegetación",
+  `1` = "Volcán activo",
+  `2` = "Otra fuente estática",
+  `3` = "Mar"
+)
+
+# Temporadas institucionales, como bandas de referencia en la figura de
+# temporada (mes de inicio y mes de fin, inclusive). Fuentes en el README.
+TEMPORADA_SINAC <- c(inicio = 1L, fin = 5L)    # enero-mayo
+EPOCA_SECA_IMN  <- c(inicio = 12L, fin = 4L)   # diciembre-abril

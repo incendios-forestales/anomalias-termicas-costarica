@@ -17,6 +17,17 @@ docker compose run --rm --user 1000:1000 -e HOME=/home/rstudio rstudio \
   Rscript -e "targets::tar_make(reporter = 'balanced')"
 ```
 
+Pruebas unitarias (testthat, datos sintéticos; hoy cubren R/temporada.R):
+
+```bash
+docker compose run --rm --user 1000:1000 -e HOME=/home/rstudio rstudio \
+  Rscript -e "targets::tar_source('R'); testthat::test_dir('tests/testthat')"
+```
+
+Para renderizar un reporte fuera del pipeline hay que fijar el directorio de
+ejecución en la raíz (las rutas de los targets son relativas a ella):
+`quarto::quarto_render("analysis/modis.qmd", execute_dir = getwd())`.
+
 Credenciales en `.Renviron` (no versionado): `FIRMS_MAP_KEY` y
 `EARTHDATA_TOKEN` (este expira ~60 días; HTTP 401 en LP DAAC = regenerarlo).
 

@@ -195,6 +195,86 @@ crear_tabla_resumen(firms_pais, etq$fuente_fig, etq$etiqueta_ba,
                     area_quemada_pais)
 ```
 
+## Temporada de fuego
+
+Los promedios mensuales describen la temporada típica; esta sección mide la
+temporada de **cada año**. La unidad es el **año de fuego**, del 1 de
+setiembre al 31 de agosto, nombrado por el año en que termina: se corta en
+el mínimo de actividad (entre junio y octubre ocurre menos del 2 % de las
+detecciones) para que ninguna temporada quede partida, y contiene enteras
+tanto la época seca del Pacífico que describe el IMN (diciembre a abril)
+como la temporada de incendios que define el SINAC (enero a mayo,
+«pudiéndose adelantar o postergar dependiendo del comportamiento
+climático»). El año de fuego 2024 contiene, así, la temporada 2024 del
+SINAC.
+
+Para cada año se calcula el **inicio** (`INI`) y el **fin** (`FIN`) de la
+temporada observada como los primeros días en que la suma acumulada de
+detecciones alcanza el 10 % y el 90 % del total anual, y la **longitud**
+(`LON`) como los días entre ambos. Al depender de fracciones del total y no
+del conteo, la longitud es insensible a los cambios de detectabilidad de la
+serie MODIS (los años 2001 y 2002 con solo Terra; la deriva de las horas de
+paso desde 2020). Solo cuentan las detecciones de **vegetación** (columna
+`type` de FIRMS igual a 0 o ausente); volcanes y fuentes estáticas se
+apartan porque producen «temporadas» todo el año. Las definiciones
+completas y su sustento están en el
+[README](https://github.com/incendios-forestales/anomalias-termicas-costarica#año-de-fuego-e-índices-anuales).
+
+```{r}
+#| label: temporada
+temporada <- tar_read(temporada_modis, store = almacen)
+tipos <- tar_read(tipos_modis, store = almacen)
+tp <- ayudantes_temporada(temporada)
+```
+
+![](`r file.path("..", tar_read(fig_temporada_modis, store = almacen))`)
+
+En los **`r tp$n_confiables` años completos** (`r tp$anios_confiables[1]` a
+`r tp$anios_confiables[2]`, sin reservas de lectura) la temporada dura en
+promedio **`r tp$lon_media` días**, entre los `r tp$lon_min` de
+`r tp$anio_lon_min` y los `r tp$lon_max` de `r tp$anio_lon_max`. La mediana
+del inicio cae el `r tp$ini_mediana` y la del fin el `r tp$fin_mediana`. El
+inicio más temprano fue el `r tp$ini_mas_temprano` y el más tardío el
+`r tp$ini_mas_tardio`; el fin más temprano, el `r tp$fin_mas_temprano`, y el
+más tardío, el `r tp$fin_mas_tardio`.
+
+Los años en gris tienen alguna reserva: el año de fuego 2001 es **parcial**
+(la serie empieza en enero de 2001 y le faltan setiembre a diciembre de
+2000), igual que el año de fuego recién iniciado; un año es **provisional**
+cuando parte de sus días proviene del procesamiento en tiempo casi real, que
+la NASA refina al reprocesarlo a estándar (hoy, los meses posteriores a
+`r fecha_es(max(tar_read(rangos_modis, store = almacen)$fin[tar_read(rangos_modis, store = almacen)$nivel == "SP"]))`);
+y un año con menos de `r TEMPORADA_MIN_DETECCIONES` detecciones tiene fechas
+que dependen de un puñado de días.
+
+```{r}
+#| label: tabla-temporada
+crear_tabla_temporada(temporada, etq$fuente_fig)
+```
+
+La tabla completa, con las fechas y las marcas por año, está disponible como
+[CSV](`r file.path("..", tar_read(tabla_temporada_modis, store = almacen))`).
+
+### Detecciones excluidas por tipo de fuente
+
+FIRMS clasifica cada detección del procesamiento estándar por tipo de
+fuente: vegetación, volcán activo (Turrialba, Poás, Rincón de la Vieja),
+otra fuente estática en tierra (típicamente industrial) o mar. En el
+registro MODIS hay **`r num_es(sum(tipos$excluidas), 0)`** detecciones de
+los tres últimos tipos, que las series mensuales y los mapas de este reporte
+sí incluyen (son anomalías térmicas en sentido amplio) pero los índices de
+temporada apartan. La cola en tiempo casi real no trae el campo, de modo que
+sus detecciones (*sin tipo*) cuentan como vegetación y en el año provisional
+pueden colarse fuentes que el procesamiento estándar sí etiquetaría.
+
+```{r}
+#| label: tabla-tipos
+crear_tabla_tipos(tipos, etq$fuente_fig)
+```
+
+Disponible también como
+[CSV](`r file.path("..", tar_read(tabla_tipos_modis, store = almacen))`).
+
 ## Detecciones por área de conservación
 
 A escala nacional interesa no solo cuándo ocurre el fuego sino dónde. La

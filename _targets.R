@@ -311,6 +311,34 @@ list(
                format = "file")
   ),
 
+  # --- Año de fuego e índices anuales de temporada: solo MODIS --------------
+  # Primer índice de la suite (README, «Año de fuego e índices anuales»):
+  # longitud de la temporada (LON) con INI y FIN. Se conecta solo para MODIS
+  # en esta entrega, la serie con 25 años y dos satélites; las funciones son
+  # genéricas (R/temporada.R) y extender a VIIRS es mover estos targets al
+  # tar_map. Los índices usan solo detecciones de vegetación; las series
+  # publicadas siguen incluyendo todos los tipos.
+  tar_target(firms_vegetacion_modis, filtrar_vegetacion(firms_pais_modis)),
+  tar_target(tipos_modis, resumen_tipos(firms_pais_modis)),
+  tar_target(serie_diaria_modis,
+             serie_diaria(firms_vegetacion_modis, rangos_modis)),
+  tar_target(temporada_modis,
+             indices_temporada(serie_diaria_modis, rangos_modis)),
+  tar_target(tabla_temporada_modis,
+             tabla_temporada_csv(temporada_modis,
+                                 "outputs/tables/modis/temporada_anual.csv"),
+             format = "file"),
+  tar_target(tabla_tipos_modis,
+             tabla_tipos_csv(tipos_modis,
+                             "outputs/tables/modis/detecciones_por_tipo.csv"),
+             format = "file"),
+  tar_target(fig_temporada_modis,
+             grafico_temporada(temporada_modis,
+                               "outputs/figs/modis/temporada_anual.png",
+                               etiquetas_modis$fuente_fig,
+                               etiquetas_modis$pie_firms),
+             format = "file"),
+
   # --- Figura comparativa de las cuatro plataformas ------------------------
   tar_target(fig_series_plataformas,
              grafico_series_plataformas(
