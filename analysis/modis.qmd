@@ -259,6 +259,36 @@ crear_tabla_temporada(temporada, etq$fuente_fig)
 La tabla completa, con las fechas y las marcas por año, está disponible como
 [CSV](`r file.path("..", tar_read(tabla_temporada_modis, store = almacen))`).
 
+### Concentración diaria del fuego
+
+`LON` dice cuánto dura la temporada; el segundo índice dice si el fuego de
+cada año llega repartido a lo largo de ella o en unas pocas oleadas.
+Ordenando los días del año de fuego de mayor a menor número de detecciones,
+`N50` es el número mínimo de días que reúnen la mitad de las detecciones
+del año y `C10` el porcentaje del total que ocurre en los 10 días más
+activos. Como `LON`, se define por fracciones del total anual y no lo
+alteran los cambios de detectabilidad de la serie. Es un préstamo del
+índice de concentración diaria de la precipitación (Martín-Vide 2004) y de
+la fracción aportada por los días extremos del ETCCDI; la simultaneidad de
+los fuegos es, según Cunningham et al. 2024, la dimensión del régimen de
+fuego que más cambia a escala global.
+
+```{r}
+#| label: concentracion
+cc <- ayudantes_concentracion(temporada)
+```
+
+![](`r file.path("..", tar_read(fig_concentracion_modis, store = almacen))`)
+
+En los años completos, la mitad del fuego del año cabe en promedio en
+**`r cc$n50_media` días**, entre los `r cc$n50_min` de `r cc$anio_n50_min`
+y los `r cc$n50_max` de `r cc$anio_n50_max`, sobre unos `r cc$df_media`
+días de fuego por año. Los 10 días más activos concentran en promedio el
+**`r cc$c10_media` %** de las detecciones, desde el `r cc$c10_min` % de
+`r cc$anio_c10_min` hasta el `r cc$c10_max` % de `r cc$anio_c10_max`. Los
+valores por año están en las columnas `df`, `n50` y `c10` de la tabla de
+temporada.
+
 ### Temporada consolidada por celda
 
 ```{r}
@@ -310,6 +340,19 @@ el valor completo está en el ráster y en la tabla.
 ![](`r file.path("..", tar_read(fig_temporada_celdas_fin_modis, store = almacen))`)
 :::
 
+La versión por celda de la concentración es `N50F`: la proporción de los
+días de fuego de la celda, sobre las fechas reales de todo el periodo, que
+reúnen la mitad de sus detecciones. Vale 0,5 cuando el fuego está repartido
+por igual entre sus fechas y se acerca a 0 cuando unas pocas fechas
+concentran casi todo, como una quema extensa que produce decenas de
+detecciones en dos o tres días. Exige `r RASTER_MIN_DETECCIONES_CONCENTRACION`
+detecciones acumuladas, porque con pocas casi todas las fechas tienen una
+sola y la razón tiende a 0,5 sin significar nada: la cumplen
+`r tc$n_validas_n50f` celdas, con valores entre `r tc$n50f_min` y
+`r tc$n50f_max` (mediana `r tc$n50f_mediana`).
+
+![](`r file.path("..", tar_read(fig_temporada_celdas_n50f_modis, store = almacen))`)
+
 La grilla es común a las cuatro plataformas y a las variables climáticas
 que se incorporen después (celda base de 0,05° alineada a CHIRPS; celda de
 análisis de 0,1° centrada en los nodos de ERA5-Land), y el ráster se
@@ -318,7 +361,7 @@ Los índices por celda están disponibles como
 [CSV](`r file.path("..", tar_read(tabla_temporada_celdas_modis, store = almacen))`)
 y como
 [GeoTIFF](`r file.path("..", tar_read(raster_temporada_modis, store = almacen))`)
-con una capa por índice, incluida `FUERA`; las mismas celdas pueden activarse como capa del
+con una capa por índice, incluidas `FUERA` y `N50F`; las mismas celdas pueden activarse como capa del
 [mapa interactivo](#mapa-interactivo).
 
 ### Detecciones excluidas por tipo de fuente

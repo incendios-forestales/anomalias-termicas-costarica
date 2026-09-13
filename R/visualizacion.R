@@ -240,6 +240,9 @@ crear_mapa_temporal <- function(puntos, area_web, cobertura, archivos_worldcover
           "<br><strong>Detecciones ", anio_inicio, "–", anio_fin, ":</strong> ",
           dtot,
           "<br><strong>Fuera de diciembre a mayo:</strong> ", num_es(fuera, 0), " %",
+          ifelse(is.na(n50f), "",
+                 paste0("<br><strong>Concentración N50F:</strong> ", num_es(n50f, 2),
+                        " (0,5 repartido; hacia 0, en oleadas)")),
           dplyr::case_when(
             sin_estacion ~ "<br><em>Sin estación definida (bimodal o fuego todo el año): sin índices</em>",
             !valida ~ "<br><em>Bajo el umbral de detecciones: sin índices</em>",

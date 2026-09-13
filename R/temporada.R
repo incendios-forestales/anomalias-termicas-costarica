@@ -118,6 +118,25 @@ primer_dia_fraccion <- function(fecha, detecciones, fraccion) {
   fecha[which(cumsum(detecciones) >= fraccion * total)[1]]
 }
 
+# --- Concentración diaria (README, «Segundo índice») ------------------------
+
+# Número mínimo de días que, ordenados de mayor a menor, acumulan `fraccion`
+# del total; NA sin detecciones.
+n50 <- function(detecciones, fraccion = CONCENTRACION_FRACCION) {
+  total <- sum(detecciones)
+  if (total == 0) return(NA_integer_)
+  orden <- sort(detecciones, decreasing = TRUE)
+  which(cumsum(orden) >= fraccion * total)[1]
+}
+
+# Porcentaje del total en los `top` días con más detecciones; NA sin
+# detecciones.
+c10 <- function(detecciones, top = CONCENTRACION_DIAS_TOP) {
+  total <- sum(detecciones)
+  if (total == 0) return(NA_real_)
+  round(100 * sum(head(sort(detecciones, decreasing = TRUE), top)) / total, 1)
+}
+
 # Tabla de índices por año de fuego: DTOT, INI, FIN (día y fecha) y LON, con
 # tres marcas que advierten sobre la lectura de la temporalidad:
 #   parcial      el año de fuego no está completo en el periodo observado
@@ -133,8 +152,11 @@ indices_temporada <- function(diaria, rangos,
     dplyr::arrange(fecha) |>
     dplyr::summarise(
       dtot        = sum(detecciones),
+      df          = sum(detecciones > 0),
       ini_fecha   = primer_dia_fraccion(fecha, detecciones, fraccion_ini),
       fin_fecha   = primer_dia_fraccion(fecha, detecciones, fraccion_fin),
+      n50         = n50(detecciones),
+      c10         = c10(detecciones),
       provisional = any(nivel == "NRT"),
       .by = anio_fuego
     ) |>
@@ -146,8 +168,8 @@ indices_temporada <- function(diaria, rangos,
         fin_anio_fuego(anio_fuego) > observado[2],
       pocas_detecciones = dtot < minimo
     ) |>
-    dplyr::select(anio_fuego, dtot, ini_dia, ini_fecha, fin_dia, fin_fecha,
-                  lon, parcial, provisional, pocas_detecciones) |>
+    dplyr::select(anio_fuego, dtot, df, ini_dia, ini_fecha, fin_dia, fin_fecha,
+                  lon, n50, c10, parcial, provisional, pocas_detecciones) |>
     dplyr::arrange(anio_fuego)
 }
 
@@ -190,11 +212,12 @@ crear_tabla_temporada <- function(indices, etiqueta_fuente) {
       fin    = ifelse(is.na(fin_fecha), "", fecha_es(fin_fecha, con_anio = FALSE)),
       nota   = notas_temporada(indices)
     ) |>
-    dplyr::select(anio_fuego, dtot, inicio, fin, lon, nota)
+    dplyr::select(anio_fuego, dtot, inicio, fin, lon, df, n50, c10, nota)
   DT::datatable(
     datos,
     colnames = c("Año de fuego", "Detecciones", "Inicio (10 %)", "Fin (90 %)",
-                 "Longitud (días)", "Nota"),
+                 "Longitud (días)", "Días de fuego", "N50 (días)",
+                 "C10 (%)", "Nota"),
     caption = paste0("Temporada de fuego por año de fuego (setiembre–agosto) — ",
                      AREA_NOMBRE, ", ", etiqueta_fuente),
     options = list(pageLength = 30, dom = "t"),
@@ -342,6 +365,7 @@ anios_referencia <- function(indices) {
 # definida y sus INI, FIN y LON se anulan (ver README, «Celdas bimodales»).
 indices_consolidados <- function(puntos, celdas, anios,
                                  minimo = RASTER_MIN_DETECCIONES,
+                                 minimo_concentracion = RASTER_MIN_DETECCIONES_CONCENTRACION,
                                  fuera_max = RASTER_FUERA_MAX_PCT,
                                  meses_referencia = TEMPORADA_REFERENCIA_MESES,
                                  fraccion_ini = TEMPORADA_FRACCION_INI,
@@ -365,6 +389,10 @@ indices_consolidados <- function(puntos, celdas, anios,
       fuera = round(100 * mean(!en_temporada), 1),
       ini_dia = primer_dia(dia, fraccion_ini),
       fin_dia = primer_dia(dia, fraccion_fin),
+      # Concentración sobre las fechas reales agrupadas: días de fuego de la
+      # celda y días que reúnen la mitad de sus detecciones.
+      df = dplyr::n_distinct(acq_date),
+      n50 = n50(as.integer(table(acq_date))),
       .by = celda_id
     ) |>
     dplyr::mutate(
@@ -374,10 +402,12 @@ indices_consolidados <- function(puntos, celdas, anios,
       ini_dia = ifelse(con_indices, ini_dia, NA_integer_),
       fin_dia = ifelse(con_indices, fin_dia, NA_integer_),
       lon = fin_dia - ini_dia + 1L,
+      valida_n50f = dtot >= minimo_concentracion,
+      n50f = ifelse(valida_n50f, round(n50 / df, 3), NA_real_),
       anio_inicio = min(anios), anio_fin = max(anios)
     ) |>
-    dplyr::select(celda_id, dtot, fuera, ini_dia, fin_dia, lon, valida,
-                  sin_estacion, anio_inicio, anio_fin) |>
+    dplyr::select(celda_id, dtot, fuera, ini_dia, fin_dia, lon, df, n50f,
+                  valida, sin_estacion, valida_n50f, anio_inicio, anio_fin) |>
     dplyr::arrange(celda_id)
 }
 
@@ -399,7 +429,7 @@ raster_consolidado <- function(consolidado, grilla, dest, plataforma,
     xmin = b[["xmin"]], xmax = b[["xmax"]], ymin = b[["ymin"]],
     ymax = b[["ymax"]], resolution = res, crs = CRS_WGS84
   )
-  capas <- c("ini_dia", "fin_dia", "lon", "fuera", "dtot")
+  capas <- c("ini_dia", "fin_dia", "lon", "fuera", "n50f", "dtot")
   datos <- grilla |>
     sf::st_drop_geometry() |>
     dplyr::inner_join(consolidado, by = "celda_id")
@@ -416,15 +446,19 @@ raster_consolidado <- function(consolidado, grilla, dest, plataforma,
     periodo = paste0(min(consolidado$anio_inicio), "-", max(consolidado$anio_fin)),
     umbral_detecciones = as.character(minimo),
     umbral_fuera_pct = as.character(fuera_max),
+    umbral_detecciones_n50f = as.character(RASTER_MIN_DETECCIONES_CONCENTRACION),
     # Sin el signo "=" en los valores: terra descarta TODAS las etiquetas si
     # alguna lo contiene (verificado con terra 1.9-11).
     definicion = paste0("INI/FIN: dia del anio de fuego (1: 1 set) en que la suma ",
                         "acumulada alcanza 10 %/90 %; LON: FIN - INI + 1; FUERA: % de ",
                         "detecciones fuera de dic-may (celdas por encima del umbral ",
-                        "quedan sin INI/FIN/LON: sin estacion definida)")
+                        "quedan sin INI/FIN/LON: sin estacion definida); N50F: ",
+                        "proporcion de los dias de fuego de la celda que reunen la ",
+                        "mitad de sus detecciones (0,5 repartido, hacia 0 en oleadas)")
   )
   dir.create(dirname(dest), recursive = TRUE, showWarnings = FALSE)
-  terra::writeRaster(r, dest, overwrite = TRUE, datatype = "INT4S",
+  # FLT4S por N50F (0-0,5); las demás capas son enteras y caben igual.
+  terra::writeRaster(r, dest, overwrite = TRUE, datatype = "FLT4S",
                      NAflag = -9999)
   dest
 }
@@ -456,6 +490,10 @@ ayudantes_temporada_celdas <- function(consolidado) {
     fuera_sin_estacion = if (nrow(bim) > 0) paste0(num_es(min(bim$fuera), 0), " y ",
                                                    num_es(max(bim$fuera), 0)) else "",
     fuera_mediana_unimodal = num_es(stats::median(ok$fuera), 0),
+    n_validas_n50f = sum(consolidado$valida_n50f),
+    n50f_min = num_es(min(consolidado$n50f, na.rm = TRUE), 2),
+    n50f_max = num_es(max(consolidado$n50f, na.rm = TRUE), 2),
+    n50f_mediana = num_es(stats::median(consolidado$n50f, na.rm = TRUE), 2),
     periodo = paste0(min(consolidado$anio_inicio), "–", max(consolidado$anio_fin)),
     lon_min = min(ok$lon), lon_max = max(ok$lon),
     lon_mediana = stats::median(ok$lon),
@@ -491,11 +529,14 @@ grafico_temporada_celdas <- function(consolidado, grilla, area, dest,
   trama <- trama_celdas(celdas[celdas$sin_estacion, ])
   ref <- inicio_anio_fuego(2002L)
   rotulo <- c(lon = "Longitud (días)", ini_dia = "Inicio (10 %)",
-              fin_dia = "Fin (90 %)")[[variable]]
+              fin_dia = "Fin (90 %)",
+              n50f = "N50F\n(0,5 repartido;\nhacia 0, en oleadas)")[[variable]]
   titulo <- c(lon = "Longitud de la temporada de fuego por celda",
               ini_dia = "Inicio de la temporada de fuego por celda",
-              fin_dia = "Fin de la temporada de fuego por celda")[[variable]]
-  etiquetas_escala <- if (variable == "lon") ggplot2::waiver() else {
+              fin_dia = "Fin de la temporada de fuego por celda",
+              n50f = "Concentración diaria del fuego por celda")[[variable]]
+  es_fecha <- variable %in% c("ini_dia", "fin_dia")
+  etiquetas_escala <- if (!es_fecha) ggplot2::waiver() else {
     function(x) format(ref + x - 1L, "%d %b") |>
       (\(s) paste(sub(" .*", "", s), MESES_ES[lubridate::month(ref + x - 1L)]))()
   }
@@ -512,7 +553,8 @@ grafico_temporada_celdas <- function(consolidado, grilla, area, dest,
     # sin estación definida (fuego todo el año, LON cercano a 300) no
     # aplasten el gradiente de 60 a 120 días que domina el Pacífico.
     ggplot2::scale_fill_viridis_c(
-      option = if (variable == "lon") "inferno" else "viridis",
+      option = c(lon = "inferno", ini_dia = "viridis", fin_dia = "viridis",
+                 n50f = "mako")[[variable]],
       direction = if (variable == "lon") -1 else 1,
       na.value = "grey85", name = rotulo,
       limits = if (variable == "lon") c(0, RASTER_LON_TOPE) else NULL,
@@ -525,7 +567,8 @@ grafico_temporada_celdas <- function(consolidado, grilla, area, dest,
     ggplot2::labs(
       title = titulo,
       subtitle = paste0("Detecciones de vegetación de los años de fuego ",
-                        periodo, "; celdas de 0,1° con menos de ", minimo,
+                        periodo, "; celdas de 0,1° con menos de ",
+                        if (variable == "n50f") RASTER_MIN_DETECCIONES_CONCENTRACION else minimo,
                         " detecciones en gris;\ncon trama, sin estación ",
                         "definida (más de ", RASTER_FUERA_MAX_PCT,
                         " % de las detecciones fuera de diciembre a mayo)\n",
@@ -540,5 +583,65 @@ grafico_temporada_celdas <- function(consolidado, grilla, area, dest,
     )
   dir.create(dirname(dest), recursive = TRUE, showWarnings = FALSE)
   ggplot2::ggsave(dest, p, width = 9, height = 7, dpi = 200)
+  dest
+}
+
+
+# --- Figura y cifras de la concentración diaria ------------------------------
+
+ayudantes_concentracion <- function(indices) {
+  ok <- indices[temporada_confiable(indices), ]
+  list(
+    n50_media = num_es(mean(ok$n50), 0),
+    n50_min = min(ok$n50), anio_n50_min = ok$anio_fuego[which.min(ok$n50)],
+    n50_max = max(ok$n50), anio_n50_max = ok$anio_fuego[which.max(ok$n50)],
+    c10_media = num_es(mean(ok$c10), 0),
+    c10_min = num_es(min(ok$c10), 0), anio_c10_min = ok$anio_fuego[which.min(ok$c10)],
+    c10_max = num_es(max(ok$c10), 0), anio_c10_max = ok$anio_fuego[which.max(ok$c10)],
+    df_media = num_es(mean(ok$df), 0)
+  )
+}
+
+# Barras por año de fuego de N50 (días) y C10 (%), en dos paneles; los años
+# con reservas en gris.
+grafico_concentracion <- function(indices, dest, etiqueta_fuente, fuente) {
+  datos <- indices |>
+    dplyr::filter(!is.na(n50)) |>
+    dplyr::mutate(
+      lectura = ifelse(temporada_confiable(indices)[!is.na(indices$n50)],
+                       "Año completo", "Año parcial, provisional o con pocas detecciones")
+    ) |>
+    dplyr::select(anio_fuego, lectura, n50, c10) |>
+    tidyr::pivot_longer(c(n50, c10), names_to = "indice", values_to = "valor") |>
+    dplyr::mutate(indice = factor(indice, levels = c("n50", "c10"),
+                                  labels = c("N50: días que reúnen la mitad de las detecciones",
+                                             "C10: % de las detecciones en los 10 días más activos")))
+  p <- ggplot2::ggplot(datos, ggplot2::aes(x = anio_fuego, y = valor, fill = lectura)) +
+    ggplot2::geom_col(width = 0.75) +
+    ggplot2::geom_text(ggplot2::aes(label = round(valor)), vjust = -0.4, size = 2.8,
+                       color = "grey30") +
+    ggplot2::facet_wrap(~indice, ncol = 1, scales = "free_y") +
+    ggplot2::scale_fill_manual(values = c("Año completo" = COLOR_DETECCIONES,
+                                          "Año parcial, provisional o con pocas detecciones" = "grey65"),
+                               name = NULL) +
+    ggplot2::scale_x_continuous(breaks = datos$anio_fuego) +
+    ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = c(0, 0.12))) +
+    ggplot2::labs(
+      title = "Concentración diaria del fuego por año",
+      subtitle = paste0("Días del año de fuego (setiembre–agosto) ordenados de mayor a menor ",
+                        "número de detecciones — ", AREA_NOMBRE, ", ", etiqueta_fuente),
+      x = "Año de fuego", y = NULL, caption = fuente
+    ) +
+    ggplot2::theme_minimal() +
+    ggplot2::theme(
+      panel.grid.minor = ggplot2::element_blank(),
+      panel.grid.major.x = ggplot2::element_blank(),
+      legend.position = "bottom",
+      strip.text = ggplot2::element_text(face = "bold", hjust = 0),
+      axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, size = 8),
+      plot.title = ggplot2::element_text(face = "bold")
+    )
+  dir.create(dirname(dest), recursive = TRUE, showWarnings = FALSE)
+  ggplot2::ggsave(dest, p, width = 10, height = 7, dpi = 200)
   dest
 }

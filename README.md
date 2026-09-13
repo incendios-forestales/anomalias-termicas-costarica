@@ -191,9 +191,10 @@ El proyecto incorpora, paso a paso, **índices anuales de la temporada de
 fuego** inspirados en los índices de extremos del ETCCDI para precipitación
 (Zhang et al. 2011). Las definiciones se escriben aquí antes que el código y
 son el contrato de lo que se calcula. Cada índice se agrega cuando el
-anterior está publicado; esta sección documenta el primero, la **longitud
-de la temporada**, en su versión anual y en su versión espacial
-consolidada, y solo lo necesario para calcularlas. Nada de esta sección
+anterior está publicado; esta sección documenta los dos primeros, la
+**longitud de la temporada** y la **concentración diaria del fuego**, cada
+uno en su versión anual y en su versión espacial consolidada, y solo lo
+necesario para calcularlos. Nada de esta sección
 altera las series mensuales, los videos ni los mapas ya publicados.
 
 ### Año de fuego
@@ -398,6 +399,59 @@ adelantado. Las comparaciones legítimas, diferencia de `INI` o `LON` por
 celda en el periodo de traslape y mapa de acuerdo entre plataformas,
 vendrán como productos aparte.
 
+### Segundo índice: concentración diaria del fuego (`N50`, `C10`)
+
+`LON` dice cuánto dura la temporada; este índice dice si el fuego de un año
+llega repartido a lo largo de ella o en unas pocas oleadas de quema masiva.
+Se calcula sobre la misma serie diaria, ordenando los días del año de fuego
+de mayor a menor número de detecciones:
+
+| Código | Definición | Unidad |
+|---|---|---|
+| `DF` | Días de fuego del año: días con al menos una detección (auxiliar) | días |
+| `N50` | Número mínimo de días que, ordenados de mayor a menor, acumulan al menos el 50 % de `DTOT` | días |
+| `C10` | Porcentaje de `DTOT` que ocurre en los 10 días con más detecciones | % |
+
+Un `N50` de 8 significa que la mitad del fuego del año cupo en 8 días; un
+`C10` de 40 % que los 10 días más activos concentraron dos quintos de las
+detecciones. Los empates entre días con el mismo conteo no afectan las
+sumas. Como `LON`, el índice se define por fracciones del total anual y es
+**insensible a la escala del conteo**: no lo alteran los años 2001 y 2002
+con solo Terra ni la deriva orbital. Los años parciales, provisionales o
+con `DTOT` < 300 llevan las mismas marcas que en la tabla de `LON`.
+
+**Sustento.** No conocemos un uso de este índice con detecciones de fuego
+activo; es un préstamo razonado de tres fuentes. El índice de concentración
+diaria de la precipitación de Martín-Vide (2004) mide con la curva de Lorenz
+cuánto del total anual cae en los días más lluviosos, y `N50` y `C10` son
+su lectura directa sobre esa misma curva. En el ETCCDI, `R95pTOT` expresa
+la fracción del total aportada por los días extremos; `C10` hace lo mismo
+con un número fijo de días en lugar de un percentil del periodo base, lo
+que evita depender del conteo absoluto. Y Cunningham et al. (2024) muestran
+que la dimensión del régimen de fuego que más cambia a escala global es la
+simultaneidad, cuántos fuegos intensos coinciden en pocos días, que es
+justamente lo que este índice captura a escala nacional.
+
+**Versión consolidada por celda.** Sobre la distribución agrupada de cada
+celda, con las fechas reales de los años de fuego del periodo de
+referencia, se calcula la proporción de sus días de fuego que reúnen la
+mitad de sus detecciones:
+
+| Código | Definición | Unidad |
+|---|---|---|
+| `N50F` | `N50` de la celda dividido entre sus días de fuego `DF`, ambos sobre las fechas agrupadas del periodo de referencia | 0–0,5 |
+
+Vale 0,5 cuando todos los días de fuego de la celda tuvieron el mismo
+número de detecciones (fuego repartido) y se acerca a 0 cuando unas pocas
+fechas concentran casi todo (fuego en oleadas, como una quema extensa que
+produce decenas de detecciones en dos o tres días). La razón normaliza por
+el número de fechas y hace comparables celdas con distinto conteo. Con
+pocas detecciones casi todas las fechas tienen una sola y la razón tiende
+a 0,5 sin significar nada, por lo que el umbral de esta capa es de **100
+detecciones acumuladas**, más alto que el de `LON`. Las celdas marcadas sin
+estación definida sí reciben `N50F`: la concentración no depende de que
+haya una temporada.
+
 ### Salidas
 
 - Tabla con una fila por año de fuego: año, marca de parcial/provisional,
@@ -407,11 +461,13 @@ vendrán como productos aparte.
   cronológicamente, con enero a mayo (SINAC) y diciembre a abril (IMN) como
   bandas de referencia.
 - Ráster consolidado: una capa por celda de 0,1° para `INI`, `FIN`, `LON`,
-  `FUERA` y `DTOT` (auxiliar), en GeoTIFF con la plataforma, el periodo de
-  referencia y los umbrales en los metadatos; mapas estáticos de `LON`,
-  `INI` y `FIN` con las celdas bajo el umbral en gris y las celdas sin
-  estación definida con trama, y las mismas celdas como capa del mapa
-  interactivo.
+  `FUERA`, `N50F` y `DTOT` (auxiliar), en GeoTIFF con la plataforma, el
+  periodo de referencia y los umbrales en los metadatos; mapas estáticos de
+  `LON`, `INI`, `FIN` y `N50F` con las celdas bajo el umbral en gris y las
+  celdas sin estación definida con trama, y las mismas celdas como capa del
+  mapa interactivo.
+- Concentración anual: columnas `DF`, `N50` y `C10` en la tabla por año de
+  fuego, y una figura de barras por año con `N50` y `C10`.
 
 ### Referencias
 
@@ -425,6 +481,10 @@ vendrán como productos aparte.
   analysis of global interannual fire variability. *Journal of Geophysical
   Research: Biogeosciences*, 113, G03020.
   <https://doi.org/10.1029/2008JG000686>
+- Cunningham, C. X., Williamson, G. J. y Bowman, D. M. J. S. (2024).
+  Increasing frequency and intensity of the most extreme wildfires on Earth.
+  *Nature Ecology & Evolution*, 8(8), 1420–1425.
+  <https://doi.org/10.1038/s41559-024-02452-2>
 - Dunning, C. M., Black, E. C. L. y Allan, R. P. (2016). The onset and
   cessation of seasonal rainfall over Africa. *Journal of Geophysical
   Research: Atmospheres*, 121.
@@ -440,6 +500,9 @@ vendrán como productos aparte.
 - Liebmann, B. et al. (2012). Seasonality of African precipitation from 1996
   to 2009. *Journal of Climate*, 25, 4304–4322.
   <https://doi.org/10.1175/JCLI-D-11-00157.1>
+- Martín-Vide, J. (2004). Spatial distribution of a daily precipitation
+  concentration index in peninsular Spain. *International Journal of
+  Climatology*, 24(8), 959–971. <https://doi.org/10.1002/joc.1030>
 - SINAC (2012). *Estrategia Nacional de Manejo Integral del Fuego en Costa
   Rica 2012–2021*. Sistema Nacional de Áreas de Conservación, MINAE.
   <https://www.sinac.go.cr/ES/partciudygober/Documents/Estrategia%20Nacional%20Manejo%20del%20Fuego.pdf>

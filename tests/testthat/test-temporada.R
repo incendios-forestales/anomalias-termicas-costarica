@@ -66,6 +66,9 @@ test_that("indices_temporada calcula INI, FIN y LON por fracciones acumuladas", 
   expect_equal(ix$ini_fecha, as.Date("2021-01-10"))
   expect_equal(ix$fin_fecha, as.Date("2021-03-31"))
   expect_equal(ix$lon, 81L)
+  expect_equal(ix$df, 100L)
+  expect_equal(ix$n50, 50L)      # una detección por día: 50 días para el 50 %
+  expect_equal(ix$c10, 10)       # 10 de 100
   expect_equal(ix$ini_dia, dia_anio_fuego(as.Date("2021-01-10")))
   expect_false(ix$parcial)
   expect_true(ix$provisional)          # julio y agosto son NRT
@@ -194,4 +197,37 @@ test_that("una celda bimodal queda sin estación definida", {
   expect_false(ix2$sin_estacion)
   expect_gt(ix2$lon, 150)
   expect_equal(nrow(trama_celdas(celdas_temporada_sf(ix, analisis))), 1L)
+})
+
+
+test_that("n50 y c10 ordenan de mayor a menor y toleran empates y ceros", {
+  d <- c(0, 30, 10, 5, 3, 2, 0, 0)          # total 50
+  expect_equal(n50(d), 1L)                    # 30 >= 25
+  expect_equal(c10(d), 100)                   # solo hay 5 días con fuego
+  expect_equal(n50(c(5, 5, 5, 5)), 2L)        # empates: 10 >= 10
+  expect_equal(c10(rep(1, 40)), 25)           # 10 de 40
+  expect_true(is.na(n50(c(0, 0))))
+  expect_true(is.na(c10(numeric(0))))
+})
+
+test_that("N50F por celda usa las fechas reales y su propio umbral", {
+  analisis <- construir_grilla(area_prueba, GRILLA_RES_ANALISIS,
+                               centrada_en_nodos = TRUE)
+  # Una celda con 5 fechas: 30, 10, 5, 3, 2 detecciones (50 en total,
+  # todas en marzo de 2021): N50 = 1, DF = 5, N50F = 0,2.
+  fechas <- rep(as.Date("2021-03-01") + 0:4, times = c(30, 10, 5, 3, 2))
+  puntos <- sf::st_as_sf(
+    data.frame(id_deteccion = seq_along(fechas), acq_date = fechas,
+               lon = -85.18, lat = 9.92),
+    coords = c("lon", "lat"), crs = 4326)
+  celdas <- asignar_celda(puntos, analisis)
+  ix <- indices_consolidados(puntos, celdas, anios = 2021L, minimo = 30L,
+                             minimo_concentracion = 40L)
+  expect_equal(ix$df, 5L)
+  expect_true(ix$valida_n50f)
+  expect_equal(ix$n50f, 0.2)
+  ix2 <- indices_consolidados(puntos, celdas, anios = 2021L, minimo = 30L,
+                              minimo_concentracion = 100L)
+  expect_false(ix2$valida_n50f)
+  expect_true(is.na(ix2$n50f))
 })

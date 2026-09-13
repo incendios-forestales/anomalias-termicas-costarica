@@ -181,3 +181,13 @@ RASTER_LON_TOPE <- 180L
 # README, «Celdas bimodales»).
 TEMPORADA_REFERENCIA_MESES <- c(12L, 1L, 2L, 3L, 4L, 5L)
 RASTER_FUERA_MAX_PCT       <- 25
+
+# --- Concentración diaria del fuego (README, «Segundo índice») ---
+# N50: días que acumulan esta fracción del total anual, ordenados de mayor a
+# menor; C10: porcentaje del total en los CONCENTRACION_DIAS_TOP días más
+# activos. N50F por celda exige más detecciones que LON: con pocas, casi
+# todas las fechas tienen una sola detección y la razón tiende a 0,5 sin
+# significar nada.
+CONCENTRACION_FRACCION              <- 0.5
+CONCENTRACION_DIAS_TOP              <- 10L
+RASTER_MIN_DETECCIONES_CONCENTRACION <- 100L
