@@ -192,7 +192,8 @@ fuego** inspirados en los índices de extremos del ETCCDI para precipitación
 (Zhang et al. 2011). Las definiciones se escriben aquí antes que el código y
 son el contrato de lo que se calcula. Cada índice se agrega cuando el
 anterior está publicado; esta sección documenta el primero, la **longitud
-de la temporada**, y solo lo necesario para calcularlo. Nada de esta sección
+de la temporada**, en su versión anual y en su versión espacial
+consolidada, y solo lo necesario para calcularlas. Nada de esta sección
 altera las series mensuales, los videos ni los mapas ya publicados.
 
 ### Año de fuego
@@ -288,6 +289,70 @@ Una definición alternativa sin umbrales, el mínimo y máximo de la anomalía
 diaria acumulada (Liebmann et al. 2012; Dunning et al. 2016 para regímenes
 bimodales), queda como comprobación futura.
 
+### Ráster consolidado de `LON`
+
+La versión espacial del índice responde a dónde empieza, termina y cuánto
+dura la temporada, celda por celda. Es un producto **consolidado**: para
+cada celda se juntan las detecciones de vegetación de todos los años de
+fuego del periodo de referencia, se toma su distribución en días del año
+de fuego y se calculan `INI`, `FIN` y `LON` con las mismas fracciones del
+10 % y el 90 %. Es la temporada climatológica de la celda, el producto
+estándar de la pirogeografía (Giglio et al. 2006; Benali et al. 2017), y
+**no es el promedio de los `LON` anuales**: la distribución agrupada
+incluye la variabilidad entre años, así que es sistemáticamente más ancha.
+
+**No hay rásteres anuales de `LON`.** Con MODIS, a 0,1° solo el 1 % de las
+celda-año alcanza 30 detecciones, y a 0,25° el 12 %; con VIIRS S-NPP, a
+0,1° el 12 %. `INI` y `FIN` por celda y año dependerían de un puñado de
+días en casi todo el país. La dimensión interanual espacial corresponde a
+las áreas de conservación, con cientos de detecciones por año en las del
+Pacífico.
+
+**Periodo de referencia**: los años de fuego completos y no provisionales
+del registro; para MODIS, 2002–2025. Es un parámetro y no una constante,
+para poder calcular el consolidado de MODIS sobre el periodo de otra
+plataforma (2013–2025 para S-NPP) y compararlos en igualdad de años.
+
+**Grilla.** Una sola grilla para todas las plataformas y para las variables
+climáticas que se agreguen después, definida en WGS84 con dos niveles
+anidados:
+
+- **Celda base de 0,05°** con bordes en múltiplos de 0,05°: la grilla de
+  CHIRPS, que es la común más fina con IMERG (0,1°, bordes en múltiplos de
+  0,1°) y con ERA5-Land (0,1°, celdas centradas en múltiplos de 0,1°).
+  Cada celda lleva un identificador estable derivado de su esquina
+  suroeste (`c0985_m08525` = 9,85 N, 85,25 O), que es la llave entre
+  índices, clima y cobertura, con el papel que `id_deteccion` tiene entre
+  detecciones y capas.
+- **Celda de análisis de 0,1°** formada por 2 × 2 celdas base y **centrada
+  en los nodos de ERA5-Land** (bordes en múltiplos impares de 0,05°), de
+  modo que coincide uno a uno con ERA5-Land y con cualquier índice de
+  peligro que se derive de él. Cada celda base conoce su celda madre.
+
+Con MODIS, la celda de 0,1° es la más fina que deja celdas suficientes: de
+las 477 con alguna detección, 195 (41 %) acumulan 30 o más en 2002–2025 y
+cubren la vertiente del Pacífico y la zona norte casi sin huecos; a 0,05°
+casi ninguna alcanza el mínimo. Se descartan la rejilla sinusoidal de MODIS
+(1 km: 30 000 detecciones para 50 000 celdas y una proyección incómoda) y
+una grilla propia en CRTM05 (obligaría a remuestrear todos los productos
+climáticos). Para los mapas, las celdas se vectorizan y se proyectan a
+CRTM05 como polígonos, sin remuestreo. Una detección pertenece a la celda
+que contiene su punto; a 11 km, la geolocalización de ~1 km de MODIS y la
+elipse del footprint no importan.
+
+**Umbral**: las celdas con menos de 30 detecciones acumuladas en el periodo
+de referencia quedan en NA y se dibujan en gris. Es distinto del umbral de
+300 de la tabla anual, que aplica al total nacional de un año.
+
+**Plataformas.** El ráster se calcula por plataforma, sobre la misma
+grilla y con el mismo umbral, y nunca juntando las detecciones de dos
+plataformas: VIIRS produce cinco veces más detecciones por año que MODIS y
+ve las quemas pequeñas de inicio de temporada que MODIS no ve, así que un
+consolidado mixto sería un mapa de VIIRS con ruido de MODIS y con `INI`
+adelantado. Las comparaciones legítimas, diferencia de `INI` o `LON` por
+celda en el periodo de traslape y mapa de acuerdo entre plataformas,
+vendrán como productos aparte.
+
 ### Salidas
 
 - Tabla con una fila por año de fuego: año, marca de parcial/provisional,
@@ -296,12 +361,19 @@ bimodales), queda como comprobación futura.
 - Figura de temporada: un segmento por año de `INI` a `FIN`, ordenado
   cronológicamente, con enero a mayo (SINAC) y diciembre a abril (IMN) como
   bandas de referencia.
+- Ráster consolidado: una capa por celda de 0,1° para `INI`, `FIN`, `LON` y
+  `DTOT` (auxiliar), en GeoTIFF con la plataforma, el periodo de referencia
+  y el umbral en los metadatos; mapa estático de `LON` con las celdas bajo
+  el umbral en gris, y las mismas celdas como capa del mapa interactivo.
 
 ### Referencias
 
 - Archibald, S., Lehmann, C. E. R., Gómez-Dans, J. L. y Bradstock, R. A.
   (2013). Defining pyromes and global syndromes of fire regimes. *PNAS*,
   110(16), 6442–6447. <https://doi.org/10.1073/pnas.1211466110>
+- Benali, A. et al. (2017). Bimodal fire regimes unveil a global-scale
+  anthropogenic fingerprint. *Global Ecology and Biogeography*, 26,
+  799–811. <https://doi.org/10.1111/geb.12586>
 - Boschetti, L. y Roy, D. P. (2008). Defining a fire year for reporting and
   analysis of global interannual fire variability. *Journal of Geophysical
   Research: Biogeosciences*, 113, G03020.
@@ -314,6 +386,10 @@ bimodales), queda como comprobación futura.
   E. E. N. (2020). Global fire season severity analysis and forecasting.
   *Computers & Geosciences*.
   <https://www.sciencedirect.com/science/article/abs/pii/S0098300419302808>
+- Giglio, L., Csiszar, I. y Justice, C. O. (2006). Global distribution and
+  seasonality of active fires as observed with the Terra and Aqua MODIS
+  sensors. *Journal of Geophysical Research: Biogeosciences*, 111, G02016.
+  <https://doi.org/10.1029/2005JG000142>
 - Liebmann, B. et al. (2012). Seasonality of African precipitation from 1996
   to 2009. *Journal of Climate*, 25, 4304–4322.
   <https://doi.org/10.1175/JCLI-D-11-00157.1>
