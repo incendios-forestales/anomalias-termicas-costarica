@@ -462,7 +462,9 @@ haya una temporada.
   bandas de referencia.
 - Ráster consolidado: una capa por celda de 0,1° para `INI`, `FIN`, `LON`,
   `FUERA`, `N50F` y `DTOT` (auxiliar), en GeoTIFF con la plataforma, el
-  periodo de referencia y los umbrales en los metadatos; mapas estáticos de
+  periodo de referencia y los umbrales en los metadatos, acompañado de un
+  estilo `.qml` de QGIS con la simbología de `LON` (sin él, QGIS abre el
+  ráster como color multibanda con las tres primeras bandas); mapas estáticos de
   `LON`, `INI`, `FIN` y `N50F` con las celdas bajo el umbral en gris y las
   celdas sin estación definida con trama, y las mismas celdas como capa del
   mapa interactivo.

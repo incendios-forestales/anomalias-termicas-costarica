@@ -645,3 +645,57 @@ grafico_concentracion <- function(indices, dest, etiqueta_fuente, fuente) {
   ggplot2::ggsave(dest, p, width = 10, height = 7, dpi = 200)
   dest
 }
+
+# --- Estilo de QGIS para el GeoTIFF consolidado ------------------------------
+# QGIS abre un ráster de más de tres bandas como «color multibanda» con las
+# tres primeras, lo que oculta que hay seis índices. Un archivo .qml con el
+# mismo nombre que el ráster se aplica solo al abrirlo: pseudocolor
+# monobanda sobre LON, con la misma rampa y el mismo tope que el mapa
+# estático. Solo simbología (styleCategories), para que QGIS lo acepte con
+# cualquier versión 3.x.
+escribir_estilo_qml <- function(dest, banda = 3L, minimo = 0, maximo = RASTER_LON_TOPE,
+                                titulo = "Longitud de la temporada (días)") {
+  cortes <- seq(minimo, maximo, length.out = 7)
+  colores <- rev(viridisLite::inferno(length(cortes)))
+  items <- sprintf('      <item alpha="255" value="%s" color="%s" label="%s"/>',
+                   cortes, substr(colores, 1, 7),
+                   ifelse(cortes >= maximo, paste0("≥ ", maximo), round(cortes)))
+  xml <- c(
+    "<!DOCTYPE qgis PUBLIC 'http://mrcc.com/qgis.dtd' 'SYSTEM'>",
+    '<qgis version="3.34" styleCategories="Symbology">',
+    "  <pipe>",
+    "    <provider>",
+    '      <resampling enabled="false" zoomedInResamplingMethod="nearestNeighbour" zoomedOutResamplingMethod="nearestNeighbour" maxOversampling="2"/>',
+    "    </provider>",
+    sprintf('    <rasterrenderer type="singlebandpseudocolor" band="%d" opacity="1" alphaBand="-1" nodataColor="" classificationMin="%s" classificationMax="%s">',
+            banda, minimo, maximo),
+    "      <rasterTransparency/>",
+    "      <minMaxOrigin>",
+    "        <limits>None</limits>",
+    "        <extent>WholeRaster</extent>",
+    "        <statAccuracy>Estimated</statAccuracy>",
+    "        <cumulativeCutLower>0.02</cumulativeCutLower>",
+    "        <cumulativeCutUpper>0.98</cumulativeCutUpper>",
+    "        <stdDevFactor>2</stdDevFactor>",
+    "      </minMaxOrigin>",
+    "      <rastershader>",
+    sprintf('        <colorrampshader colorRampType="INTERPOLATED" classificationMode="1" clip="0" minimumValue="%s" maximumValue="%s" labelPrecision="0">',
+            minimo, maximo),
+    items,
+    sprintf('          <rampLegendSettings minimumLabel="" maximumLabel="" prefix="" suffix="" direction="0" orientation="2" useContinuousLegend="1"><numericFormat id="basic"><Option type="Map"><Option name="decimals" type="int" value="0"/></Option></numericFormat></rampLegendSettings>'),
+    "        </colorrampshader>",
+    "      </rastershader>",
+    "    </rasterrenderer>",
+    '    <brightnesscontrast brightness="0" contrast="0" gamma="1"/>',
+    '    <huesaturation saturation="0" grayscaleMode="0" colorizeOn="0" colorizeRed="255" colorizeGreen="128" colorizeBlue="128" colorizeStrength="100" invertColors="0"/>',
+    '    <rasterresampler maxOversampling="2"/>',
+    "    <resamplingStage>resamplingFilter</resamplingStage>",
+    "  </pipe>",
+    "  <blendMode>0</blendMode>",
+    sprintf("  <!-- %s: banda %d del GeoTIFF consolidado; ver README -->", titulo, banda),
+    "</qgis>"
+  )
+  dir.create(dirname(dest), recursive = TRUE, showWarnings = FALSE)
+  writeLines(xml, dest, useBytes = FALSE)
+  dest
+}

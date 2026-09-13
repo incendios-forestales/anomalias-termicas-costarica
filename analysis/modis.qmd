@@ -361,8 +361,15 @@ Los índices por celda están disponibles como
 [CSV](`r file.path("..", tar_read(tabla_temporada_celdas_modis, store = almacen))`)
 y como
 [GeoTIFF](`r file.path("..", tar_read(raster_temporada_modis, store = almacen))`)
-con una capa por índice, incluidas `FUERA` y `N50F`; las mismas celdas pueden activarse como capa del
-[mapa interactivo](#mapa-interactivo).
+con seis bandas con nombre: `ini_dia`, `fin_dia`, `lon`, `fuera`, `n50f`
+y `dtot`. Un SIG como QGIS abre por defecto un ráster de varias bandas
+como «color multibanda» con las tres primeras, lo que parece un archivo de
+tres capas: para ver un índice hay que elegir la simbología «pseudocolor
+monobanda» y la banda por su nombre. El archivo de estilo
+[`.qml`](`r file.path("..", tar_read(estilo_raster_modis, store = almacen))`),
+guardado con el mismo nombre junto al GeoTIFF, hace que QGIS lo abra ya
+con la simbología de `LON`. Las mismas celdas pueden activarse como capa
+del [mapa interactivo](#mapa-interactivo).
 
 ### Detecciones excluidas por tipo de fuente
 
