@@ -283,6 +283,9 @@ test_that("indices_frecuencia cubre toda la grilla y usa el periodo base", {
   expect_true(all(u$dtot[u$celda_id != "c0985_m08525"] == 0))
   expect_true(all(is.na(u$lon[u$celda_id != "c0985_m08525"])))
   expect_false(any(is.na(u$valida)))
+  # El periodo de referencia es el vector de años, no la columna `anios`.
+  expect_true(all(u$anio_inicio == 2020L & u$anio_fin == 2023L))
+  expect_true(all(u$base_inicio == 2020L & u$base_fin == 2023L))
 })
 
 test_that("anios_base falla con claridad si la plataforma no lo tiene", {

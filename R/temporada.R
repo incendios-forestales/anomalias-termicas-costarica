@@ -455,6 +455,10 @@ indices_frecuencia <- function(puntos, celdas, grilla, anios,
 # grilla completa, con ceros en dtot y NA en los índices de temporada de las
 # celdas sin fuego.
 unir_consolidados <- function(consolidado, frecuencia, anios) {
+  # Antes de entrar a la tabla: `anios` es también una columna de
+  # `frecuencia` (años con fuego por celda) y taparía al vector.
+  ref_ini <- min(anios)
+  ref_fin <- max(anios)
   frecuencia |>
     dplyr::left_join(consolidado, by = "celda_id") |>
     dplyr::mutate(
@@ -462,7 +466,7 @@ unir_consolidados <- function(consolidado, frecuencia, anios) {
       valida = tidyr::replace_na(valida, FALSE),
       sin_estacion = tidyr::replace_na(sin_estacion, FALSE),
       valida_n50f = tidyr::replace_na(valida_n50f, FALSE),
-      anio_inicio = min(anios), anio_fin = max(anios)
+      anio_inicio = ref_ini, anio_fin = ref_fin
     ) |>
     dplyr::select(celda_id, area_km2, dtot, fuera, ini_dia, fin_dia, lon, df,
                   n50f, dtot_base, anios, frec, dens, valida, sin_estacion,
@@ -622,13 +626,12 @@ grafico_temporada_celdas <- function(consolidado, grilla, area, dest,
   }
   periodo <- if (es_conteo) {
     paste0(min(consolidado$base_inicio), "–", max(consolidado$base_fin),
-           " (periodo base)")
+           ", el periodo base")
   } else {
     paste0(min(consolidado$anio_inicio), "–", max(consolidado$anio_fin))
   }
   nota_umbral <- if (es_conteo) {
-    paste0("celdas de 0,1° con menos de ", RASTER_MIN_AREA_KM2,
-           " km² de tierra en gris")
+    paste0("celdas con menos de ", RASTER_MIN_AREA_KM2, " km² de tierra en gris")
   } else {
     paste0("celdas de 0,1° con menos de ",
            if (variable == "n50f") RASTER_MIN_DETECCIONES_CONCENTRACION else minimo,
@@ -661,8 +664,9 @@ grafico_temporada_celdas <- function(consolidado, grilla, area, dest,
     ggplot2::labs(
       title = titulo,
       subtitle = paste0("Detecciones de vegetación de los años de fuego ",
-                        periodo, "\n", nota_umbral,
-                        "; con trama, sin estación definida (más de ",
+                        periodo, "\n", toupper(substr(nota_umbral, 1, 1)),
+                        substr(nota_umbral, 2, nchar(nota_umbral)),
+                        "\nCon trama, sin estación definida (más de ",
                         RASTER_FUERA_MAX_PCT,
                         " % de las detecciones fuera de diciembre a mayo)\n",
                         AREA_NOMBRE, ", ", etiqueta_fuente),
