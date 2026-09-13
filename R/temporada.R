@@ -471,6 +471,7 @@ grafico_temporada_celdas <- function(consolidado, grilla, area, dest,
       direction = if (variable == "lon") -1 else 1,
       na.value = "grey85", name = rotulo,
       limits = if (variable == "lon") c(0, RASTER_LON_TOPE) else NULL,
+      breaks = if (variable == "lon") seq(0, RASTER_LON_TOPE, by = 60) else ggplot2::waiver(),
       oob = scales::oob_squish,
       labels = if (variable == "lon") {
         function(x) ifelse(x >= RASTER_LON_TOPE, paste0("\u2265 ", x), x)

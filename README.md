@@ -508,7 +508,8 @@ fragmento, teselas) en [`R/constantes.R`](R/constantes.R).
 ├── R/                  # funciones: descarga (FIRMS, CMR, WFS), procesamiento,
 │                       #   cobertura de la tierra, áreas de conservación,
 │                       #   eventos documentados, visualización y tablas
-├── R/temporada.R       # año de fuego e índices anuales de temporada (LON)
+├── R/temporada.R       # año de fuego e índices de temporada (LON) y ráster
+├── R/grilla.R          # grilla de análisis común (0,05° y 0,1°, WGS84)
 ├── tests/testthat/     # pruebas unitarias con datos sintéticos
 ├── analysis/portada.qmd # portada         → index.html (GitHub Pages)
 ├── analysis/modis.qmd   # reporte MODIS   → modis/index.html
