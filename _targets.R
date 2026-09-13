@@ -88,6 +88,13 @@ list(
   tar_target(relieve_video, fondo_relieve_video(archivos_dem, pais_mapa,
                                                 bbox_descarga,
                                                 archivos_worldcover)),
+  # Grilla de análisis común a plataformas y variables climáticas (README,
+  # «Ráster consolidado de LON»; R/grilla.R): base de 0,05° alineada a
+  # CHIRPS y análisis de 0,1° centrada en los nodos de ERA5-Land.
+  tar_target(grilla_base,
+             construir_grilla(pais, GRILLA_RES_BASE, centrada_en_nodos = FALSE)),
+  tar_target(grilla_analisis,
+             construir_grilla(pais, GRILLA_RES_ANALISIS, centrada_en_nodos = TRUE)),
 
   # --- Área quemada, por PRODUCTO y no por plataforma ----------------------
   # Hay exactamente dos productos y son un recurso compartido: VNP64A1
@@ -337,6 +344,42 @@ list(
                                "outputs/figs/modis/temporada_anual.png",
                                etiquetas_modis$fuente_fig,
                                etiquetas_modis$pie_firms),
+             format = "file"),
+  # Ráster consolidado: temporada climatológica por celda de 0,1° sobre los
+  # años de fuego completos y no provisionales.
+  tar_target(celdas_modis, asignar_celda(firms_vegetacion_modis, grilla_analisis)),
+  tar_target(temporada_celdas_modis,
+             indices_consolidados(firms_vegetacion_modis, celdas_modis,
+                                  anios_referencia(temporada_modis))),
+  tar_target(tabla_temporada_celdas_modis,
+             tabla_temporada_celdas_csv(temporada_celdas_modis,
+                                        "outputs/tables/modis/temporada_celdas.csv"),
+             format = "file"),
+  tar_target(raster_temporada_modis,
+             raster_consolidado(temporada_celdas_modis, grilla_analisis,
+                                "outputs/rasters/modis/temporada_celdas.tif",
+                                etiquetas_modis$corta),
+             format = "file"),
+  tar_target(fig_temporada_celdas_modis,
+             grafico_temporada_celdas(temporada_celdas_modis, grilla_analisis,
+                                      pais_mapa,
+                                      "outputs/figs/modis/temporada_celdas_lon.png",
+                                      "lon", etiquetas_modis$fuente_fig,
+                                      etiquetas_modis$pie_firms),
+             format = "file"),
+  tar_target(fig_temporada_celdas_ini_modis,
+             grafico_temporada_celdas(temporada_celdas_modis, grilla_analisis,
+                                      pais_mapa,
+                                      "outputs/figs/modis/temporada_celdas_ini.png",
+                                      "ini_dia", etiquetas_modis$fuente_fig,
+                                      etiquetas_modis$pie_firms),
+             format = "file"),
+  tar_target(fig_temporada_celdas_fin_modis,
+             grafico_temporada_celdas(temporada_celdas_modis, grilla_analisis,
+                                      pais_mapa,
+                                      "outputs/figs/modis/temporada_celdas_fin.png",
+                                      "fin_dia", etiquetas_modis$fuente_fig,
+                                      etiquetas_modis$pie_firms),
              format = "file"),
 
   # --- Figura comparativa de las cuatro plataformas ------------------------

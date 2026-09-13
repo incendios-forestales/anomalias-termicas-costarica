@@ -153,3 +153,23 @@ TIPOS_FIRMS <- c(
 # temporada (mes de inicio y mes de fin, inclusive). Fuentes en el README.
 TEMPORADA_SINAC <- c(inicio = 1L, fin = 5L)    # enero-mayo
 EPOCA_SECA_IMN  <- c(inicio = 12L, fin = 4L)   # diciembre-abril
+
+# --- Grilla de análisis (ráster consolidado; ver README) ---
+# Dos niveles anidados en WGS84: la celda base de 0,05° con bordes en
+# múltiplos de 0,05° (la grilla de CHIRPS, común más fina con IMERG y
+# ERA5-Land) y la celda de análisis de 0,1°, formada por 2 × 2 celdas base y
+# CENTRADA en los nodos de ERA5-Land (bordes en múltiplos impares de 0,05°).
+# La geometría se fija aquí para que las variables climáticas futuras entren
+# sin remuestrear; cambiarla invalida los identificadores de celda.
+GRILLA_RES_BASE     <- 0.05
+GRILLA_RES_ANALISIS <- 0.10
+
+# Celdas con menos detecciones acumuladas que esto en el periodo de
+# referencia quedan en NA en el ráster consolidado (distinto del umbral
+# anual TEMPORADA_MIN_DETECCIONES, que aplica al total nacional de un año).
+RASTER_MIN_DETECCIONES <- 30L
+
+# Tope de la escala de color del mapa de LON por celda (días): las celdas con
+# fuego todo el año (LON ~300) se pintan como "≥ tope" para no aplastar el
+# gradiente de 60-120 días del Pacífico. El valor real queda en el ráster.
+RASTER_LON_TOPE <- 180L

@@ -114,8 +114,9 @@ El botón ⛶ de la esquina superior izquierda abre el mapa en pantalla
 completa. Desde el control de capas pueden activarse además el área quemada
 reciente (píxeles de MCD64A1, con su fecha de quema en el popup, filtrados
 por el deslizador igual que las detecciones), la cobertura
-([ESA WorldCover 2021](https://esa-worldcover.org/)) y las
-áreas de conservación del SINAC.
+([ESA WorldCover 2021](https://esa-worldcover.org/)), las
+áreas de conservación del SINAC y la temporada de fuego consolidada por
+celda (ver la sección [Temporada de fuego](#temporada-de-fuego)).
 
 ```{r}
 #| label: mapa-interactivo
@@ -124,9 +125,12 @@ cobertura_mapa <- tar_read(cobertura_modis, store = almacen)
 worldcover <- tar_read(archivos_worldcover, store = almacen)
 bbox <- tar_read(bbox_descarga, store = almacen)
 ac_web <- tar_read(ac_web, store = almacen)
+celdas_mapa <- celdas_temporada_sf(tar_read(temporada_celdas_modis, store = almacen),
+                                   tar_read(grilla_analisis, store = almacen))
 crear_mapa_temporal(firms_pais, pais_web, cobertura_mapa, worldcover, bbox,
                     etq$etiqueta_quemas, ac_web,
-                    quemas = area_quemada_pais)
+                    quemas = area_quemada_pais,
+                    celdas_temporada = celdas_mapa)
 ```
 
 ## Área quemada (MCD64A1)
@@ -254,6 +258,57 @@ crear_tabla_temporada(temporada, etq$fuente_fig)
 
 La tabla completa, con las fechas y las marcas por año, está disponible como
 [CSV](`r file.path("..", tar_read(tabla_temporada_modis, store = almacen))`).
+
+### Temporada consolidada por celda
+
+```{r}
+#| label: temporada-celdas
+consolidado <- tar_read(temporada_celdas_modis, store = almacen)
+tc <- ayudantes_temporada_celdas(consolidado)
+```
+
+La versión espacial del índice responde a dónde empieza y termina la
+temporada. Es un producto **consolidado**: para cada celda de 0,1° (~11 km)
+se juntan las detecciones de vegetación de los años de fuego completos
+(`r tc$periodo`) y se calculan `INI`, `FIN` y `LON` sobre esa distribución
+de fechas. Es la temporada *climatológica* de la celda, y no el promedio
+de sus temporadas anuales: al incluir la variabilidad entre años, es más
+ancha. No hay mapas por año: con MODIS, casi ninguna celda reúne en un
+solo año las detecciones necesarias para fechar su temporada; la dimensión
+interanual espacial corresponde a las áreas de conservación. Las celdas con
+menos de `r RASTER_MIN_DETECCIONES` detecciones acumuladas quedan sin
+índices y se dibujan en gris.
+
+![](`r file.path("..", tar_read(fig_temporada_celdas_modis, store = almacen))`)
+
+De las `r tc$n_con_fuego` celdas con alguna detección, `r tc$n_validas`
+alcanzan el umbral; en ellas la temporada consolidada dura entre
+`r tc$lon_min` y `r tc$lon_max` días (mediana `r tc$lon_mediana`). El
+inicio más temprano de celda cae el `r tc$ini_min` y el más tardío el
+`r tc$ini_max`; el fin, entre el `r tc$fin_min` y el `r tc$fin_max`. Las
+pocas celdas con más de 200 días, en las llanuras del norte, no tienen una
+estación definida: el fuego aparece a lo largo de todo el año, con conteos
+cercanos al umbral. En el mapa de longitud la escala de color se acota en
+`r RASTER_LON_TOPE` días para que esas celdas no aplasten el gradiente de
+60 a 120 días que domina el Pacífico; el valor completo está en el ráster
+y en la tabla.
+
+::: {layout-ncol=2}
+![](`r file.path("..", tar_read(fig_temporada_celdas_ini_modis, store = almacen))`)
+
+![](`r file.path("..", tar_read(fig_temporada_celdas_fin_modis, store = almacen))`)
+:::
+
+La grilla es común a las cuatro plataformas y a las variables climáticas
+que se incorporen después (celda base de 0,05° alineada a CHIRPS; celda de
+análisis de 0,1° centrada en los nodos de ERA5-Land), y el ráster se
+calcula por plataforma, nunca mezclando detecciones de sensores distintos.
+Los índices por celda están disponibles como
+[CSV](`r file.path("..", tar_read(tabla_temporada_celdas_modis, store = almacen))`)
+y como
+[GeoTIFF](`r file.path("..", tar_read(raster_temporada_modis, store = almacen))`)
+con una capa por índice; las mismas celdas pueden activarse como capa del
+[mapa interactivo](#mapa-interactivo).
 
 ### Detecciones excluidas por tipo de fuente
 

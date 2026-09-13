@@ -105,3 +105,67 @@ test_that("banda_referencia proyecta los meses al año de referencia", {
   s <- banda_referencia(TEMPORADA_SINAC)
   expect_equal(unname(s[["xmax"]]), as.Date("2002-05-31"))
 })
+
+# --- Grilla y consolidado ---------------------------------------------------
+
+test_that("la grilla base y la de análisis anidan como dice el README", {
+  # Celda base con esquina SW en (9,90 N, 85,25 O): su madre de 0,1° está
+  # centrada en el nodo (9,9; -85,2) y tiene esquina SW en (9,85; -85,25).
+  expect_equal(id_celda(9.90, -85.25), "c0990_m08525")
+  sw <- esquina_sw(9.925, -85.225, GRILLA_RES_ANALISIS, centrada_en_nodos = TRUE)
+  expect_equal(c(sw$lat_sw, sw$lon_sw), c(9.85, -85.25))
+  # Un punto justo en el nodo cae en la celda que lo tiene como centro.
+  sw <- esquina_sw(9.9, -85.2, GRILLA_RES_ANALISIS, centrada_en_nodos = TRUE)
+  expect_equal(c(sw$lat_sw, sw$lon_sw), c(9.85, -85.25))
+  # Grilla base: bordes en múltiplos de 0,05.
+  sw <- esquina_sw(9.949, -85.201, GRILLA_RES_BASE, centrada_en_nodos = FALSE)
+  expect_equal(c(sw$lat_sw, sw$lon_sw), c(9.90, -85.25))
+})
+
+area_prueba <- sf::st_as_sf(
+  sf::st_sfc(sf::st_polygon(list(rbind(c(-85.3, 9.8), c(-85.0, 9.8),
+                                       c(-85.0, 10.1), c(-85.3, 10.1),
+                                       c(-85.3, 9.8)))), crs = 4326)
+)
+
+test_that("construir_grilla cubre el área y asigna la celda madre", {
+  base <- construir_grilla(area_prueba, GRILLA_RES_BASE, centrada_en_nodos = FALSE)
+  analisis <- construir_grilla(area_prueba, GRILLA_RES_ANALISIS,
+                               centrada_en_nodos = TRUE)
+  expect_true(all(base$celda_madre %in% analisis$celda_id))
+  expect_true(all(round(analisis$lat_sw * 100) %% 10 == 5))   # bordes impares
+  expect_true(all(round(base$lat_sw * 100) %% 5 == 0))
+  expect_true(all(sf::st_area(base) > units::set_units(0, "m^2")))
+  expect_equal(anyDuplicated(base$celda_id), 0L)
+})
+
+test_that("asignar_celda e indices_consolidados calculan por celda", {
+  analisis <- construir_grilla(area_prueba, GRILLA_RES_ANALISIS,
+                               centrada_en_nodos = TRUE)
+  # 40 detecciones en una celda: una por día del 1 de enero al 9 de febrero
+  # de 2021 (40 días), repartidas en dos años de fuego; 5 en otra celda.
+  fechas <- c(as.Date("2021-01-01") + 0:19, as.Date("2022-01-01") + 20:39)
+  puntos <- sf::st_as_sf(
+    data.frame(id_deteccion = 1:45,
+               acq_date = c(fechas, rep(as.Date("2021-03-01"), 5)),
+               lon = c(rep(-85.18, 40), rep(-85.05, 5)),
+               lat = c(rep(9.92, 40), rep(10.02, 5))),
+    coords = c("lon", "lat"), crs = 4326)
+  celdas <- asignar_celda(puntos, analisis)
+  expect_equal(unique(celdas$celda_id[1:40]), "c0985_m08525")
+  ix <- indices_consolidados(puntos, celdas, anios = 2021:2022, minimo = 30L)
+  grande <- ix[ix$celda_id == "c0985_m08525", ]
+  expect_equal(grande$dtot, 40L)
+  # Días 1-40 desde el 1 de enero (día 123 del año de fuego): 10 % en el
+  # cuarto día, 90 % en el día 36.
+  expect_equal(grande$ini_dia, 123L + 3L)
+  expect_equal(grande$fin_dia, 123L + 35L)
+  expect_equal(grande$lon, 33L)
+  chica <- ix[ix$celda_id != "c0985_m08525", ]
+  expect_equal(chica$dtot, 5L)
+  expect_false(chica$valida)
+  expect_true(is.na(chica$lon))
+  # Restringir los años excluye detecciones.
+  ix21 <- indices_consolidados(puntos, celdas, anios = 2021L, minimo = 1L)
+  expect_equal(ix21$dtot[ix21$celda_id == "c0985_m08525"], 20L)
+})

@@ -321,3 +321,176 @@ grafico_temporada <- function(indices, dest, etiqueta_fuente, fuente) {
                   height = 2.5 + 0.28 * nrow(datos), dpi = 200)
   dest
 }
+
+# --- Ráster consolidado ------------------------------------------------------
+# Ver README, «Ráster consolidado de LON». Temporada climatológica por celda:
+# las detecciones de todos los años del periodo de referencia se agrupan por
+# celda y su distribución en días del año de fuego da INI, FIN y LON con las
+# mismas fracciones. No es el promedio de los LON anuales.
+
+# Años de fuego del periodo de referencia: los completos y no provisionales.
+anios_referencia <- function(indices) {
+  indices$anio_fuego[!indices$parcial & !indices$provisional]
+}
+
+# Índices consolidados por celda. `celdas` es la tabla (id_deteccion,
+# celda_id) de asignar_celda(); `anios`, los años de fuego incluidos. Las
+# celdas con menos de `minimo` detecciones conservan dtot pero llevan NA en
+# los índices; las celdas de la grilla sin detección alguna no aparecen.
+indices_consolidados <- function(puntos, celdas, anios,
+                                 minimo = RASTER_MIN_DETECCIONES,
+                                 fraccion_ini = TEMPORADA_FRACCION_INI,
+                                 fraccion_fin = TEMPORADA_FRACCION_FIN) {
+  df <- puntos |>
+    sf::st_drop_geometry() |>
+    dplyr::select(id_deteccion, acq_date) |>
+    dplyr::inner_join(celdas, by = "id_deteccion") |>
+    dplyr::mutate(anio_fuego = anio_fuego(acq_date),
+                  dia = dia_anio_fuego(acq_date)) |>
+    dplyr::filter(anio_fuego %in% anios)
+  primer_dia <- function(dia, fraccion) {
+    conteo <- table(dia)
+    dias <- as.integer(names(conteo))
+    dias[which(cumsum(conteo) >= fraccion * sum(conteo))[1]]
+  }
+  df |>
+    dplyr::summarise(
+      dtot = dplyr::n(),
+      ini_dia = primer_dia(dia, fraccion_ini),
+      fin_dia = primer_dia(dia, fraccion_fin),
+      .by = celda_id
+    ) |>
+    dplyr::mutate(
+      valida = dtot >= minimo,
+      ini_dia = ifelse(valida, ini_dia, NA_integer_),
+      fin_dia = ifelse(valida, fin_dia, NA_integer_),
+      lon = fin_dia - ini_dia + 1L,
+      anio_inicio = min(anios), anio_fin = max(anios)
+    ) |>
+    dplyr::arrange(celda_id)
+}
+
+tabla_temporada_celdas_csv <- function(consolidado, dest) {
+  dir.create(dirname(dest), recursive = TRUE, showWarnings = FALSE)
+  readr::write_csv(consolidado, dest)
+  dest
+}
+
+# GeoTIFF con una capa por índice sobre la extensión de la grilla de
+# análisis. Los metadatos llevan plataforma, periodo y umbral para que dos
+# rásteres no se comparen sin saber qué hay detrás.
+raster_consolidado <- function(consolidado, grilla, dest, plataforma,
+                               res = GRILLA_RES_ANALISIS,
+                               minimo = RASTER_MIN_DETECCIONES) {
+  b <- sf::st_bbox(grilla)
+  plantilla <- terra::rast(
+    xmin = b[["xmin"]], xmax = b[["xmax"]], ymin = b[["ymin"]],
+    ymax = b[["ymax"]], resolution = res, crs = CRS_WGS84
+  )
+  capas <- c("ini_dia", "fin_dia", "lon", "dtot")
+  datos <- grilla |>
+    sf::st_drop_geometry() |>
+    dplyr::inner_join(consolidado, by = "celda_id")
+  celda <- terra::cellFromXY(plantilla,
+                             cbind(datos$lon_sw + res / 2, datos$lat_sw + res / 2))
+  r <- terra::rast(replicate(length(capas), plantilla, simplify = FALSE))
+  names(r) <- capas
+  for (capa in capas) {
+    r[[capa]][celda] <- datos[[capa]]
+  }
+  terra::metags(r) <- c(
+    plataforma = plataforma,
+    periodo = paste0(min(consolidado$anio_inicio), "-", max(consolidado$anio_fin)),
+    umbral_detecciones = as.character(minimo),
+    # Sin el signo "=" en los valores: terra descarta TODAS las etiquetas si
+    # alguna lo contiene (verificado con terra 1.9-11).
+    definicion = "INI/FIN: dia del anio de fuego (1: 1 set) en que la suma acumulada alcanza 10 %/90 %; LON: FIN - INI + 1"
+  )
+  dir.create(dirname(dest), recursive = TRUE, showWarnings = FALSE)
+  terra::writeRaster(r, dest, overwrite = TRUE, datatype = "INT4S",
+                     NAflag = -9999)
+  dest
+}
+
+# Celdas de la grilla con sus índices, en CRTM05, listas para dibujar: las
+# celdas sin detección alguna no se incluyen; las que no alcanzan el umbral
+# van con índices NA (gris en los mapas).
+celdas_temporada_sf <- function(consolidado, grilla) {
+  # La unión se hace sobre la tabla sin geometría y esta se vuelve a pegar
+  # con st_sf: el método de dplyr para sf solo existe si el paquete está
+  # cargado, y en los qmd no lo está.
+  datos <- dplyr::inner_join(sf::st_drop_geometry(grilla), consolidado,
+                             by = "celda_id")
+  geometria <- sf::st_geometry(grilla)[match(datos$celda_id, grilla$celda_id)]
+  a_crtm05(sf::st_sf(datos, geometry = geometria))
+}
+
+# Cifras para la prosa del reporte.
+ayudantes_temporada_celdas <- function(consolidado) {
+  ok <- consolidado[consolidado$valida, ]
+  ref <- inicio_anio_fuego(2002L)
+  fecha_ref <- function(dia) fecha_es(ref + dia - 1L, con_anio = FALSE)
+  list(
+    n_con_fuego = nrow(consolidado),
+    n_validas = nrow(ok),
+    periodo = paste0(min(consolidado$anio_inicio), "–", max(consolidado$anio_fin)),
+    lon_min = min(ok$lon), lon_max = max(ok$lon),
+    lon_mediana = stats::median(ok$lon),
+    ini_min = fecha_ref(min(ok$ini_dia)), ini_max = fecha_ref(max(ok$ini_dia)),
+    fin_min = fecha_ref(min(ok$fin_dia)), fin_max = fecha_ref(max(ok$fin_dia))
+  )
+}
+
+# Mapa estático de un índice consolidado por celda sobre el límite nacional.
+# `variable`: "lon" (días), "ini_dia" o "fin_dia" (rotulados como fechas).
+grafico_temporada_celdas <- function(consolidado, grilla, area, dest,
+                                     variable, etiqueta_fuente, fuente,
+                                     minimo = RASTER_MIN_DETECCIONES) {
+  celdas <- celdas_temporada_sf(consolidado, grilla)
+  ref <- inicio_anio_fuego(2002L)
+  rotulo <- c(lon = "Longitud (días)", ini_dia = "Inicio (10 %)",
+              fin_dia = "Fin (90 %)")[[variable]]
+  titulo <- c(lon = "Longitud de la temporada de fuego por celda",
+              ini_dia = "Inicio de la temporada de fuego por celda",
+              fin_dia = "Fin de la temporada de fuego por celda")[[variable]]
+  etiquetas_escala <- if (variable == "lon") ggplot2::waiver() else {
+    function(x) format(ref + x - 1L, "%d %b") |>
+      (\(s) paste(sub(" .*", "", s), MESES_ES[lubridate::month(ref + x - 1L)]))()
+  }
+  periodo <- paste0(min(consolidado$anio_inicio), "–", max(consolidado$anio_fin))
+  p <- ggplot2::ggplot() +
+    ggplot2::geom_sf(data = celdas, ggplot2::aes(fill = .data[[variable]]),
+                     color = "white", linewidth = 0.15) +
+    ggplot2::geom_sf(data = area, fill = NA, color = "grey30",
+                     linewidth = 0.4) +
+    # LON: la escala se acota en RASTER_LON_TOPE para que las pocas celdas
+    # sin estación definida (fuego todo el año, LON cercano a 300) no
+    # aplasten el gradiente de 60 a 120 días que domina el Pacífico.
+    ggplot2::scale_fill_viridis_c(
+      option = if (variable == "lon") "inferno" else "viridis",
+      direction = if (variable == "lon") -1 else 1,
+      na.value = "grey85", name = rotulo,
+      limits = if (variable == "lon") c(0, RASTER_LON_TOPE) else NULL,
+      oob = scales::oob_squish,
+      labels = if (variable == "lon") {
+        function(x) ifelse(x >= RASTER_LON_TOPE, paste0("\u2265 ", x), x)
+      } else etiquetas_escala
+    ) +
+    ggplot2::labs(
+      title = titulo,
+      subtitle = paste0("Detecciones de vegetación de los años de fuego ",
+                        periodo, "; celdas de 0,1° con menos de ", minimo,
+                        " detecciones en gris\n", AREA_NOMBRE, ", ",
+                        etiqueta_fuente),
+      caption = fuente
+    ) +
+    ggplot2::theme_minimal() +
+    ggplot2::theme(
+      panel.grid = ggplot2::element_line(color = "grey92", linewidth = 0.3),
+      plot.title = ggplot2::element_text(face = "bold"),
+      legend.position = "right"
+    )
+  dir.create(dirname(dest), recursive = TRUE, showWarnings = FALSE)
+  ggplot2::ggsave(dest, p, width = 9, height = 7, dpi = 200)
+  dest
+}

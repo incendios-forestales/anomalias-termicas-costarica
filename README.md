@@ -363,8 +363,9 @@ vendrán como productos aparte.
   bandas de referencia.
 - Ráster consolidado: una capa por celda de 0,1° para `INI`, `FIN`, `LON` y
   `DTOT` (auxiliar), en GeoTIFF con la plataforma, el periodo de referencia
-  y el umbral en los metadatos; mapa estático de `LON` con las celdas bajo
-  el umbral en gris, y las mismas celdas como capa del mapa interactivo.
+  y el umbral en los metadatos; mapas estáticos de `LON`, `INI` y `FIN` con
+  las celdas bajo el umbral en gris, y las mismas celdas como capa del mapa
+  interactivo.
 
 ### Referencias
 

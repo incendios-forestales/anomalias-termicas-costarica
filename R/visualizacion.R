@@ -111,7 +111,8 @@ animar_detecciones <- function(puntos, area, mensual, archivos_worldcover,
 crear_mapa_temporal <- function(puntos, area_web, cobertura, archivos_worldcover,
                                 bbox, etiqueta_quemas,
                                 areas_conservacion = NULL, quemas = NULL,
-                                meses_recientes = 24) {
+                                meses_recientes = 24,
+                                celdas_temporada = NULL) {
   # Clase de cobertura dominante por detección, unida por id_deteccion (la
   # llave estable que asigna a_sf_puntos(); nada depende del orden de filas).
   puntos_wgs84 <- sf::st_transform(puntos, CRS_WGS84) |>
@@ -157,6 +158,7 @@ crear_mapa_temporal <- function(puntos, area_web, cobertura, archivos_worldcover
   GRUPO_LIMITE    <- AREA_LIMITE_LABEL
   GRUPO_REGISTRO  <- "Registro completo (sin popups)"
   GRUPO_QUEMAS    <- paste0(etiqueta_quemas, " — ventana reciente")
+  GRUPO_TEMPORADA <- "Temporada de fuego por celda (LON)"
   # Los píxeles quemados llevan layerId propio para que el deslizador pueda
   # mostrarlos u ocultarlos uno por uno (ver onRender). Solo se embeben los
   # de la ventana reciente: los históricos a escala nacional son demasiados.
@@ -213,6 +215,44 @@ crear_mapa_temporal <- function(puntos, area_web, cobertura, archivos_worldcover
       )
   }
 
+  # Temporada de fuego consolidada por celda (ver R/temporada.R), conmutable
+  # y oculta al inicio: color por longitud, gris bajo el umbral, y los tres
+  # índices en el popup como fechas del año de fuego de referencia.
+  hay_celdas <- !is.null(celdas_temporada) && nrow(celdas_temporada) > 0
+  if (hay_celdas) {
+    ref <- inicio_anio_fuego(2002L)
+    a_fecha <- function(dia) ifelse(is.na(dia), "—",
+                                    fecha_es(ref + dia - 1L, con_anio = FALSE))
+    paleta_lon <- leaflet::colorNumeric(rev(viridisLite::inferno(256)),
+                                        domain = celdas_temporada$lon,
+                                        na.color = "#bdbdbd")
+    celdas_wgs84 <- sf::st_transform(celdas_temporada, CRS_WGS84) |>
+      dplyr::mutate(
+        popup_celda = paste0(
+          "<strong>Celda ", celda_id, "</strong>",
+          "<br><strong>Detecciones ", anio_inicio, "–", anio_fin, ":</strong> ",
+          dtot,
+          ifelse(valida, paste0(
+            "<br><strong>Inicio (10 %):</strong> ", a_fecha(ini_dia),
+            "<br><strong>Fin (90 %):</strong> ", a_fecha(fin_dia),
+            "<br><strong>Longitud:</strong> ", lon, " días"
+          ), "<br><em>Bajo el umbral: sin índices</em>")
+        )
+      )
+    m <- m |>
+      leaflet::addPolygons(
+        data = celdas_wgs84, group = GRUPO_TEMPORADA,
+        fillColor = ~paleta_lon(lon), fillOpacity = 0.55,
+        color = "#ffffff", weight = 0.6,
+        popup = ~popup_celda
+      ) |>
+      leaflet::addLegend(
+        pal = paleta_lon, values = celdas_wgs84$lon[celdas_wgs84$valida],
+        title = "Longitud de la<br>temporada (días)", position = "bottomleft",
+        group = GRUPO_TEMPORADA, na.label = "Bajo el umbral"
+      )
+  }
+
   # Píxeles de área quemada (ventana reciente), conmutables y ocultos al
   # inicio. Se agregan antes del límite nacional y de las detecciones para
   # quedar debajo de ambos. Los píxeles son rectángulos de 4 vértices: basta
@@ -265,13 +305,15 @@ crear_mapa_temporal <- function(puntos, area_web, cobertura, archivos_worldcover
                         GRUPO_REGISTRO,
                         if (hay_quemas) GRUPO_QUEMAS,
                         GRUPO_LIMITE, GRUPO_COBERTURA,
-                        if (!is.null(areas_conservacion)) GRUPO_AC),
+                        if (!is.null(areas_conservacion)) GRUPO_AC,
+                        if (hay_celdas) GRUPO_TEMPORADA),
       position = "topright"
     ) |>
     leaflet::hideGroup(c(GRUPO_REGISTRO,
                          if (hay_quemas) GRUPO_QUEMAS,
                          GRUPO_COBERTURA,
-                         if (!is.null(areas_conservacion)) GRUPO_AC)) |>
+                         if (!is.null(areas_conservacion)) GRUPO_AC,
+                         if (hay_celdas) GRUPO_TEMPORADA)) |>
     # Botón de pantalla completa con la API Fullscreen del navegador y el
     # plugin EasyButton (incluido en el paquete leaflet base): evita agregar
     # leaflet.extras solo para este control. Safari usa el prefijo webkit.
