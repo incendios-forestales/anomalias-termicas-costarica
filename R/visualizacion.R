@@ -223,33 +223,50 @@ crear_mapa_temporal <- function(puntos, area_web, cobertura, archivos_worldcover
     ref <- inicio_anio_fuego(2002L)
     a_fecha <- function(dia) ifelse(is.na(dia), "—",
                                     fecha_es(ref + dia - 1L, con_anio = FALSE))
+    COLOR_SIN_ESTACION <- "#6baed6"
+    COLOR_BAJO_UMBRAL  <- "#bdbdbd"
     paleta_lon <- leaflet::colorNumeric(rev(viridisLite::inferno(256)),
                                         domain = celdas_temporada$lon,
-                                        na.color = "#bdbdbd")
+                                        na.color = COLOR_BAJO_UMBRAL)
     celdas_wgs84 <- sf::st_transform(celdas_temporada, CRS_WGS84) |>
       dplyr::mutate(
+        color_celda = dplyr::case_when(
+          sin_estacion ~ COLOR_SIN_ESTACION,
+          !valida ~ COLOR_BAJO_UMBRAL,
+          TRUE ~ paleta_lon(lon)
+        ),
         popup_celda = paste0(
           "<strong>Celda ", celda_id, "</strong>",
           "<br><strong>Detecciones ", anio_inicio, "–", anio_fin, ":</strong> ",
           dtot,
-          ifelse(valida, paste0(
-            "<br><strong>Inicio (10 %):</strong> ", a_fecha(ini_dia),
-            "<br><strong>Fin (90 %):</strong> ", a_fecha(fin_dia),
-            "<br><strong>Longitud:</strong> ", lon, " días"
-          ), "<br><em>Bajo el umbral: sin índices</em>")
+          "<br><strong>Fuera de diciembre a mayo:</strong> ", num_es(fuera, 0), " %",
+          dplyr::case_when(
+            sin_estacion ~ "<br><em>Sin estación definida (bimodal o fuego todo el año): sin índices</em>",
+            !valida ~ "<br><em>Bajo el umbral de detecciones: sin índices</em>",
+            TRUE ~ paste0(
+              "<br><strong>Inicio (10 %):</strong> ", a_fecha(ini_dia),
+              "<br><strong>Fin (90 %):</strong> ", a_fecha(fin_dia),
+              "<br><strong>Longitud:</strong> ", lon, " días"
+            )
+          )
         )
       )
     m <- m |>
       leaflet::addPolygons(
         data = celdas_wgs84, group = GRUPO_TEMPORADA,
-        fillColor = ~paleta_lon(lon), fillOpacity = 0.55,
+        fillColor = ~color_celda, fillOpacity = 0.55,
         color = "#ffffff", weight = 0.6,
         popup = ~popup_celda
       ) |>
       leaflet::addLegend(
-        pal = paleta_lon, values = celdas_wgs84$lon[celdas_wgs84$valida],
+        pal = paleta_lon, values = celdas_wgs84$lon[!is.na(celdas_wgs84$lon)],
         title = "Longitud de la<br>temporada (días)", position = "bottomleft",
         group = GRUPO_TEMPORADA, na.label = "Bajo el umbral"
+      ) |>
+      leaflet::addLegend(
+        colors = c(COLOR_SIN_ESTACION, COLOR_BAJO_UMBRAL),
+        labels = c("Sin estación definida", "Bajo el umbral"),
+        position = "bottomleft", group = GRUPO_TEMPORADA, opacity = 0.55
       )
   }
 

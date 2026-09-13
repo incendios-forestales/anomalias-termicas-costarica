@@ -279,19 +279,30 @@ interanual espacial corresponde a las áreas de conservación. Las celdas con
 menos de `r RASTER_MIN_DETECCIONES` detecciones acumuladas quedan sin
 índices y se dibujan en gris.
 
+La definición supone una sola temporada por celda. En las llanuras del
+norte y la vertiente Caribe la lluvia tiene dos periodos relativamente
+secos, de febrero a abril y el veranillo de setiembre y octubre, y el fuego
+sigue el calendario agrícola: la distribución de fechas tiene dos picos y
+el intervalo del 10 al 90 % abarcaría también los meses vacíos entre
+ambos, leyéndose como una temporada larga que no existe. Por eso cada
+celda lleva su **fracción de detecciones fuera de diciembre a mayo**
+(`FUERA`), y las que superan el `r RASTER_FUERA_MAX_PCT` % se marcan **sin
+estación definida**: quedan sin `INI`, `FIN` ni `LON` y se dibujan con
+trama.
+
 ![](`r file.path("..", tar_read(fig_temporada_celdas_modis, store = almacen))`)
 
 De las `r tc$n_con_fuego` celdas con alguna detección, `r tc$n_validas`
-alcanzan el umbral; en ellas la temporada consolidada dura entre
-`r tc$lon_min` y `r tc$lon_max` días (mediana `r tc$lon_mediana`). El
+alcanzan el umbral y `r tc$n_sin_estacion` de ellas quedan sin estación
+definida, con entre `r tc$fuera_sin_estacion` % de sus detecciones fuera
+de diciembre a mayo (en las demás la mediana es `r tc$fuera_mediana_unimodal`
+%). En las `r tc$n_con_indices` celdas con índices la temporada consolidada
+dura entre `r tc$lon_min` y `r tc$lon_max` días (mediana
+`r tc$lon_mediana`). El
 inicio más temprano de celda cae el `r tc$ini_min` y el más tardío el
-`r tc$ini_max`; el fin, entre el `r tc$fin_min` y el `r tc$fin_max`. Las
-pocas celdas con más de 200 días, en las llanuras del norte, no tienen una
-estación definida: el fuego aparece a lo largo de todo el año, con conteos
-cercanos al umbral. En el mapa de longitud la escala de color se acota en
-`r RASTER_LON_TOPE` días para que esas celdas no aplasten el gradiente de
-60 a 120 días que domina el Pacífico; el valor completo está en el ráster
-y en la tabla.
+`r tc$ini_max`; el fin, entre el `r tc$fin_min` y el `r tc$fin_max`. En el
+mapa de longitud la escala de color se acota en `r RASTER_LON_TOPE` días;
+el valor completo está en el ráster y en la tabla.
 
 ::: {layout-ncol=2}
 ![](`r file.path("..", tar_read(fig_temporada_celdas_ini_modis, store = almacen))`)
@@ -307,7 +318,7 @@ Los índices por celda están disponibles como
 [CSV](`r file.path("..", tar_read(tabla_temporada_celdas_modis, store = almacen))`)
 y como
 [GeoTIFF](`r file.path("..", tar_read(raster_temporada_modis, store = almacen))`)
-con una capa por índice; las mismas celdas pueden activarse como capa del
+con una capa por índice, incluida `FUERA`; las mismas celdas pueden activarse como capa del
 [mapa interactivo](#mapa-interactivo).
 
 ### Detecciones excluidas por tipo de fuente

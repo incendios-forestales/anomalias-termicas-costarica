@@ -337,8 +337,13 @@ anios_referencia <- function(indices) {
 # celda_id) de asignar_celda(); `anios`, los años de fuego incluidos. Las
 # celdas con menos de `minimo` detecciones conservan dtot pero llevan NA en
 # los índices; las celdas de la grilla sin detección alguna no aparecen.
+# `fuera` es el porcentaje de detecciones fuera de los meses de referencia
+# (dic-may): por encima de `fuera_max` la celda es bimodal o sin estación
+# definida y sus INI, FIN y LON se anulan (ver README, «Celdas bimodales»).
 indices_consolidados <- function(puntos, celdas, anios,
                                  minimo = RASTER_MIN_DETECCIONES,
+                                 fuera_max = RASTER_FUERA_MAX_PCT,
+                                 meses_referencia = TEMPORADA_REFERENCIA_MESES,
                                  fraccion_ini = TEMPORADA_FRACCION_INI,
                                  fraccion_fin = TEMPORADA_FRACCION_FIN) {
   df <- puntos |>
@@ -346,7 +351,8 @@ indices_consolidados <- function(puntos, celdas, anios,
     dplyr::select(id_deteccion, acq_date) |>
     dplyr::inner_join(celdas, by = "id_deteccion") |>
     dplyr::mutate(anio_fuego = anio_fuego(acq_date),
-                  dia = dia_anio_fuego(acq_date)) |>
+                  dia = dia_anio_fuego(acq_date),
+                  en_temporada = lubridate::month(acq_date) %in% meses_referencia) |>
     dplyr::filter(anio_fuego %in% anios)
   primer_dia <- function(dia, fraccion) {
     conteo <- table(dia)
@@ -356,17 +362,22 @@ indices_consolidados <- function(puntos, celdas, anios,
   df |>
     dplyr::summarise(
       dtot = dplyr::n(),
+      fuera = round(100 * mean(!en_temporada), 1),
       ini_dia = primer_dia(dia, fraccion_ini),
       fin_dia = primer_dia(dia, fraccion_fin),
       .by = celda_id
     ) |>
     dplyr::mutate(
       valida = dtot >= minimo,
-      ini_dia = ifelse(valida, ini_dia, NA_integer_),
-      fin_dia = ifelse(valida, fin_dia, NA_integer_),
+      sin_estacion = valida & fuera > fuera_max,
+      con_indices = valida & !sin_estacion,
+      ini_dia = ifelse(con_indices, ini_dia, NA_integer_),
+      fin_dia = ifelse(con_indices, fin_dia, NA_integer_),
       lon = fin_dia - ini_dia + 1L,
       anio_inicio = min(anios), anio_fin = max(anios)
     ) |>
+    dplyr::select(celda_id, dtot, fuera, ini_dia, fin_dia, lon, valida,
+                  sin_estacion, anio_inicio, anio_fin) |>
     dplyr::arrange(celda_id)
 }
 
@@ -381,13 +392,14 @@ tabla_temporada_celdas_csv <- function(consolidado, dest) {
 # rásteres no se comparen sin saber qué hay detrás.
 raster_consolidado <- function(consolidado, grilla, dest, plataforma,
                                res = GRILLA_RES_ANALISIS,
-                               minimo = RASTER_MIN_DETECCIONES) {
+                               minimo = RASTER_MIN_DETECCIONES,
+                               fuera_max = RASTER_FUERA_MAX_PCT) {
   b <- sf::st_bbox(grilla)
   plantilla <- terra::rast(
     xmin = b[["xmin"]], xmax = b[["xmax"]], ymin = b[["ymin"]],
     ymax = b[["ymax"]], resolution = res, crs = CRS_WGS84
   )
-  capas <- c("ini_dia", "fin_dia", "lon", "dtot")
+  capas <- c("ini_dia", "fin_dia", "lon", "fuera", "dtot")
   datos <- grilla |>
     sf::st_drop_geometry() |>
     dplyr::inner_join(consolidado, by = "celda_id")
@@ -395,6 +407,7 @@ raster_consolidado <- function(consolidado, grilla, dest, plataforma,
                              cbind(datos$lon_sw + res / 2, datos$lat_sw + res / 2))
   r <- terra::rast(replicate(length(capas), plantilla, simplify = FALSE))
   names(r) <- capas
+  datos$fuera <- round(datos$fuera)
   for (capa in capas) {
     r[[capa]][celda] <- datos[[capa]]
   }
@@ -402,9 +415,13 @@ raster_consolidado <- function(consolidado, grilla, dest, plataforma,
     plataforma = plataforma,
     periodo = paste0(min(consolidado$anio_inicio), "-", max(consolidado$anio_fin)),
     umbral_detecciones = as.character(minimo),
+    umbral_fuera_pct = as.character(fuera_max),
     # Sin el signo "=" en los valores: terra descarta TODAS las etiquetas si
     # alguna lo contiene (verificado con terra 1.9-11).
-    definicion = "INI/FIN: dia del anio de fuego (1: 1 set) en que la suma acumulada alcanza 10 %/90 %; LON: FIN - INI + 1"
+    definicion = paste0("INI/FIN: dia del anio de fuego (1: 1 set) en que la suma ",
+                        "acumulada alcanza 10 %/90 %; LON: FIN - INI + 1; FUERA: % de ",
+                        "detecciones fuera de dic-may (celdas por encima del umbral ",
+                        "quedan sin INI/FIN/LON: sin estacion definida)")
   )
   dir.create(dirname(dest), recursive = TRUE, showWarnings = FALSE)
   terra::writeRaster(r, dest, overwrite = TRUE, datatype = "INT4S",
@@ -427,12 +444,18 @@ celdas_temporada_sf <- function(consolidado, grilla) {
 
 # Cifras para la prosa del reporte.
 ayudantes_temporada_celdas <- function(consolidado) {
-  ok <- consolidado[consolidado$valida, ]
+  ok <- consolidado[!is.na(consolidado$lon), ]
+  bim <- consolidado[consolidado$sin_estacion, ]
   ref <- inicio_anio_fuego(2002L)
   fecha_ref <- function(dia) fecha_es(ref + dia - 1L, con_anio = FALSE)
   list(
     n_con_fuego = nrow(consolidado),
-    n_validas = nrow(ok),
+    n_validas = sum(consolidado$valida),
+    n_con_indices = nrow(ok),
+    n_sin_estacion = nrow(bim),
+    fuera_sin_estacion = if (nrow(bim) > 0) paste0(num_es(min(bim$fuera), 0), " y ",
+                                                   num_es(max(bim$fuera), 0)) else "",
+    fuera_mediana_unimodal = num_es(stats::median(ok$fuera), 0),
     periodo = paste0(min(consolidado$anio_inicio), "–", max(consolidado$anio_fin)),
     lon_min = min(ok$lon), lon_max = max(ok$lon),
     lon_mediana = stats::median(ok$lon),
@@ -441,12 +464,31 @@ ayudantes_temporada_celdas <- function(consolidado) {
   )
 }
 
+# Trama diagonal (tres líneas por celda) para marcar celdas en un mapa sin
+# depender de paquetes de patrones: líneas sf en el CRS de las celdas.
+trama_celdas <- function(celdas) {
+  if (nrow(celdas) == 0) {
+    return(sf::st_sf(geometry = sf::st_sfc(crs = sf::st_crs(celdas))))
+  }
+  lineas <- lapply(seq_len(nrow(celdas)), function(i) {
+    b <- sf::st_bbox(celdas[i, ])
+    w <- b[["xmax"]] - b[["xmin"]]; h <- b[["ymax"]] - b[["ymin"]]
+    sf::st_multilinestring(list(
+      rbind(c(b[["xmin"]], b[["ymin"]]), c(b[["xmax"]], b[["ymax"]])),
+      rbind(c(b[["xmin"]], b[["ymin"]] + h / 2), c(b[["xmax"]] - w / 2, b[["ymax"]])),
+      rbind(c(b[["xmin"]] + w / 2, b[["ymin"]]), c(b[["xmax"]], b[["ymax"]] - h / 2))
+    ))
+  })
+  sf::st_sf(geometry = sf::st_sfc(lineas, crs = sf::st_crs(celdas)))
+}
+
 # Mapa estático de un índice consolidado por celda sobre el límite nacional.
 # `variable`: "lon" (días), "ini_dia" o "fin_dia" (rotulados como fechas).
 grafico_temporada_celdas <- function(consolidado, grilla, area, dest,
                                      variable, etiqueta_fuente, fuente,
                                      minimo = RASTER_MIN_DETECCIONES) {
   celdas <- celdas_temporada_sf(consolidado, grilla)
+  trama <- trama_celdas(celdas[celdas$sin_estacion, ])
   ref <- inicio_anio_fuego(2002L)
   rotulo <- c(lon = "Longitud (días)", ini_dia = "Inicio (10 %)",
               fin_dia = "Fin (90 %)")[[variable]]
@@ -461,6 +503,9 @@ grafico_temporada_celdas <- function(consolidado, grilla, area, dest,
   p <- ggplot2::ggplot() +
     ggplot2::geom_sf(data = celdas, ggplot2::aes(fill = .data[[variable]]),
                      color = "white", linewidth = 0.15) +
+    ggplot2::geom_sf(data = celdas[celdas$sin_estacion, ], fill = "#deebf7",
+                     color = "white", linewidth = 0.15) +
+    ggplot2::geom_sf(data = trama, color = "grey35", linewidth = 0.35) +
     ggplot2::geom_sf(data = area, fill = NA, color = "grey30",
                      linewidth = 0.4) +
     # LON: la escala se acota en RASTER_LON_TOPE para que las pocas celdas
@@ -481,8 +526,10 @@ grafico_temporada_celdas <- function(consolidado, grilla, area, dest,
       title = titulo,
       subtitle = paste0("Detecciones de vegetación de los años de fuego ",
                         periodo, "; celdas de 0,1° con menos de ", minimo,
-                        " detecciones en gris\n", AREA_NOMBRE, ", ",
-                        etiqueta_fuente),
+                        " detecciones en gris;\ncon trama, sin estación ",
+                        "definida (más de ", RASTER_FUERA_MAX_PCT,
+                        " % de las detecciones fuera de diciembre a mayo)\n",
+                        AREA_NOMBRE, ", ", etiqueta_fuente),
       caption = fuente
     ) +
     ggplot2::theme_minimal() +

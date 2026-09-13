@@ -165,7 +165,33 @@ test_that("asignar_celda e indices_consolidados calculan por celda", {
   expect_equal(chica$dtot, 5L)
   expect_false(chica$valida)
   expect_true(is.na(chica$lon))
+  expect_equal(grande$fuera, 0)          # todo entre enero y febrero
+  expect_false(grande$sin_estacion)
   # Restringir los años excluye detecciones.
   ix21 <- indices_consolidados(puntos, celdas, anios = 2021L, minimo = 1L)
   expect_equal(ix21$dtot[ix21$celda_id == "c0985_m08525"], 20L)
+})
+
+test_that("una celda bimodal queda sin estación definida", {
+  analisis <- construir_grilla(area_prueba, GRILLA_RES_ANALISIS,
+                               centrada_en_nodos = TRUE)
+  # 20 detecciones en marzo y 20 en setiembre de 2021: 50 % fuera de dic-may.
+  puntos <- sf::st_as_sf(
+    data.frame(id_deteccion = 1:40,
+               acq_date = c(as.Date("2021-03-01") + 0:19,
+                            as.Date("2021-09-05") + 0:19),
+               lon = -85.18, lat = 9.92),
+    coords = c("lon", "lat"), crs = 4326)
+  celdas <- asignar_celda(puntos, analisis)
+  ix <- indices_consolidados(puntos, celdas, anios = 2021:2022, minimo = 30L)
+  expect_equal(ix$fuera, 50)
+  expect_true(ix$valida)
+  expect_true(ix$sin_estacion)
+  expect_true(is.na(ix$lon) && is.na(ix$ini_dia))
+  # Con un umbral más permisivo sí se calcula y abarca ambos picos.
+  ix2 <- indices_consolidados(puntos, celdas, anios = 2021:2022, minimo = 30L,
+                              fuera_max = 60)
+  expect_false(ix2$sin_estacion)
+  expect_gt(ix2$lon, 150)
+  expect_equal(nrow(trama_celdas(celdas_temporada_sf(ix, analisis))), 1L)
 })

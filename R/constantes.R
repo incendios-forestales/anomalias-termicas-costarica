@@ -173,3 +173,11 @@ RASTER_MIN_DETECCIONES <- 30L
 # fuego todo el año (LON ~300) se pintan como "≥ tope" para no aplastar el
 # gradiente de 60-120 días del Pacífico. El valor real queda en el ráster.
 RASTER_LON_TOPE <- 180L
+
+# Temporada de referencia para el indicador de bimodalidad FUERA: meses de
+# diciembre a mayo, unión de la época seca del IMN (dic-abr) y la temporada
+# del SINAC (ene-may). Una celda con más de RASTER_FUERA_MAX_PCT % de sus
+# detecciones fuera de esos meses se marca "sin estación definida" (ver
+# README, «Celdas bimodales»).
+TEMPORADA_REFERENCIA_MESES <- c(12L, 1L, 2L, 3L, 4L, 5L)
+RASTER_FUERA_MAX_PCT       <- 25

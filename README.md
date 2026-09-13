@@ -252,6 +252,20 @@ estacionalidad.
 Las series mensuales, los videos y los mapas publicados siguen incluyendo
 todos los tipos: son anomalías térmicas en sentido amplio.
 
+**No se aplica umbral de confianza.** La confianza de MODIS (0–100; FIRMS
+llama «baja» a < 30 y «alta» a ≥ 80) se probó como filtro sobre la serie de
+vegetación 2002–2025 antes de descartarla: con ≥ 30 se pierde el 4 % de las
+detecciones y `LON` anual cambia en promedio 0,8 días (3 como máximo); con
+≥ 50, el 16 % y 2 días (8 como máximo); con ≥ 80, el 71 %, la mitad de los
+años cae bajo el mínimo de 300 y `LON` cambia 11 días en promedio. Además,
+la confianza alta selecciona fuegos grandes (FRP mediana de 31 MW frente a
+12 MW) y nocturnos, y es estacional (mediana 72 de enero a abril, 55–61 de
+junio a noviembre), de modo que un umbral elimina preferentemente las
+detecciones fuera de temporada sin haber demostrado que sean falsas. Por
+último, la confianza de VIIRS es categórica (baja, nominal, alta) y con
+otro algoritmo, así que un umbral numérico rompería la simetría entre
+plataformas.
+
 ### Serie diaria
 
 Base de los índices: una fila por día del año de fuego con el número de
@@ -344,6 +358,37 @@ elipse del footprint no importan.
 de referencia quedan en NA y se dibujan en gris. Es distinto del umbral de
 300 de la tabla anual, que aplica al total nacional de un año.
 
+**Celdas bimodales.** La definición de `INI` y `FIN` por percentiles
+acumulados supone una sola temporada. En una celda con dos picos de fuego
+separados por meses sin detecciones, el 10 % cae al inicio del primero y el
+90 % al final del segundo, y `LON` abarca también el vacío entre ambos: el
+número es correcto según la definición pero no significa «temporada larga».
+En Costa Rica ocurre en las llanuras del norte y la vertiente Caribe, donde
+la lluvia tiene dos periodos relativamente secos (febrero a abril y el
+veranillo de setiembre y octubre) y el fuego sigue el calendario agrícola,
+no una estación seca (Benali et al. 2017 muestran que estas temporadas
+bimodales son en gran parte de origen humano). Con MODIS, en la celda de
+Boca San Carlos las detecciones de 2002–2025 tienen un pico en abril y otro
+en setiembre, julio en cero y `LON` = 266.
+
+El indicador es la **fracción fuera de temporada** (`FUERA`): proporción de
+las detecciones de la celda, en el periodo de referencia, cuya fecha cae
+fuera de diciembre a mayo, la unión de la época seca del IMN y la temporada
+del SINAC. En las celdas unimodales del Pacífico ronda el 2 %; en las
+bimodales, entre 21 y 59 %. Las celdas con `FUERA` > 25 % se marcan como
+**sin estación definida**: `INI`, `FIN` y `LON` quedan en NA en el ráster
+y en la tabla, `FUERA` se publica como capa propia y los mapas las dibujan
+con trama en lugar de color, para que no se lean como temporadas largas ni
+desaparezcan como si no tuvieran fuego. Con MODIS son 4 de 163 celdas
+válidas (todas en las llanuras de San Carlos); el 97 % restante es
+unimodal, así que la definición se mantiene y solo se marcan las
+excepciones. Un umbral de confianza no las corrige: las detecciones fuera
+de temporada tienen confianza nominal, como el 67 % del registro (ver
+«Detecciones incluidas»). La extensión natural, dos pares de `INI` y `FIN`
+por celda al estilo de Dunning et al. (2016) para lluvias bimodales, queda
+como trabajo futuro; la concentración circular de las fechas sería la
+alternativa general al indicador, más abstracta y por eso no adoptada.
+
 **Plataformas.** El ráster se calcula por plataforma, sobre la misma
 grilla y con el mismo umbral, y nunca juntando las detecciones de dos
 plataformas: VIIRS produce cinco veces más detecciones por año que MODIS y
@@ -361,10 +406,11 @@ vendrán como productos aparte.
 - Figura de temporada: un segmento por año de `INI` a `FIN`, ordenado
   cronológicamente, con enero a mayo (SINAC) y diciembre a abril (IMN) como
   bandas de referencia.
-- Ráster consolidado: una capa por celda de 0,1° para `INI`, `FIN`, `LON` y
-  `DTOT` (auxiliar), en GeoTIFF con la plataforma, el periodo de referencia
-  y el umbral en los metadatos; mapas estáticos de `LON`, `INI` y `FIN` con
-  las celdas bajo el umbral en gris, y las mismas celdas como capa del mapa
+- Ráster consolidado: una capa por celda de 0,1° para `INI`, `FIN`, `LON`,
+  `FUERA` y `DTOT` (auxiliar), en GeoTIFF con la plataforma, el periodo de
+  referencia y los umbrales en los metadatos; mapas estáticos de `LON`,
+  `INI` y `FIN` con las celdas bajo el umbral en gris y las celdas sin
+  estación definida con trama, y las mismas celdas como capa del mapa
   interactivo.
 
 ### Referencias
