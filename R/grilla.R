@@ -57,6 +57,10 @@ construir_grilla <- function(area, res, centrada_en_nodos) {
   )
   toca <- lengths(sf::st_intersects(grilla, area_wgs84)) > 0
   grilla <- grilla[toca, ]
+  # Superficie terrestre de cada celda (km², en CRTM05): su intersección con
+  # el área. Es el denominador de la densidad; las celdas de costa tienen
+  # una fracción pequeña de tierra.
+  grilla$area_km2 <- area_terrestre_km2(grilla, area)
   if (!centrada_en_nodos) {
     madre <- esquina_sw(grilla$lat_sw + res / 2, grilla$lon_sw + res / 2,
                         GRILLA_RES_ANALISIS, centrada_en_nodos = TRUE)
@@ -64,6 +68,18 @@ construir_grilla <- function(area, res, centrada_en_nodos) {
   }
   rownames(grilla) <- NULL
   grilla
+}
+
+# Superficie terrestre (km²) de cada celda: intersección con el área en
+# CRTM05, sumada por celda (una celda puede cortar el área en varias piezas).
+area_terrestre_km2 <- function(grilla, area) {
+  celdas_m <- a_crtm05(grilla)
+  union_m <- sf::st_union(a_crtm05(area))
+  piezas <- suppressWarnings(sf::st_intersection(celdas_m, union_m))
+  areas <- tapply(as.numeric(sf::st_area(piezas)) / 1e6, piezas$celda_id, sum)
+  out <- as.numeric(areas[grilla$celda_id])
+  out[is.na(out)] <- 0
+  round(out, 3)
 }
 
 # Celda de análisis de cada detección: tabla (id_deteccion, celda_id). Se

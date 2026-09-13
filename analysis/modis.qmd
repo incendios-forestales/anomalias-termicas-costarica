@@ -126,7 +126,8 @@ worldcover <- tar_read(archivos_worldcover, store = almacen)
 bbox <- tar_read(bbox_descarga, store = almacen)
 ac_web <- tar_read(ac_web, store = almacen)
 celdas_mapa <- celdas_temporada_sf(tar_read(temporada_celdas_modis, store = almacen),
-                                   tar_read(grilla_analisis, store = almacen))
+                                   tar_read(grilla_analisis, store = almacen),
+                                   solo_con_fuego = TRUE)
 crear_mapa_temporal(firms_pais, pais_web, cobertura_mapa, worldcover, bbox,
                     etq$etiqueta_quemas, ac_web,
                     quemas = area_quemada_pais,
@@ -353,6 +354,38 @@ sola y la razón tiende a 0,5 sin significar nada: la cumplen
 
 ![](`r file.path("..", tar_read(fig_temporada_celdas_n50f_modis, store = almacen))`)
 
+### Frecuencia y densidad por celda
+
+Los índices anteriores dicen cuándo y cómo llega el fuego; estos dicen
+dónde y cuánto, y son el mapa más antiguo de la pirogeografía satelital
+(Giglio et al. 2006; Chuvieco et al. 2008). Para cada celda de la grilla,
+incluidas las que nunca tuvieron fuego, `FREC` es la fracción de años con
+al menos una detección, una probabilidad empírica de fuego anual, y `DENS`
+las detecciones por km² de superficie terrestre y por año. Como dependen
+del conteo absoluto y no de fracciones, se calculan sobre el **periodo
+base `r tc$periodo_base`**, los veinte años de fuego con Terra y Aqua
+completos y sin deriva orbital, y describen ese periodo y no el presente.
+Las celdas con menos de `r RASTER_MIN_AREA_KM2` km² de tierra, fragmentos
+de costa, quedan en gris.
+
+::: {layout-ncol=2}
+![](`r file.path("..", tar_read(fig_temporada_celdas_frec_modis, store = almacen))`)
+
+![](`r file.path("..", tar_read(fig_temporada_celdas_dens_modis, store = almacen))`)
+:::
+
+De las `r tc$n_celdas_grilla` celdas que tocan el país,
+`r tc$n_sin_fuego_base` no tuvieron ninguna detección de vegetación en el
+periodo base. En el otro extremo, `r tc$n_frec_alta` celdas arden tres de
+cada cuatro años o más: Guanacaste y la zona norte, el Pacífico central y
+las sabanas del Pacífico sur; `r tc$n_frec_baja` lo hacen menos de uno de
+cada cuatro, y son la mayor parte del Caribe y las cordilleras. La densidad
+mediana entre las celdas con fuego es de `r tc$dens_mediana_con_fuego`
+detecciones por km² y año, con un máximo de `r tc$dens_max`. Las
+densidades son propias de MODIS y no se comparan con las de VIIRS, que ve
+unas cinco veces más detecciones; sí se comparan entre celdas de este
+mapa.
+
 La grilla es común a las cuatro plataformas y a las variables climáticas
 que se incorporen después (celda base de 0,05° alineada a CHIRPS; celda de
 análisis de 0,1° centrada en los nodos de ERA5-Land), y el ráster se
@@ -361,8 +394,8 @@ Los índices por celda están disponibles como
 [CSV](`r file.path("..", tar_read(tabla_temporada_celdas_modis, store = almacen))`)
 y como
 [GeoTIFF](`r file.path("..", tar_read(raster_temporada_modis, store = almacen))`)
-con seis bandas con nombre: `ini_dia`, `fin_dia`, `lon`, `fuera`, `n50f`
-y `dtot`. Un SIG como QGIS abre por defecto un ráster de varias bandas
+con ocho bandas con nombre: `ini_dia`, `fin_dia`, `lon`, `fuera`, `n50f`,
+`dtot`, `frec` y `dens`. Un SIG como QGIS abre por defecto un ráster de varias bandas
 como «color multibanda» con las tres primeras, lo que parece un archivo de
 tres capas: para ver un índice hay que elegir la simbología «pseudocolor
 monobanda» y la banda por su nombre. El archivo de estilo

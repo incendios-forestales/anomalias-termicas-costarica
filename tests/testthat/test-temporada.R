@@ -231,3 +231,61 @@ test_that("N50F por celda usa las fechas reales y su propio umbral", {
   expect_false(ix2$valida_n50f)
   expect_true(is.na(ix2$n50f))
 })
+
+
+test_that("la grilla conoce la superficie terrestre de cada celda", {
+  analisis <- construir_grilla(area_prueba, GRILLA_RES_ANALISIS,
+                               centrada_en_nodos = TRUE)
+  expect_true(all(analisis$area_km2 > 0))
+  # Una celda entera de 0,1° a ~10 N mide ~121 km²; ninguna puede superarlo.
+  expect_true(all(analisis$area_km2 <= 125))
+  # La suma de las piezas es el área del rectángulo de prueba (~0,3° × 0,3°).
+  total <- as.numeric(sf::st_area(a_crtm05(area_prueba))) / 1e6
+  expect_equal(sum(analisis$area_km2), total, tolerance = 0.01)
+})
+
+test_that("indices_frecuencia cubre toda la grilla y usa el periodo base", {
+  analisis <- construir_grilla(area_prueba, GRILLA_RES_ANALISIS,
+                               centrada_en_nodos = TRUE)
+  # 6 detecciones en una celda: 4 en el año de fuego 2020 y 2 en 2022; nada
+  # en 2021 ni 2023. Periodo base 2020-2023: FREC = 2/4.
+  puntos <- sf::st_as_sf(
+    data.frame(id_deteccion = 1:6,
+               acq_date = as.Date(c("2020-03-01", "2020-03-02", "2020-03-03",
+                                    "2020-04-01", "2022-02-10", "2022-02-11")),
+               lon = -85.18, lat = 9.92),
+    coords = c("lon", "lat"), crs = 4326)
+  celdas <- asignar_celda(puntos, analisis)
+  fr <- indices_frecuencia(puntos, celdas, analisis, anios = 2020:2023,
+                           min_area = 1)
+  expect_equal(nrow(fr), nrow(analisis))
+  con <- fr[fr$celda_id == "c0985_m08525", ]
+  expect_equal(con$dtot_base, 6L)
+  expect_equal(con$anios, 2L)
+  expect_equal(con$frec, 0.5)
+  expect_equal(con$dens, round(6 / con$area_km2 / 4, 4))
+  sin <- fr[fr$celda_id != "c0985_m08525", ]
+  expect_true(all(sin$dtot_base == 0 & sin$frec == 0 & sin$dens == 0))
+  # Fuera del periodo base no cuenta.
+  fr2 <- indices_frecuencia(puntos, celdas, analisis, anios = 2021:2023,
+                            min_area = 1)
+  expect_equal(fr2$anios[fr2$celda_id == "c0985_m08525"], 1L)
+  # Umbral de superficie: con un mínimo imposible, todo NA.
+  fr3 <- indices_frecuencia(puntos, celdas, analisis, anios = 2020:2023,
+                            min_area = 1e6)
+  expect_true(all(is.na(fr3$frec)))
+  # La unión conserva todas las celdas, con ceros donde no hubo fuego.
+  cons <- indices_consolidados(puntos, celdas, anios = 2020:2023, minimo = 3L,
+                               minimo_concentracion = 3L)
+  u <- unir_consolidados(cons, fr, anios = 2020:2023)
+  expect_equal(nrow(u), nrow(analisis))
+  expect_equal(u$dtot[u$celda_id == "c0985_m08525"], 6L)
+  expect_true(all(u$dtot[u$celda_id != "c0985_m08525"] == 0))
+  expect_true(all(is.na(u$lon[u$celda_id != "c0985_m08525"])))
+  expect_false(any(is.na(u$valida)))
+})
+
+test_that("anios_base falla con claridad si la plataforma no lo tiene", {
+  expect_equal(anios_base("modis"), 2003:2022)
+  expect_error(anios_base("noaa21"), "periodo base")
+})

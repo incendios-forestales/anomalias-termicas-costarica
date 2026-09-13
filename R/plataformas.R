@@ -18,17 +18,33 @@
 #                plataforma de origen cuando es prestado)
 #   ba_creditos  cómo se nombra en los pies de fuente
 #   ba_version   con número de versión, para el pie del producto de área quemada
+#   base_inicio, base_fin
+#                periodo base (años de fuego) de los índices que dependen del
+#                conteo absoluto (README, «Tercer índice»): para MODIS,
+#                2003–2022, los años con Terra y Aqua completos y sin deriva
+#                orbital. NA mientras no se fije para la plataforma.
 #
 # NOAA-20 y NOAA-21 no tienen producto de área quemada propio (VJ164A1 no está
 # publicado; verificado en CMR el 2026-08-04), así que toman el de Suomi-NPP y
 # lo declaran en la etiqueta.
 PLATAFORMAS <- tibble::tribble(
-  ~clave,   ~etiqueta,             ~corta,          ~fuente_sp,        ~fuente_nrt,          ~ba_producto, ~ba_etiqueta,     ~ba_creditos,          ~ba_version,
-  "modis",  "MODIS (Terra/Aqua)",  "MODIS",         "MODIS_SP",        "MODIS_NRT",          "MCD64A1",    "MCD64A1",        "MCD64A1",             "MCD64A1 v6.1",
-  "snpp",   "VIIRS (Suomi-NPP)",   "VIIRS S-NPP",   "VIIRS_SNPP_SP",   "VIIRS_SNPP_NRT",     "VNP64A1",    "VNP64A1",        "VNP64A1",             "VNP64A1 v2",
-  "noaa20", "VIIRS (NOAA-20)",     "VIIRS NOAA-20", "VIIRS_NOAA20_SP", "VIIRS_NOAA20_NRT",   "VNP64A1",    "VNP64A1, S-NPP", "VNP64A1, Suomi-NPP",  "VNP64A1 v2, Suomi-NPP",
-  "noaa21", "VIIRS (NOAA-21)",     "VIIRS NOAA-21", NA,                "VIIRS_NOAA21_NRT",   "VNP64A1",    "VNP64A1, S-NPP", "VNP64A1, Suomi-NPP",  "VNP64A1 v2, Suomi-NPP"
+  ~clave,   ~etiqueta,             ~corta,          ~fuente_sp,        ~fuente_nrt,          ~ba_producto, ~ba_etiqueta,     ~ba_creditos,          ~ba_version,             ~base_inicio, ~base_fin,
+  "modis",  "MODIS (Terra/Aqua)",  "MODIS",         "MODIS_SP",        "MODIS_NRT",          "MCD64A1",    "MCD64A1",        "MCD64A1",             "MCD64A1 v6.1",          2003L,        2022L,
+  "snpp",   "VIIRS (Suomi-NPP)",   "VIIRS S-NPP",   "VIIRS_SNPP_SP",   "VIIRS_SNPP_NRT",     "VNP64A1",    "VNP64A1",        "VNP64A1",             "VNP64A1 v2",            NA,           NA,
+  "noaa20", "VIIRS (NOAA-20)",     "VIIRS NOAA-20", "VIIRS_NOAA20_SP", "VIIRS_NOAA20_NRT",   "VNP64A1",    "VNP64A1, S-NPP", "VNP64A1, Suomi-NPP",  "VNP64A1 v2, Suomi-NPP", NA,           NA,
+  "noaa21", "VIIRS (NOAA-21)",     "VIIRS NOAA-21", NA,                "VIIRS_NOAA21_NRT",   "VNP64A1",    "VNP64A1, S-NPP", "VNP64A1, Suomi-NPP",  "VNP64A1 v2, Suomi-NPP", NA,           NA
 )
+
+# Años de fuego del periodo base de una plataforma; error claro si no está
+# fijado, porque un índice por conteo sin periodo base no debe calcularse.
+anios_base <- function(clave) {
+  p <- plataforma(clave)
+  if (is.na(p$base_inicio) || is.na(p$base_fin)) {
+    stop("La plataforma '", clave, "' no tiene periodo base definido en ",
+         "PLATAFORMAS (base_inicio, base_fin).", call. = FALSE)
+  }
+  seq(p$base_inicio, p$base_fin)
+}
 
 # Fila de PLATAFORMAS, con error claro si la clave no existe (un típo en una
 # clave produciría si no un data frame vacío y rótulos NA silenciosos).

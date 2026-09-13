@@ -191,3 +191,8 @@ RASTER_FUERA_MAX_PCT       <- 25
 CONCENTRACION_FRACCION              <- 0.5
 CONCENTRACION_DIAS_TOP              <- 10L
 RASTER_MIN_DETECCIONES_CONCENTRACION <- 100L
+
+# --- Frecuencia y densidad (README, «Tercer índice») ---
+# Celdas con menos superficie terrestre que esto (fragmentos de costa) quedan
+# en NA en FREC y DENS: una sola detección daría una densidad enorme.
+RASTER_MIN_AREA_KM2 <- 10

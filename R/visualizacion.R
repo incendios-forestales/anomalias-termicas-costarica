@@ -243,6 +243,11 @@ crear_mapa_temporal <- function(puntos, area_web, cobertura, archivos_worldcover
           ifelse(is.na(n50f), "",
                  paste0("<br><strong>Concentración N50F:</strong> ", num_es(n50f, 2),
                         " (0,5 repartido; hacia 0, en oleadas)")),
+          ifelse(is.na(frec), "",
+                 paste0("<br><strong>Periodo base ", base_inicio, "–", base_fin,
+                        ":</strong> fuego en ", anios, " de ", base_fin - base_inicio + 1,
+                        " años (FREC ", num_es(frec, 2), "); ", num_es(dens, 2),
+                        " detecciones por km² y año")),
           dplyr::case_when(
             sin_estacion ~ "<br><em>Sin estación definida (bimodal o fuego todo el año): sin índices</em>",
             !valida ~ "<br><em>Bajo el umbral de detecciones: sin índices</em>",

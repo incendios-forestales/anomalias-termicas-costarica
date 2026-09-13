@@ -191,10 +191,10 @@ El proyecto incorpora, paso a paso, **índices anuales de la temporada de
 fuego** inspirados en los índices de extremos del ETCCDI para precipitación
 (Zhang et al. 2011). Las definiciones se escriben aquí antes que el código y
 son el contrato de lo que se calcula. Cada índice se agrega cuando el
-anterior está publicado; esta sección documenta los dos primeros, la
-**longitud de la temporada** y la **concentración diaria del fuego**, cada
-uno en su versión anual y en su versión espacial consolidada, y solo lo
-necesario para calcularlos. Nada de esta sección
+anterior está publicado; esta sección documenta los tres primeros, la
+**longitud de la temporada**, la **concentración diaria del fuego** y la
+**frecuencia y densidad del fuego**, cada uno en su versión anual o
+espacial consolidada, y solo lo necesario para calcularlos. Nada de esta sección
 altera las series mensuales, los videos ni los mapas ya publicados.
 
 ### Año de fuego
@@ -452,6 +452,54 @@ detecciones acumuladas**, más alto que el de `LON`. Las celdas marcadas sin
 estación definida sí reciben `N50F`: la concentración no depende de que
 haya una temporada.
 
+### Tercer índice: frecuencia y densidad del fuego (`FREC`, `DENS`)
+
+Los dos primeros índices dicen cuándo y cómo llega el fuego; este dice
+**dónde y cuánto**. Es el mapa más antiguo de la pirogeografía satelital
+(la densidad de píxeles de fuego de Giglio et al. 2006) y, junto con la
+variabilidad interanual, uno de los ejes con que Chuvieco et al. (2008)
+definen regímenes de fuego a partir de observaciones de la Tierra. Solo
+tiene versión consolidada por celda, sobre las detecciones de vegetación:
+
+| Código | Definición | Unidad |
+|---|---|---|
+| `AREA` | Superficie terrestre de la celda: su intersección con el límite nacional (auxiliar) | km² |
+| `ANIOS` | Años de fuego del periodo base con al menos una detección en la celda (auxiliar) | años |
+| `FREC` | `ANIOS` dividido entre los años del periodo base: probabilidad empírica de que la celda tenga fuego en un año dado | 0–1 |
+| `DENS` | Detecciones por km² de superficie terrestre y por año del periodo base | det./km²/año |
+
+A diferencia de `LON` y `N50F`, **el cero es un dato**: una celda sin
+detecciones en veinte años tiene `FREC` = 0 y `DENS` = 0, y el ráster
+cubre todas las celdas de la grilla que tocan el país, no solo las que
+tuvieron fuego. Por eso no hay umbral de detecciones. Sí hay uno de
+superficie: las celdas con menos de 10 km² de tierra, fragmentos de costa
+donde una sola detección daría una densidad enorme, quedan en NA.
+
+**Periodo base.** `FREC` y `DENS` son los primeros índices de la suite que
+**dependen del conteo absoluto** de detecciones, y por tanto de la
+detectabilidad de la serie. Para que sean comparables entre celdas y no
+arrastren los cambios del instrumental, se consolidan sobre el **periodo
+base 2003–2022**, los veinte años de fuego con Terra y Aqua completos:
+empieza en 2003 porque Aqua entra en julio de 2002 y los años de fuego 2001
+y 2002 tienen la mitad de las pasadas, y termina en 2022 porque Terra dejó
+de mantener su hora de paso en 2020 y Aqua en 2022, y desde entonces sus
+horas de cruce derivan. Los índices por fracciones (`LON`, `FUERA`, `N50F`)
+siguen usando todos los años completos, 2002–2025, porque no les afecta.
+El periodo base queda declarado por plataforma (para las VIIRS se fijará
+cuando se extiendan los índices) y es el que usarán después los índices por
+percentil. La consecuencia práctica: `DENS` y `FREC` describen 2003–2022 y
+no el presente; su versión reciente vendrá como comparación de periodos,
+no como actualización continua.
+
+**Lectura.** `FREC` separa el fuego recurrente del ocasional: una celda con
+0,9 arde casi todos los años, una con 0,2 arde uno de cada cinco. `DENS`
+gradúa la intensidad de uso del fuego dentro de las recurrentes. Ambas son
+específicas de la plataforma: MODIS ve cinco veces menos detecciones que
+VIIRS, así que las densidades no se comparan entre sensores, solo entre
+celdas de un mismo mapa. No hay versión anual por celda: con 2,6
+detecciones por celda y año en promedio, un ráster anual sería ruido; la
+dimensión interanual corresponde a las áreas de conservación.
+
 ### Salidas
 
 - Tabla con una fila por año de fuego: año, marca de parcial/provisional,
@@ -461,7 +509,7 @@ haya una temporada.
   cronológicamente, con enero a mayo (SINAC) y diciembre a abril (IMN) como
   bandas de referencia.
 - Ráster consolidado: una capa por celda de 0,1° para `INI`, `FIN`, `LON`,
-  `FUERA`, `N50F` y `DTOT` (auxiliar), en GeoTIFF con la plataforma, el
+  `FUERA`, `N50F`, `FREC`, `DENS` y `DTOT` (auxiliar), en GeoTIFF con la plataforma, el
   periodo de referencia y los umbrales en los metadatos, acompañado de un
   estilo `.qml` de QGIS con la simbología de `LON` (sin él, QGIS abre el
   ráster como color multibanda con las tres primeras bandas); mapas estáticos de
@@ -470,6 +518,11 @@ haya una temporada.
   mapa interactivo.
 - Concentración anual: columnas `DF`, `N50` y `C10` en la tabla por año de
   fuego, y una figura de barras por año con `N50` y `C10`.
+- Frecuencia y densidad: capas `FREC` y `DENS` en el mismo GeoTIFF y
+  columnas `AREA`, `ANIOS`, `FREC` y `DENS` en la tabla por celda, que pasa
+  a incluir todas las celdas de la grilla (las sin fuego con ceros y los
+  demás índices en NA); mapas estáticos de `FREC` y `DENS`; ambos valores
+  en la ficha del mapa interactivo.
 
 ### Referencias
 
@@ -483,6 +536,10 @@ haya una temporada.
   analysis of global interannual fire variability. *Journal of Geophysical
   Research: Biogeosciences*, 113, G03020.
   <https://doi.org/10.1029/2008JG000686>
+- Chuvieco, E., Giglio, L. y Justice, C. (2008). Global characterization of
+  fire activity: toward defining fire regimes from Earth observation data.
+  *Global Change Biology*, 14(7), 1488–1502.
+  <https://doi.org/10.1111/j.1365-2486.2008.01585.x>
 - Cunningham, C. X., Williamson, G. J. y Bowman, D. M. J. S. (2024).
   Increasing frequency and intensity of the most extreme wildfires on Earth.
   *Nature Ecology & Evolution*, 8(8), 1420–1425.
