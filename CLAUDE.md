@@ -17,7 +17,8 @@ docker compose run --rm --user 1000:1000 -e HOME=/home/rstudio rstudio \
   Rscript -e "targets::tar_make(reporter = 'balanced')"
 ```
 
-Pruebas unitarias (testthat, datos sintéticos; hoy cubren R/temporada.R):
+Pruebas unitarias (testthat, datos sintéticos; cubren R/temporada.R y
+R/grilla.R):
 
 ```bash
 docker compose run --rm --user 1000:1000 -e HOME=/home/rstudio rstudio \
@@ -61,3 +62,34 @@ tipo «Corrida del AAAA-MM-DD», separado de cambios de código). Pages sirve
   `layout_video()` y `animar_detecciones()`.
 - `terraOptions(progress = 0)` en constantes.R: sin él, las barras de
   progreso de terra aparecen como texto en los reportes Quarto.
+
+## Suite de índices de temporada (README, «Año de fuego e índices anuales»)
+
+Se construye índice por índice, MODIS primero, y el README es el contrato:
+cada índice se define ahí (con sustento y referencias verificadas en
+Crossref) ANTES de escribir código, en un commit de documentación aparte.
+Luego: funciones genéricas en R/temporada.R, pruebas sintéticas, targets
+solo para MODIS fuera del `tar_map`, sección en analysis/modis.qmd, commit
+de código, corrida y commit «Corrida del AAAA-MM-DD (<índice>)».
+
+Invariantes propios de la suite (cambiarlos invalida índices publicados):
+
+- Año de fuego del 1 de septiembre al 31 de agosto, nombrado por el año en
+  que termina (`MES_INICIO_ANIO_FUEGO`); INI/FIN al 10 %/90 % acumulado.
+- Índices solo con detecciones de vegetación (`type` 0 o ausente); las
+  series publicadas siguen con todos los tipos. Sin umbral de confianza.
+- Grilla común: celda base de 0,05° con bordes en múltiplos de 0,05° (CHIRPS)
+  y celda de análisis de 0,1° CENTRADA en los nodos de ERA5-Land, con
+  `celda_id` por esquina suroeste. Nunca remuestrear a otra grilla.
+- Dos periodos: los índices por fracciones (LON, FUERA, N50F) usan todos los
+  años completos y no provisionales; los que dependen del conteo (FREC,
+  DENS, FRPI, AQ, P95) usan el periodo base de `PLATAFORMAS`
+  (`base_inicio`/`base_fin`; MODIS 2003–2022).
+- Nunca mezclar detecciones de plataformas distintas en un índice o ráster;
+  las comparaciones entre plataformas son productos aparte.
+- Umbrales: 300 detecciones/año (nacional), 30/celda (LON, FRPI, AQ),
+  100/celda (N50F), 10 km² de tierra (FREC, DENS), 25 % fuera de dic–may
+  (celda sin estación definida).
+- `terra::metags()` descarta TODAS las etiquetas si un valor contiene «=»;
+  los joins de dplyr sobre sf fallan en los qmd (sf no está cargado): unir
+  sin geometría y volver a pegar con `st_sf()`.
