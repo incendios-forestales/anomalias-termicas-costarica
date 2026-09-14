@@ -173,6 +173,32 @@ indices_temporada <- function(diaria, rangos,
     dplyr::arrange(anio_fuego)
 }
 
+# --- Intensidad (README, «Cuarto índice») -----------------------------------
+# Por año de fuego, sobre las detecciones de vegetación: mediana y percentil
+# 95 de la FRP (MW) y los controles de mezcla de satélites (fracción de Aqua)
+# y de hora (fracción nocturna). NA en los años sin detecciones.
+indices_intensidad <- function(puntos) {
+  puntos |>
+    sf::st_drop_geometry() |>
+    dplyr::mutate(anio_fuego = anio_fuego(acq_date)) |>
+    dplyr::summarise(
+      frpi  = round(stats::median(frp, na.rm = TRUE), 1),
+      frp95 = round(stats::quantile(frp, 0.95, na.rm = TRUE, names = FALSE), 1),
+      aq    = round(mean(satellite == "Aqua"), 3),
+      noc   = round(mean(daynight == "N"), 3),
+      .by = anio_fuego
+    ) |>
+    dplyr::arrange(anio_fuego)
+}
+
+# Agrega la intensidad a la tabla anual de índices (NA donde no hubo
+# detecciones). Las columnas de control van al final, antes de las marcas.
+unir_intensidad <- function(indices, intensidad) {
+  indices |>
+    dplyr::left_join(intensidad, by = "anio_fuego") |>
+    dplyr::relocate(frpi, frp95, aq, noc, .before = parcial)
+}
+
 # Años cuya temporalidad puede interpretarse sin reservas.
 temporada_confiable <- function(indices) {
   !(indices$parcial | indices$provisional | indices$pocas_detecciones) &
@@ -212,12 +238,13 @@ crear_tabla_temporada <- function(indices, etiqueta_fuente) {
       fin    = ifelse(is.na(fin_fecha), "", fecha_es(fin_fecha, con_anio = FALSE)),
       nota   = notas_temporada(indices)
     ) |>
-    dplyr::select(anio_fuego, dtot, inicio, fin, lon, df, n50, c10, nota)
+    dplyr::select(anio_fuego, dtot, inicio, fin, lon, df, n50, c10, frpi,
+                  frp95, nota)
   DT::datatable(
     datos,
     colnames = c("Año de fuego", "Detecciones", "Inicio (10 %)", "Fin (90 %)",
                  "Longitud (días)", "Días de fuego", "N50 (días)",
-                 "C10 (%)", "Nota"),
+                 "C10 (%)", "FRP mediana (MW)", "FRP p95 (MW)", "Nota"),
     caption = paste0("Temporada de fuego por año de fuego (setiembre–agosto) — ",
                      AREA_NOMBRE, ", ", etiqueta_fuente),
     options = list(pageLength = 30, dom = "t"),
@@ -415,9 +442,13 @@ indices_consolidados <- function(puntos, celdas, anios,
 # Para TODAS las celdas de la grilla (el cero es dato), sobre los años de
 # fuego del periodo base: superficie terrestre, años con fuego, FREC (fracción
 # de años con fuego) y DENS (detecciones por km² de tierra y año). Celdas con
-# menos de `min_area` km² de tierra quedan en NA.
+# menos de `min_area` km² de tierra quedan en NA. Sobre el mismo periodo base
+# van la intensidad FRPI (mediana de FRP) y el control AQ (fracción de Aqua)
+# por celda, con NA por debajo de `minimo` detecciones (README, «Cuarto
+# índice»).
 indices_frecuencia <- function(puntos, celdas, grilla, anios,
-                               min_area = RASTER_MIN_AREA_KM2) {
+                               min_area = RASTER_MIN_AREA_KM2,
+                               minimo = RASTER_MIN_DETECCIONES) {
   # Se fijan antes de entrar a la tabla: dentro de mutate(), `anios` pasa a
   # ser la columna de años con fuego y taparía al vector del periodo base.
   n_anios <- length(anios)
@@ -425,12 +456,14 @@ indices_frecuencia <- function(puntos, celdas, grilla, anios,
   base_fin <- max(anios)
   por_celda <- puntos |>
     sf::st_drop_geometry() |>
-    dplyr::select(id_deteccion, acq_date) |>
+    dplyr::select(id_deteccion, acq_date, frp, satellite) |>
     dplyr::inner_join(celdas, by = "id_deteccion") |>
     dplyr::mutate(anio_fuego = anio_fuego(acq_date)) |>
     dplyr::filter(anio_fuego %in% anios) |>
     dplyr::summarise(dtot_base = dplyr::n(),
                      anios = dplyr::n_distinct(anio_fuego),
+                     frpi = round(stats::median(frp, na.rm = TRUE), 1),
+                     aq = round(mean(satellite == "Aqua"), 3),
                      .by = celda_id)
   grilla |>
     sf::st_drop_geometry() |>
@@ -443,10 +476,13 @@ indices_frecuencia <- function(puntos, celdas, grilla, anios,
       frec = ifelse(area_ok, round(anios / n_anios, 3), NA_real_),
       dens = ifelse(area_ok, round(dtot_base / area_km2 / n_anios, 4),
                     NA_real_),
+      valida_base = dtot_base >= minimo,
+      frpi = ifelse(valida_base, frpi, NA_real_),
+      aq = ifelse(valida_base, aq, NA_real_),
       base_inicio = base_ini, base_fin = base_fin
     ) |>
-    dplyr::select(celda_id, area_km2, dtot_base, anios, frec, dens,
-                  base_inicio, base_fin) |>
+    dplyr::select(celda_id, area_km2, dtot_base, anios, frec, dens, frpi, aq,
+                  valida_base, base_inicio, base_fin) |>
     dplyr::arrange(celda_id)
 }
 
@@ -466,11 +502,13 @@ unir_consolidados <- function(consolidado, frecuencia, anios) {
       valida = tidyr::replace_na(valida, FALSE),
       sin_estacion = tidyr::replace_na(sin_estacion, FALSE),
       valida_n50f = tidyr::replace_na(valida_n50f, FALSE),
+      valida_base = tidyr::replace_na(valida_base, FALSE),
       anio_inicio = ref_ini, anio_fin = ref_fin
     ) |>
     dplyr::select(celda_id, area_km2, dtot, fuera, ini_dia, fin_dia, lon, df,
-                  n50f, dtot_base, anios, frec, dens, valida, sin_estacion,
-                  valida_n50f, anio_inicio, anio_fin, base_inicio, base_fin) |>
+                  n50f, dtot_base, anios, frec, dens, frpi, aq, valida,
+                  sin_estacion, valida_n50f, valida_base, anio_inicio,
+                  anio_fin, base_inicio, base_fin) |>
     dplyr::arrange(celda_id)
 }
 
@@ -492,7 +530,8 @@ raster_consolidado <- function(consolidado, grilla, dest, plataforma,
     xmin = b[["xmin"]], xmax = b[["xmax"]], ymin = b[["ymin"]],
     ymax = b[["ymax"]], resolution = res, crs = CRS_WGS84
   )
-  capas <- c("ini_dia", "fin_dia", "lon", "fuera", "n50f", "dtot", "frec", "dens")
+  capas <- c("ini_dia", "fin_dia", "lon", "fuera", "n50f", "dtot", "frec", "dens",
+             "frpi", "aq")
   datos <- grilla |>
     sf::st_drop_geometry() |>
     dplyr::inner_join(consolidado, by = "celda_id")
@@ -522,7 +561,9 @@ raster_consolidado <- function(consolidado, grilla, dest, plataforma,
                         "proporcion de los dias de fuego de la celda que reunen la ",
                         "mitad de sus detecciones (0,5 repartido, hacia 0 en oleadas); ",
                         "FREC: fraccion de anios del periodo base con fuego; DENS: ",
-                        "detecciones por km2 de tierra y anio del periodo base")
+                        "detecciones por km2 de tierra y anio del periodo base; ",
+                        "FRPI: mediana de la FRP (MW) en el periodo base; AQ: ",
+                        "fraccion de detecciones de Aqua en el periodo base")
   )
   dir.create(dirname(dest), recursive = TRUE, showWarnings = FALSE)
   # FLT4S por N50F (0-0,5); las demás capas son enteras y caben igual.
@@ -566,6 +607,13 @@ ayudantes_temporada_celdas <- function(consolidado) {
     periodo_base = paste0(min(consolidado$base_inicio), "–", max(consolidado$base_fin)),
     dens_max = num_es(max(consolidado$dens, na.rm = TRUE), 2),
     dens_mediana_con_fuego = num_es(stats::median(consolidado$dens[consolidado$dtot_base > 0], na.rm = TRUE), 3),
+    n_validas_base = sum(consolidado$valida_base),
+    frpi_mediana = num_es(stats::median(consolidado$frpi, na.rm = TRUE), 1),
+    frpi_min = num_es(min(consolidado$frpi, na.rm = TRUE), 1),
+    frpi_max = num_es(max(consolidado$frpi, na.rm = TRUE), 1),
+    aq_mediana = num_es(100 * stats::median(consolidado$aq, na.rm = TRUE), 0),
+    aq_min = num_es(100 * min(consolidado$aq, na.rm = TRUE), 0),
+    aq_max = num_es(100 * max(consolidado$aq, na.rm = TRUE), 0),
     n_validas_n50f = sum(consolidado$valida_n50f),
     n50f_min = num_es(min(consolidado$n50f, na.rm = TRUE), 2),
     n50f_max = num_es(max(consolidado$n50f, na.rm = TRUE), 2),
@@ -604,34 +652,45 @@ grafico_temporada_celdas <- function(consolidado, grilla, area, dest,
   # Los índices de temporada se dibujan solo en las celdas con fuego (las
   # demás quedan en blanco); frecuencia y densidad cubren toda la grilla,
   # porque en ellas el cero es dato.
-  es_conteo <- variable %in% c("frec", "dens")
-  celdas <- celdas_temporada_sf(consolidado, grilla, solo_con_fuego = !es_conteo)
+  # Frecuencia y densidad cubren toda la grilla; intensidad y control de
+  # satélite usan el periodo base pero solo en celdas con fuego.
+  todas_las_celdas <- variable %in% c("frec", "dens")
+  usa_base <- variable %in% c("frec", "dens", "frpi", "aq")
+  celdas <- celdas_temporada_sf(consolidado, grilla,
+                                solo_con_fuego = !todas_las_celdas)
   trama <- trama_celdas(celdas[celdas$sin_estacion, ])
   ref <- inicio_anio_fuego(2002L)
   rotulo <- c(lon = "Longitud (días)", ini_dia = "Inicio (10 %)",
               fin_dia = "Fin (90 %)",
               n50f = "N50F\n(0,5 repartido;\nhacia 0, en oleadas)",
               frec = "Fracción de años\ncon fuego",
-              dens = "Detecciones por\nkm² y año")[[variable]]
+              dens = "Detecciones por\nkm² y año",
+              frpi = "FRP mediana\n(MW)",
+              aq = "Fracción de\ndetecciones\nde Aqua (tarde)")[[variable]]
   titulo <- c(lon = "Longitud de la temporada de fuego por celda",
               ini_dia = "Inicio de la temporada de fuego por celda",
               fin_dia = "Fin de la temporada de fuego por celda",
               n50f = "Concentración diaria del fuego por celda",
               frec = "Frecuencia del fuego por celda",
-              dens = "Densidad del fuego por celda")[[variable]]
+              dens = "Densidad del fuego por celda",
+              frpi = "Intensidad del fuego por celda",
+              aq = "Ciclo diurno del fuego por celda")[[variable]]
   es_fecha <- variable %in% c("ini_dia", "fin_dia")
   etiquetas_escala <- if (!es_fecha) ggplot2::waiver() else {
     function(x) format(ref + x - 1L, "%d %b") |>
       (\(s) paste(sub(" .*", "", s), MESES_ES[lubridate::month(ref + x - 1L)]))()
   }
-  periodo <- if (es_conteo) {
+  periodo <- if (usa_base) {
     paste0(min(consolidado$base_inicio), "–", max(consolidado$base_fin),
            ", el periodo base")
   } else {
     paste0(min(consolidado$anio_inicio), "–", max(consolidado$anio_fin))
   }
-  nota_umbral <- if (es_conteo) {
+  nota_umbral <- if (todas_las_celdas) {
     paste0("celdas con menos de ", RASTER_MIN_AREA_KM2, " km² de tierra en gris")
+  } else if (usa_base) {
+    paste0("celdas con menos de ", minimo,
+           " detecciones en el periodo base en gris")
   } else {
     paste0("celdas de 0,1° con menos de ",
            if (variable == "n50f") RASTER_MIN_DETECCIONES_CONCENTRACION else minimo,
@@ -650,9 +709,10 @@ grafico_temporada_celdas <- function(consolidado, grilla, area, dest,
     # aplasten el gradiente de 60 a 120 días que domina el Pacífico.
     ggplot2::scale_fill_viridis_c(
       option = c(lon = "inferno", ini_dia = "viridis", fin_dia = "viridis",
-                 n50f = "mako", frec = "viridis", dens = "rocket")[[variable]],
-      direction = if (variable %in% c("lon", "dens")) -1 else 1,
-      trans = if (variable == "dens") "sqrt" else "identity",
+                 n50f = "mako", frec = "viridis", dens = "rocket",
+                 frpi = "magma", aq = "cividis")[[variable]],
+      direction = if (variable %in% c("lon", "dens", "frpi")) -1 else 1,
+      trans = if (variable %in% c("dens", "frpi")) "sqrt" else "identity",
       na.value = "grey85", name = rotulo,
       limits = if (variable == "lon") c(0, RASTER_LON_TOPE) else NULL,
       breaks = if (variable == "lon") seq(0, RASTER_LON_TOPE, by = 60) else ggplot2::waiver(),
@@ -699,24 +759,26 @@ ayudantes_concentracion <- function(indices) {
   )
 }
 
-# Barras por año de fuego de N50 (días) y C10 (%), en dos paneles; los años
-# con reservas en gris.
-grafico_concentracion <- function(indices, dest, etiqueta_fuente, fuente) {
-  datos <- indices |>
-    dplyr::filter(!is.na(n50)) |>
+# Barras por año de fuego de dos índices en paneles apilados; los años con
+# reservas en gris. `variables` es un vector con nombre: c(columna = rótulo).
+grafico_barras_anuales <- function(indices, variables, titulo, subtitulo, dest,
+                                   etiqueta_fuente, fuente, decimales = 0) {
+  columnas <- names(variables)
+  con_dato <- !is.na(indices[[columnas[1]]])
+  datos <- indices[con_dato, ] |>
     dplyr::mutate(
-      lectura = ifelse(temporada_confiable(indices)[!is.na(indices$n50)],
+      lectura = ifelse(temporada_confiable(indices)[con_dato],
                        "Año completo", "Año parcial, provisional o con pocas detecciones")
     ) |>
-    dplyr::select(anio_fuego, lectura, n50, c10) |>
-    tidyr::pivot_longer(c(n50, c10), names_to = "indice", values_to = "valor") |>
-    dplyr::mutate(indice = factor(indice, levels = c("n50", "c10"),
-                                  labels = c("N50: días que reúnen la mitad de las detecciones",
-                                             "C10: % de las detecciones en los 10 días más activos")))
+    dplyr::select(anio_fuego, lectura, dplyr::all_of(columnas)) |>
+    tidyr::pivot_longer(dplyr::all_of(columnas), names_to = "indice",
+                        values_to = "valor") |>
+    dplyr::mutate(indice = factor(indice, levels = columnas,
+                                  labels = unname(variables)))
   p <- ggplot2::ggplot(datos, ggplot2::aes(x = anio_fuego, y = valor, fill = lectura)) +
     ggplot2::geom_col(width = 0.75) +
-    ggplot2::geom_text(ggplot2::aes(label = round(valor)), vjust = -0.4, size = 2.8,
-                       color = "grey30") +
+    ggplot2::geom_text(ggplot2::aes(label = num_es(valor, decimales)),
+                       vjust = -0.4, size = 2.8, color = "grey30") +
     ggplot2::facet_wrap(~indice, ncol = 1, scales = "free_y") +
     ggplot2::scale_fill_manual(values = c("Año completo" = COLOR_DETECCIONES,
                                           "Año parcial, provisional o con pocas detecciones" = "grey65"),
@@ -724,9 +786,8 @@ grafico_concentracion <- function(indices, dest, etiqueta_fuente, fuente) {
     ggplot2::scale_x_continuous(breaks = datos$anio_fuego) +
     ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = c(0, 0.12))) +
     ggplot2::labs(
-      title = "Concentración diaria del fuego por año",
-      subtitle = paste0("Días del año de fuego (setiembre–agosto) ordenados de mayor a menor ",
-                        "número de detecciones — ", AREA_NOMBRE, ", ", etiqueta_fuente),
+      title = titulo,
+      subtitle = paste0(subtitulo, " — ", AREA_NOMBRE, ", ", etiqueta_fuente),
       x = "Año de fuego", y = NULL, caption = fuente
     ) +
     ggplot2::theme_minimal() +
@@ -741,6 +802,31 @@ grafico_concentracion <- function(indices, dest, etiqueta_fuente, fuente) {
   dir.create(dirname(dest), recursive = TRUE, showWarnings = FALSE)
   ggplot2::ggsave(dest, p, width = 10, height = 7, dpi = 200)
   dest
+}
+
+grafico_concentracion <- function(indices, dest, etiqueta_fuente, fuente) {
+  grafico_barras_anuales(
+    indices,
+    c(n50 = "N50: días que reúnen la mitad de las detecciones",
+      c10 = "C10: % de las detecciones en los 10 días más activos"),
+    titulo = "Concentración diaria del fuego por año",
+    subtitulo = paste0("Días del año de fuego (setiembre–agosto) ordenados de ",
+                       "mayor a menor número de detecciones"),
+    dest, etiqueta_fuente, fuente
+  )
+}
+
+# Intensidad anual: FRP mediana y percentil 95 (MW) por año de fuego.
+grafico_intensidad <- function(indices, dest, etiqueta_fuente, fuente) {
+  grafico_barras_anuales(
+    indices,
+    c(frpi = "FRPI: FRP mediana de las detecciones (MW)",
+      frp95 = "FRP95: percentil 95 de la FRP (MW)"),
+    titulo = "Intensidad del fuego por año",
+    subtitulo = paste0("Potencia radiativa de las detecciones de vegetación ",
+                       "de cada año de fuego (setiembre–agosto)"),
+    dest, etiqueta_fuente, fuente, decimales = 1
+  )
 }
 
 # --- Estilo de QGIS para el GeoTIFF consolidado ------------------------------
@@ -795,4 +881,17 @@ escribir_estilo_qml <- function(dest, banda = 3L, minimo = 0, maximo = RASTER_LO
   dir.create(dirname(dest), recursive = TRUE, showWarnings = FALSE)
   writeLines(xml, dest, useBytes = FALSE)
   dest
+}
+
+ayudantes_intensidad <- function(indices) {
+  ok <- indices[temporada_confiable(indices), ]
+  list(
+    frpi_media = num_es(mean(ok$frpi), 1),
+    frpi_min = num_es(min(ok$frpi), 1), anio_frpi_min = ok$anio_fuego[which.min(ok$frpi)],
+    frpi_max = num_es(max(ok$frpi), 1), anio_frpi_max = ok$anio_fuego[which.max(ok$frpi)],
+    frp95_media = num_es(mean(ok$frp95), 0),
+    frp95_max = num_es(max(ok$frp95), 0), anio_frp95_max = ok$anio_fuego[which.max(ok$frp95)],
+    aq_media = num_es(100 * mean(ok$aq[ok$aq > 0]), 0),
+    noc_media = num_es(100 * mean(ok$noc), 0)
+  )
 }

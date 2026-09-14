@@ -191,10 +191,11 @@ El proyecto incorpora, paso a paso, **índices anuales de la temporada de
 fuego** inspirados en los índices de extremos del ETCCDI para precipitación
 (Zhang et al. 2011). Las definiciones se escriben aquí antes que el código y
 son el contrato de lo que se calcula. Cada índice se agrega cuando el
-anterior está publicado; esta sección documenta los tres primeros, la
-**longitud de la temporada**, la **concentración diaria del fuego** y la
-**frecuencia y densidad del fuego**, cada uno en su versión anual o
-espacial consolidada, y solo lo necesario para calcularlos. Nada de esta sección
+anterior está publicado; esta sección documenta los cuatro primeros, la
+**longitud de la temporada**, la **concentración diaria del fuego**, la
+**frecuencia y densidad del fuego** y la **intensidad del fuego**, cada uno
+en su versión anual o espacial consolidada, y solo lo necesario para
+calcularlos. Nada de esta sección
 altera las series mensuales, los videos ni los mapas ya publicados.
 
 ### Año de fuego
@@ -500,6 +501,64 @@ celdas de un mismo mapa. No hay versión anual por celda: con 2,6
 detecciones por celda y año en promedio, un ráster anual sería ruido; la
 dimensión interanual corresponde a las áreas de conservación.
 
+### Cuarto índice: intensidad del fuego (`FRPI`, `FRP95`)
+
+Los tres primeros índices cuentan detecciones; este usa el único campo
+físico que trae cada una, la **potencia radiativa del fuego** (`frp`, en
+megavatios), que MODIS deriva de la radiancia del píxel en la banda de 4 µm
+y que es proporcional a la tasa de combustión de biomasa (Wooster et al.
+2005). Responde con qué fuerza arde el fuego, no cuándo ni cuánto, y
+distingue las quemas agrícolas pequeñas de los incendios extensos de
+sabana y humedal.
+
+| Código | Definición | Unidad |
+|---|---|---|
+| `FRPI` | Mediana de la FRP de las detecciones de vegetación del año de fuego | MW |
+| `FRP95` | Percentil 95 de la FRP de esas detecciones | MW |
+| `AQ` | Fracción de las detecciones del año que son de Aqua, el paso de la tarde (control) | 0–1 |
+| `NOC` | Fracción de las detecciones del año que son nocturnas (control) | 0–1 |
+
+Se usa la mediana y no la media porque la distribución de la FRP es muy
+asimétrica: unas pocas detecciones de cientos de megavatios dominarían el
+promedio. `FRP95` captura precisamente esa cola, la intensidad de los
+fuegos más fuertes del año, que Cunningham et al. (2024) identifican como
+la dimensión del régimen de fuego que más crece a escala global. Ambos son
+independientes del número de detecciones, así que el conteo reducido de
+2001 y 2002 no los altera por sí mismo.
+
+**Controles: satélite y hora.** La FRP sí depende de la hora de
+observación. Aqua pasa a primera hora de la tarde, cuando los fuegos arden
+con más fuerza, y registra FRP mayores que Terra a media mañana (Giglio
+2007); las detecciones nocturnas, pocas en Costa Rica, corresponden a
+fuegos grandes o persistentes (Balch et al. 2022). Un año con otra
+proporción de Aqua o de noche tendría otra FRP sin que cambiara el fuego.
+Por eso la tabla anual lleva `AQ` y `NOC` como columnas de control, la
+prosa advierte de 2001 y 2002 (sin Aqua, `AQ` = 0) y de los años recientes
+con deriva de las horas de paso, y la versión por celda se consolida sobre
+el **periodo base 2003–2022**, donde la mezcla de satélites es estable. Un
+segundo matiz: la FRP es por píxel, y los píxeles del borde del barrido
+cubren varias veces más superficie que los del nadir, lo que también
+favorece la mediana frente a la media. No se normaliza por el área del
+píxel: la FRP se reporta como la publica FIRMS, que es como la usa la
+literatura (Ichoku et al. 2008).
+
+**Versión consolidada por celda.** Sobre las detecciones de vegetación del
+periodo base:
+
+| Código | Definición | Unidad |
+|---|---|---|
+| `FRPI` | Mediana de la FRP de las detecciones de la celda | MW |
+| `AQ` | Fracción de esas detecciones que son de Aqua | 0–1 |
+
+El mapa de `FRPI` es la climatología de FRP de Ichoku et al. (2008) a
+escala nacional; el de `AQ` es el ciclo diurno de Giglio (2007): una celda
+con `AQ` alta arde sobre todo por la tarde, el patrón de las quemas
+agrícolas encendidas a media mañana que MODIS ve ya crecidas en el paso de
+Aqua, y una con `AQ` cerca de la mitad tiene fuego que persiste desde la
+mañana. Ambas capas usan el umbral de 30 detecciones de `LON`; `FRP95` no
+tiene versión por celda porque el percentil 95 de unas decenas de valores
+no es estable.
+
 ### Salidas
 
 - Tabla con una fila por año de fuego: año, marca de parcial/provisional,
@@ -509,7 +568,7 @@ dimensión interanual corresponde a las áreas de conservación.
   cronológicamente, con enero a mayo (SINAC) y diciembre a abril (IMN) como
   bandas de referencia.
 - Ráster consolidado: una capa por celda de 0,1° para `INI`, `FIN`, `LON`,
-  `FUERA`, `N50F`, `FREC`, `DENS` y `DTOT` (auxiliar), en GeoTIFF con la plataforma, el
+  `FUERA`, `N50F`, `FREC`, `DENS`, `FRPI`, `AQ` y `DTOT` (auxiliar), en GeoTIFF con la plataforma, el
   periodo de referencia y los umbrales en los metadatos, acompañado de un
   estilo `.qml` de QGIS con la simbología de `LON` (sin él, QGIS abre el
   ráster como color multibanda con las tres primeras bandas); mapas estáticos de
@@ -518,6 +577,10 @@ dimensión interanual corresponde a las áreas de conservación.
   mapa interactivo.
 - Concentración anual: columnas `DF`, `N50` y `C10` en la tabla por año de
   fuego, y una figura de barras por año con `N50` y `C10`.
+- Intensidad: columnas `FRPI`, `FRP95`, `AQ` y `NOC` en la tabla por año de
+  fuego, con una figura de barras por año de `FRPI` y `FRP95`; capas `FRPI`
+  y `AQ` en el GeoTIFF con sus mapas estáticos, y ambos valores en la ficha
+  del mapa interactivo.
 - Frecuencia y densidad: capas `FREC` y `DENS` en el mismo GeoTIFF y
   columnas `AREA`, `ANIOS`, `FREC` y `DENS` en la tabla por celda, que pasa
   a incluir todas las celdas de la grilla (las sin fuego con ceros y los
@@ -529,6 +592,9 @@ dimensión interanual corresponde a las áreas de conservación.
 - Archibald, S., Lehmann, C. E. R., Gómez-Dans, J. L. y Bradstock, R. A.
   (2013). Defining pyromes and global syndromes of fire regimes. *PNAS*,
   110(16), 6442–6447. <https://doi.org/10.1073/pnas.1211466110>
+- Balch, J. K. et al. (2022). Warming weakens the night-time barrier to
+  global fire. *Nature*, 602, 442–448.
+  <https://doi.org/10.1038/s41586-021-04325-1>
 - Benali, A. et al. (2017). Bimodal fire regimes unveil a global-scale
   anthropogenic fingerprint. *Global Ecology and Biogeography*, 26,
   799–811. <https://doi.org/10.1111/geb.12586>
@@ -552,10 +618,17 @@ dimensión interanual corresponde a las áreas de conservación.
   E. E. N. (2020). Global fire season severity analysis and forecasting.
   *Computers & Geosciences*.
   <https://www.sciencedirect.com/science/article/abs/pii/S0098300419302808>
+- Giglio, L. (2007). Characterization of the tropical diurnal fire cycle
+  using VIRS and MODIS observations. *Remote Sensing of Environment*,
+  108(4), 407–421. <https://doi.org/10.1016/j.rse.2006.11.018>
 - Giglio, L., Csiszar, I. y Justice, C. O. (2006). Global distribution and
   seasonality of active fires as observed with the Terra and Aqua MODIS
   sensors. *Journal of Geophysical Research: Biogeosciences*, 111, G02016.
   <https://doi.org/10.1029/2005JG000142>
+- Ichoku, C., Giglio, L., Wooster, M. J. y Remer, L. A. (2008). Global
+  characterization of biomass-burning patterns using satellite measurements
+  of fire radiative energy. *Remote Sensing of Environment*, 112(6),
+  2950–2962. <https://doi.org/10.1016/j.rse.2008.02.009>
 - Liebmann, B. et al. (2012). Seasonality of African precipitation from 1996
   to 2009. *Journal of Climate*, 25, 4304–4322.
   <https://doi.org/10.1175/JCLI-D-11-00157.1>
@@ -569,6 +642,11 @@ dimensión interanual corresponde a las áreas de conservación.
   incendios forestales en Costa Rica*. Instituto Meteorológico Nacional,
   Gestión de Desarrollo (datos hasta 2000).
   <https://www.imn.ac.cr/documents/10179/20911/El+Ni%C3%B1o+y+los+incendios+forestales>
+- Wooster, M. J., Roberts, G., Perry, G. L. W. y Kaufman, Y. J. (2005).
+  Retrieval of biomass combustion rates and totals from fire radiative power
+  observations: FRP derivation and calibration relationships between biomass
+  consumption and fire radiative energy release. *Journal of Geophysical
+  Research: Atmospheres*, 110, D24311. <https://doi.org/10.1029/2005JD006318>
 - Zhang, X. et al. (2011). Indices for monitoring changes in extremes based
   on daily temperature and precipitation data. *WIREs Climate Change*, 2,
   851–870. <https://doi.org/10.1002/wcc.147>

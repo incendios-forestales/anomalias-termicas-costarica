@@ -253,11 +253,22 @@ test_that("indices_frecuencia cubre toda la grilla y usa el periodo base", {
     data.frame(id_deteccion = 1:6,
                acq_date = as.Date(c("2020-03-01", "2020-03-02", "2020-03-03",
                                     "2020-04-01", "2022-02-10", "2022-02-11")),
+               frp = c(5, 10, 20, 40, 80, 160),
+               satellite = c("Terra", "Aqua", "Aqua", "Terra", "Aqua", "Aqua"),
+               daynight = c("D", "D", "D", "N", "D", "D"),
                lon = -85.18, lat = 9.92),
     coords = c("lon", "lat"), crs = 4326)
   celdas <- asignar_celda(puntos, analisis)
   fr <- indices_frecuencia(puntos, celdas, analisis, anios = 2020:2023,
-                           min_area = 1)
+                           min_area = 1, minimo = 5L)
+  # Intensidad y control de satélite por celda sobre el periodo base.
+  expect_equal(fr$frpi[fr$celda_id == "c0985_m08525"], 30)     # mediana de 5..160
+  expect_equal(fr$aq[fr$celda_id == "c0985_m08525"], round(4 / 6, 3))
+  expect_true(all(is.na(fr$frpi[fr$celda_id != "c0985_m08525"])))
+  fr_u <- indices_frecuencia(puntos, celdas, analisis, anios = 2020:2023,
+                             min_area = 1, minimo = 30L)
+  expect_true(all(is.na(fr_u$frpi)))
+  expect_true(all(fr_u$frec[fr_u$celda_id == "c0985_m08525"] == 0.5))
   expect_equal(nrow(fr), nrow(analisis))
   con <- fr[fr$celda_id == "c0985_m08525", ]
   expect_equal(con$dtot_base, 6L)
@@ -291,4 +302,29 @@ test_that("indices_frecuencia cubre toda la grilla y usa el periodo base", {
 test_that("anios_base falla con claridad si la plataforma no lo tiene", {
   expect_equal(anios_base("modis"), 2003:2022)
   expect_error(anios_base("noaa21"), "periodo base")
+})
+
+
+test_that("indices_intensidad resume FRP y controles por año de fuego", {
+  puntos <- data.frame(
+    id_deteccion = 1:8,
+    acq_date = as.Date(c(rep("2021-03-01", 4), rep("2022-03-01", 4))),
+    frp = c(1, 2, 3, 100, 10, 10, 10, 10),
+    satellite = c("Terra", "Terra", "Terra", "Terra", "Aqua", "Aqua", "Terra", "Terra"),
+    daynight = c("D", "D", "N", "N", "D", "D", "D", "D")
+  )
+  ix <- indices_intensidad(puntos)
+  expect_equal(ix$anio_fuego, c(2021L, 2022L))
+  expect_equal(ix$frpi, c(2.5, 10))
+  expect_equal(ix$frp95[2], 10)
+  expect_gt(ix$frp95[1], 3)              # la cola pesa en el percentil 95
+  expect_equal(ix$aq, c(0, 0.5))
+  expect_equal(ix$noc, c(0.5, 0))
+  # La unión conserva los años sin detecciones con NA.
+  rangos <- data.frame(data_id = "MODIS_SP", nivel = "SP",
+                       inicio = as.Date("2020-09-01"), fin = as.Date("2022-08-31"))
+  anual <- indices_temporada(serie_diaria(puntos, rangos), rangos)
+  u <- unir_intensidad(anual, ix)
+  expect_equal(u$frpi, c(2.5, 10))
+  expect_true(all(c("frpi", "frp95", "aq", "noc") %in% names(u)))
 })

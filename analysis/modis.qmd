@@ -290,6 +290,39 @@ días de fuego por año. Los 10 días más activos concentran en promedio el
 valores por año están en las columnas `df`, `n50` y `c10` de la tabla de
 temporada.
 
+### Intensidad del fuego
+
+Los tres índices anteriores cuentan detecciones; este usa el único campo
+físico que trae cada una, la **potencia radiativa del fuego** (FRP, en
+megavatios), proporcional a la tasa de combustión de biomasa (Wooster et
+al. 2005). `FRPI` es la mediana de la FRP de las detecciones de
+vegetación del año de fuego y `FRP95` su percentil 95, la intensidad de los
+fuegos más fuertes del año, que Cunningham et al. 2024 identifican como la
+dimensión del régimen de fuego que más crece a escala global. Se usa la
+mediana porque unas pocas detecciones de cientos de megavatios dominarían
+el promedio.
+
+La FRP depende de la hora de observación: Aqua pasa a primera hora de la
+tarde, cuando los fuegos arden con más fuerza, y registra valores mayores
+que Terra a media mañana (Giglio 2007). Por eso la tabla anual lleva como
+controles la fracción de detecciones de Aqua (`aq`) y la fracción nocturna
+(`noc`): los años de fuego 2001 y 2002, sin Aqua, y los recientes, con las
+horas de paso a la deriva, se leen con ellas a la vista.
+
+```{r}
+#| label: intensidad
+ci <- ayudantes_intensidad(temporada)
+```
+
+![](`r file.path("..", tar_read(fig_intensidad_modis, store = almacen))`)
+
+En los años completos la FRP mediana es de **`r ci$frpi_media` MW**, entre
+los `r ci$frpi_min` de `r ci$anio_frpi_min` y los `r ci$frpi_max` de
+`r ci$anio_frpi_max`; el percentil 95 promedia `r ci$frp95_media` MW y
+alcanzó `r ci$frp95_max` MW en `r ci$anio_frp95_max`. En los años con
+ambos satélites, el `r ci$aq_media` % de las detecciones son de Aqua y el
+`r ci$noc_media` % son nocturnas.
+
 ### Temporada consolidada por celda
 
 ```{r}
@@ -386,6 +419,28 @@ densidades son propias de MODIS y no se comparan con las de VIIRS, que ve
 unas cinco veces más detecciones; sí se comparan entre celdas de este
 mapa.
 
+### Intensidad y ciclo diurno por celda
+
+Sobre las detecciones del periodo base `r tc$periodo_base`, cada celda con
+al menos `r RASTER_MIN_DETECCIONES` detecciones lleva su FRP mediana
+(`FRPI`), la climatología de intensidad de Ichoku et al. 2008 a escala
+nacional, y su fracción de detecciones de Aqua (`AQ`), el ciclo diurno de
+Giglio 2007: una celda con `AQ` alta arde sobre todo por la tarde, el
+patrón de las quemas agrícolas encendidas a media mañana que MODIS ve ya
+crecidas en el paso de Aqua, y una con `AQ` cerca de la mitad tiene fuego
+que persiste desde la mañana.
+
+::: {layout-ncol=2}
+![](`r file.path("..", tar_read(fig_temporada_celdas_frpi_modis, store = almacen))`)
+
+![](`r file.path("..", tar_read(fig_temporada_celdas_aq_modis, store = almacen))`)
+:::
+
+En las `r tc$n_validas_base` celdas que alcanzan el umbral, la FRP mediana
+va de `r tc$frpi_min` a `r tc$frpi_max` MW (mediana entre celdas,
+`r tc$frpi_mediana`), y la fracción de Aqua del `r tc$aq_min` al
+`r tc$aq_max` % (mediana `r tc$aq_mediana` %).
+
 La grilla es común a las cuatro plataformas y a las variables climáticas
 que se incorporen después (celda base de 0,05° alineada a CHIRPS; celda de
 análisis de 0,1° centrada en los nodos de ERA5-Land), y el ráster se
@@ -394,8 +449,8 @@ Los índices por celda están disponibles como
 [CSV](`r file.path("..", tar_read(tabla_temporada_celdas_modis, store = almacen))`)
 y como
 [GeoTIFF](`r file.path("..", tar_read(raster_temporada_modis, store = almacen))`)
-con ocho bandas con nombre: `ini_dia`, `fin_dia`, `lon`, `fuera`, `n50f`,
-`dtot`, `frec` y `dens`. Un SIG como QGIS abre por defecto un ráster de varias bandas
+con diez bandas con nombre: `ini_dia`, `fin_dia`, `lon`, `fuera`, `n50f`,
+`dtot`, `frec`, `dens`, `frpi` y `aq`. Un SIG como QGIS abre por defecto un ráster de varias bandas
 como «color multibanda» con las tres primeras, lo que parece un archivo de
 tres capas: para ver un índice hay que elegir la simbología «pseudocolor
 monobanda» y la banda por su nombre. El archivo de estilo
