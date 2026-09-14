@@ -191,11 +191,11 @@ El proyecto incorpora, paso a paso, **índices anuales de la temporada de
 fuego** inspirados en los índices de extremos del ETCCDI para precipitación
 (Zhang et al. 2011). Las definiciones se escriben aquí antes que el código y
 son el contrato de lo que se calcula. Cada índice se agrega cuando el
-anterior está publicado; esta sección documenta los cuatro primeros, la
+anterior está publicado; esta sección documenta los cinco primeros, la
 **longitud de la temporada**, la **concentración diaria del fuego**, la
-**frecuencia y densidad del fuego** y la **intensidad del fuego**, cada uno
-en su versión anual o espacial consolidada, y solo lo necesario para
-calcularlos. Nada de esta sección
+**frecuencia y densidad del fuego**, la **intensidad del fuego** y los
+**días extremos**, cada uno en su versión anual o espacial consolidada, y
+solo lo necesario para calcularlos. Nada de esta sección
 altera las series mensuales, los videos ni los mapas ya publicados.
 
 ### Año de fuego
@@ -559,6 +559,55 @@ mañana. Ambas capas usan el umbral de 30 detecciones de `LON`; `FRP95` no
 tiene versión por celda porque el percentil 95 de unas decenas de valores
 no es estable.
 
+### Quinto índice: días extremos (`ND95`, `D95p`, `D95pTOT`)
+
+Es el análogo directo de `R95p` y `R95pTOT`, los índices de extremos por
+percentil del ETCCDI (Zhang et al. 2011): cuánto del fuego del año ocurre
+en días que, por su número de detecciones, son extremos respecto del
+registro. A diferencia de `N50` y `C10`, que son relativos al propio año,
+este mide los extremos contra un umbral fijo y por eso permite decir si un
+año tuvo más días de quema masiva que otro en términos absolutos.
+
+| Código | Definición | Unidad |
+|---|---|---|
+| `P95` | Umbral: percentil 95 de las detecciones diarias en los **días de fuego del periodo base** (días con al menos una detección) | detecciones/día |
+| `ND95` | Días del año de fuego con más de `P95` detecciones | días |
+| `D95p` | Detecciones acumuladas en esos días | n |
+| `D95pTOT` | Fracción de `DTOT` que aportan (análogo de `R95pTOT`) | % |
+
+**El umbral.** Con MODIS, los 2 841 días de fuego de 2003–2022 dan un
+`P95` de **29 detecciones por día** (el percentil 99 es 52). Es un cuantil
+empírico calculado una sola vez y aplicado a todos los años, dentro y
+fuera del periodo base. El ETCCDI evita con un remuestreo la
+inhomogeneidad que introduce evaluar un año contra un umbral calculado con
+ese mismo año (Zhang et al. 2005); aquí no hace falta: quitando cualquier
+año del periodo base el umbral queda en 28 o 29, porque se apoya en casi
+tres mil días y no en los de un solo año. Se calcula sobre los días de
+fuego, como el ETCCDI lo hace sobre los días húmedos, para que los días sin
+detecciones, la mayoría del año, no arrastren el percentil hacia cero.
+
+**Dependencia del conteo.** Como `FREC` y `DENS`, este índice depende de
+la detectabilidad de la serie: un día con 29 detecciones de Terra y Aqua
+no es comparable con uno de solo Terra. Por eso los años de fuego 2001 y
+2002 se marcan como **no comparables** (sin Aqua, su `ND95` es de un solo
+día) y los años posteriores a 2022 se leen con la fracción de Aqua (`AQ`)
+de la tabla a la vista. `P95` es específico de la plataforma: para las
+VIIRS se recalculará sobre su propio periodo base cuando se extienda la
+suite.
+
+**Lectura.** En el registro MODIS, `ND95` va de 0 a 12 días por año y
+`D95pTOT` de 0 a 43 %: en 2022 diez días concentraron el 43 % de las
+detecciones, mientras que 2023 y 2025 no tuvieron ningún día extremo. Es
+la diferencia entre un año con temporada corta e intensa y años tranquilos
+en los que el fuego nunca superó el umbral del registro. Cunningham et al.
+(2024) muestran que la frecuencia de los días extremos es lo que más
+cambia en el régimen de fuego global; este índice es su versión para el
+país.
+
+**Sin versión espacial.** Por celda no hay conteos diarios suficientes para
+un percentil (2,6 detecciones por celda y año); la desagregación natural
+es por área de conservación, cuando se incorpore.
+
 ### Salidas
 
 - Tabla con una fila por año de fuego: año, marca de parcial/provisional,
@@ -577,6 +626,10 @@ no es estable.
   mapa interactivo.
 - Concentración anual: columnas `DF`, `N50` y `C10` en la tabla por año de
   fuego, y una figura de barras por año con `N50` y `C10`.
+- Días extremos: columnas `ND95`, `D95p`, `D95pTOT` y `P95` (el umbral,
+  repetido en cada fila para que el CSV se explique solo) en la tabla por
+  año de fuego, la marca de año no comparable en la nota, y una figura de
+  barras por año de `ND95` y `D95pTOT`.
 - Intensidad: columnas `FRPI`, `FRP95`, `AQ` y `NOC` en la tabla por año de
   fuego, con una figura de barras por año de `FRPI` y `FRP95`; capas `FRPI`
   y `AQ` en el GeoTIFF con sus mapas estáticos, y ambos valores en la ficha
@@ -647,6 +700,10 @@ no es estable.
   observations: FRP derivation and calibration relationships between biomass
   consumption and fire radiative energy release. *Journal of Geophysical
   Research: Atmospheres*, 110, D24311. <https://doi.org/10.1029/2005JD006318>
+- Zhang, X., Hegerl, G., Zwiers, F. W. y Kenyon, J. (2005). Avoiding
+  inhomogeneity in percentile-based indices of temperature extremes.
+  *Journal of Climate*, 18(11), 1641–1651.
+  <https://doi.org/10.1175/JCLI3366.1>
 - Zhang, X. et al. (2011). Indices for monitoring changes in extremes based
   on daily temperature and precipitation data. *WIREs Climate Change*, 2,
   851–870. <https://doi.org/10.1002/wcc.147>

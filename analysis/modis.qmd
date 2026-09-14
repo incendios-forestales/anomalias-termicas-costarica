@@ -323,6 +323,34 @@ alcanzó `r ci$frp95_max` MW en `r ci$anio_frp95_max`. En los años con
 ambos satélites, el `r ci$aq_media` % de las detecciones son de Aqua y el
 `r ci$noc_media` % son nocturnas.
 
+### Días extremos
+
+Es el análogo directo de `R95p` y `R95pTOT`, los índices de extremos por
+percentil del ETCCDI: cuánto del fuego del año ocurre en días que, por su
+número de detecciones, son extremos respecto del registro. A diferencia de
+`N50` y `C10`, relativos a cada año, aquí el umbral es fijo: el percentil
+95 de las detecciones diarias en los días con fuego del periodo base
+`r paste0(min(anios_base("modis")), "–", max(anios_base("modis")))`.
+
+```{r}
+#| label: extremos
+ce <- ayudantes_extremos(temporada)
+```
+
+![](`r file.path("..", tar_read(fig_extremos_modis, store = almacen))`)
+
+El umbral es de **`r ce$p95` detecciones por día**. En los
+`r ce$n_anios` años comparables, hubo en promedio `r ce$nd95_media` días
+extremos por año, con un máximo de `r ce$nd95_max` en
+`r ce$anio_nd95_max`; esos días concentran en promedio el
+`r ce$d95ptot_media` % de las detecciones del año, y hasta el
+`r ce$d95ptot_max` % en `r ce$anio_d95ptot_max`. Hubo
+`r ce$n_sin_extremos` años sin ningún día extremo
+(`r ce$anios_sin_extremos`): el fuego nunca superó allí el umbral del
+registro. Como el índice depende del
+conteo absoluto, los años de fuego 2001 y 2002, con solo Terra, se marcan
+como no comparables y van en gris.
+
 ### Temporada consolidada por celda
 
 ```{r}

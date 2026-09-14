@@ -199,6 +199,40 @@ unir_intensidad <- function(indices, intensidad) {
     dplyr::relocate(frpi, frp95, aq, noc, .before = parcial)
 }
 
+# --- Días extremos (README, «Quinto índice») --------------------------------
+
+# Umbral P95: cuantil empírico de las detecciones diarias en los días de
+# fuego (al menos una detección) de los años de fuego del periodo base.
+umbral_p95 <- function(diaria, anios, prob = EXTREMOS_PERCENTIL) {
+  base <- diaria[diaria$anio_fuego %in% anios & diaria$detecciones > 0, ]
+  if (nrow(base) == 0) stop("Sin días de fuego en el periodo base.", call. = FALSE)
+  unname(stats::quantile(base$detecciones, prob))
+}
+
+# Por año de fuego: días que superan el umbral, detecciones acumuladas en
+# ellos y fracción del total anual (NA sin detecciones).
+indices_extremos <- function(diaria, p95) {
+  diaria |>
+    dplyr::summarise(
+      nd95 = sum(detecciones > p95),
+      d95p = sum(detecciones[detecciones > p95]),
+      d95ptot = ifelse(sum(detecciones) > 0,
+                       round(100 * d95p / sum(detecciones), 1), NA_real_),
+      .by = anio_fuego
+    ) |>
+    dplyr::mutate(p95 = p95) |>
+    dplyr::arrange(anio_fuego)
+}
+
+# Agrega los días extremos a la tabla anual y marca los años no comparables
+# con el umbral: los que casi no tienen detecciones de Aqua (2001 y 2002).
+unir_extremos <- function(indices, extremos, aq_min = EXTREMOS_AQ_MIN) {
+  indices |>
+    dplyr::left_join(extremos, by = "anio_fuego") |>
+    dplyr::mutate(no_comparable = is.na(aq) | aq < aq_min) |>
+    dplyr::relocate(nd95, d95p, d95ptot, p95, .before = parcial)
+}
+
 # Años cuya temporalidad puede interpretarse sin reservas.
 temporada_confiable <- function(indices) {
   !(indices$parcial | indices$provisional | indices$pocas_detecciones) &
@@ -207,12 +241,15 @@ temporada_confiable <- function(indices) {
 
 # Nota en prosa por año, para la tabla del reporte ("" si no hay reservas).
 notas_temporada <- function(indices) {
-  notas <- mapply(function(parcial, provisional, pocas) {
+  no_comp <- if ("no_comparable" %in% names(indices)) indices$no_comparable else
+    rep(FALSE, nrow(indices))
+  notas <- mapply(function(parcial, provisional, pocas, no_comp) {
     paste(c(if (parcial) "año parcial",
             if (provisional) "provisional",
-            if (pocas) paste0("< ", TEMPORADA_MIN_DETECCIONES, " detecciones")),
+            if (pocas) paste0("< ", TEMPORADA_MIN_DETECCIONES, " detecciones"),
+            if (no_comp) "sin Aqua: días extremos no comparables"),
           collapse = "; ")
-  }, indices$parcial, indices$provisional, indices$pocas_detecciones)
+  }, indices$parcial, indices$provisional, indices$pocas_detecciones, no_comp)
   unname(notas)
 }
 
@@ -239,12 +276,13 @@ crear_tabla_temporada <- function(indices, etiqueta_fuente) {
       nota   = notas_temporada(indices)
     ) |>
     dplyr::select(anio_fuego, dtot, inicio, fin, lon, df, n50, c10, frpi,
-                  frp95, nota)
+                  frp95, nd95, d95ptot, nota)
   DT::datatable(
     datos,
     colnames = c("Año de fuego", "Detecciones", "Inicio (10 %)", "Fin (90 %)",
                  "Longitud (días)", "Días de fuego", "N50 (días)",
-                 "C10 (%)", "FRP mediana (MW)", "FRP p95 (MW)", "Nota"),
+                 "C10 (%)", "FRP mediana (MW)", "FRP p95 (MW)",
+                 "Días extremos", "% en días extremos", "Nota"),
     caption = paste0("Temporada de fuego por año de fuego (setiembre–agosto) — ",
                      AREA_NOMBRE, ", ", etiqueta_fuente),
     options = list(pageLength = 30, dom = "t"),
@@ -762,13 +800,16 @@ ayudantes_concentracion <- function(indices) {
 # Barras por año de fuego de dos índices en paneles apilados; los años con
 # reservas en gris. `variables` es un vector con nombre: c(columna = rótulo).
 grafico_barras_anuales <- function(indices, variables, titulo, subtitulo, dest,
-                                   etiqueta_fuente, fuente, decimales = 0) {
+                                   etiqueta_fuente, fuente, decimales = 0,
+                                   confiable = temporada_confiable(indices),
+                                   rotulo_reserva = "Año parcial, provisional o con pocas detecciones") {
   columnas <- names(variables)
-  con_dato <- !is.na(indices[[columnas[1]]])
+  # Un año sin detecciones (el recién iniciado) no tiene nada que mostrar,
+  # aunque un índice de conteo dé 0 en lugar de NA.
+  con_dato <- !is.na(indices[[columnas[1]]]) & indices$dtot > 0
   datos <- indices[con_dato, ] |>
     dplyr::mutate(
-      lectura = ifelse(temporada_confiable(indices)[con_dato],
-                       "Año completo", "Año parcial, provisional o con pocas detecciones")
+      lectura = ifelse(confiable[con_dato], "Año completo", rotulo_reserva)
     ) |>
     dplyr::select(anio_fuego, lectura, dplyr::all_of(columnas)) |>
     tidyr::pivot_longer(dplyr::all_of(columnas), names_to = "indice",
@@ -780,8 +821,8 @@ grafico_barras_anuales <- function(indices, variables, titulo, subtitulo, dest,
     ggplot2::geom_text(ggplot2::aes(label = num_es(valor, decimales)),
                        vjust = -0.4, size = 2.8, color = "grey30") +
     ggplot2::facet_wrap(~indice, ncol = 1, scales = "free_y") +
-    ggplot2::scale_fill_manual(values = c("Año completo" = COLOR_DETECCIONES,
-                                          "Año parcial, provisional o con pocas detecciones" = "grey65"),
+    ggplot2::scale_fill_manual(values = stats::setNames(c(COLOR_DETECCIONES, "grey65"),
+                                                        c("Año completo", rotulo_reserva)),
                                name = NULL) +
     ggplot2::scale_x_continuous(breaks = datos$anio_fuego) +
     ggplot2::scale_y_continuous(expand = ggplot2::expansion(mult = c(0, 0.12))) +
@@ -813,6 +854,22 @@ grafico_concentracion <- function(indices, dest, etiqueta_fuente, fuente) {
     subtitulo = paste0("Días del año de fuego (setiembre–agosto) ordenados de ",
                        "mayor a menor número de detecciones"),
     dest, etiqueta_fuente, fuente
+  )
+}
+
+# Días extremos por año: ND95 y D95pTOT; los años sin Aqua también en gris.
+grafico_extremos <- function(indices, dest, etiqueta_fuente, fuente) {
+  p95 <- unique(stats::na.omit(indices$p95))[1]
+  grafico_barras_anuales(
+    indices,
+    c(nd95 = paste0("ND95: días con más de ", p95, " detecciones (percentil 95 del periodo base)"),
+      d95ptot = "D95pTOT: % de las detecciones del año ocurridas en esos días"),
+    titulo = "Días extremos de fuego por año",
+    subtitulo = paste0("Umbral P95 = ", p95, " detecciones por día, percentil 95 de los ",
+                       "días de fuego del periodo base"),
+    dest, etiqueta_fuente, fuente,
+    confiable = temporada_confiable(indices) & !indices$no_comparable,
+    rotulo_reserva = "Año parcial, provisional, con pocas detecciones o sin Aqua"
   )
 }
 
@@ -893,5 +950,19 @@ ayudantes_intensidad <- function(indices) {
     frp95_max = num_es(max(ok$frp95), 0), anio_frp95_max = ok$anio_fuego[which.max(ok$frp95)],
     aq_media = num_es(100 * mean(ok$aq[ok$aq > 0]), 0),
     noc_media = num_es(100 * mean(ok$noc), 0)
+  )
+}
+
+ayudantes_extremos <- function(indices) {
+  ok <- indices[temporada_confiable(indices) & !indices$no_comparable, ]
+  list(
+    p95 = unique(stats::na.omit(indices$p95))[1],
+    n_anios = nrow(ok),
+    nd95_media = num_es(mean(ok$nd95), 1),
+    nd95_max = max(ok$nd95), anio_nd95_max = ok$anio_fuego[which.max(ok$nd95)],
+    anios_sin_extremos = paste(ok$anio_fuego[ok$nd95 == 0], collapse = ", "),
+    n_sin_extremos = sum(ok$nd95 == 0),
+    d95ptot_media = num_es(mean(ok$d95ptot), 0),
+    d95ptot_max = num_es(max(ok$d95ptot), 0), anio_d95ptot_max = ok$anio_fuego[which.max(ok$d95ptot)]
   )
 }

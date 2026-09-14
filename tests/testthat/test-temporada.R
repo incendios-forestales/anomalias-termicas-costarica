@@ -328,3 +328,34 @@ test_that("indices_intensidad resume FRP y controles por año de fuego", {
   expect_equal(u$frpi, c(2.5, 10))
   expect_true(all(c("frpi", "frp95", "aq", "noc") %in% names(u)))
 })
+
+
+test_that("umbral_p95 e indices_extremos siguen la lógica del ETCCDI", {
+  rangos <- data.frame(data_id = "MODIS_SP", nivel = "SP",
+                       inicio = as.Date("2019-09-01"), fin = as.Date("2022-08-31"))
+  # Año de fuego 2020: 100 días con 1 detección y 5 días con 50.
+  # Año 2021: 20 días con 1. Año 2022: 3 días con 60.
+  fechas <- c(as.Date("2020-01-01") + 0:99, rep(as.Date("2020-04-20") + 0:4, each = 50),
+              as.Date("2021-02-01") + 0:19, rep(as.Date("2022-03-01") + 0:2, each = 60))
+  puntos <- data.frame(id_deteccion = seq_along(fechas), acq_date = fechas,
+                       frp = 10, satellite = "Aqua", daynight = "D")
+  d <- serie_diaria(puntos, rangos)
+  # Umbral sobre 2020-2021 (125 días de fuego: 120 con 1 y 5 con 50): P95 = 1
+  # (el 95 % de los días tiene 1), así que los 5 días de 50 lo superan.
+  p95 <- umbral_p95(d, anios = 2020:2021)
+  expect_equal(p95, 1)
+  ex <- indices_extremos(d, p95)
+  expect_equal(ex$nd95, c(5L, 0L, 3L))
+  expect_equal(ex$d95p, c(250L, 0L, 180L))
+  expect_equal(ex$d95ptot, c(round(100 * 250 / 350, 1), 0, 100))
+  expect_true(all(ex$p95 == 1))
+  # Umbral estricto: con el 99 % nada supera en 2021.
+  expect_error(umbral_p95(d, anios = 2030L), "periodo base")
+  anual <- unir_intensidad(indices_temporada(d, rangos), indices_intensidad(puntos))
+  u <- unir_extremos(anual, ex)
+  expect_false(any(u$no_comparable))          # todo Aqua
+  anual$aq[anual$anio_fuego == 2020L] <- 0
+  u2 <- unir_extremos(anual, ex)
+  expect_equal(u2$no_comparable, c(TRUE, FALSE, FALSE))
+  expect_match(notas_temporada(u2)[1], "sin Aqua")
+})

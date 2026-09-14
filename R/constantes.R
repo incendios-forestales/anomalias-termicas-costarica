@@ -196,3 +196,10 @@ RASTER_MIN_DETECCIONES_CONCENTRACION <- 100L
 # Celdas con menos superficie terrestre que esto (fragmentos de costa) quedan
 # en NA en FREC y DENS: una sola detección daría una densidad enorme.
 RASTER_MIN_AREA_KM2 <- 10
+
+# --- Días extremos (README, «Quinto índice») ---
+# Percentil del umbral sobre los días de fuego del periodo base, y fracción
+# mínima de detecciones de Aqua para que un año sea comparable con ese umbral
+# (2001 y 2002, con solo Terra, quedan por debajo).
+EXTREMOS_PERCENTIL <- 0.95
+EXTREMOS_AQ_MIN    <- 0.2
