@@ -186,17 +186,24 @@ superficie conocidas por una fuente ajena al satélite, y por eso permite algo
 que ninguna otra parte de estos reportes permite: **auditar los productos
 contra una medición hecha en tierra**.
 
-Las cuatro plataformas lo vieron, y la comparación entre ellas es en sí misma
-un resultado. Sobre el mismo fuego, los mismos días y el mismo humedal:
+`r if (all(ev_plat$detecciones > 0)) "Las cuatro plataformas lo vieron, y la comparación entre ellas es en sí misma un resultado." else "La comparación entre plataformas es en sí misma un resultado."`
+Sobre el mismo fuego, los mismos días y el mismo humedal:
 
 ```{r}
 #| label: tabla-evento
 #| output: asis
 for (i in seq_len(nrow(ev_plat))) {
   f <- ev_plat[i, ]
-  cat(sprintf("- **%s** — %s detecciones en %s días; FRP máximo %s MW.\n",
-              f$plataforma, num_es(f$detecciones, 0), f$dias,
-              num_es(f$frp_maximo)))
+  if (f$detecciones > 0) {
+    cat(sprintf("- **%s** — %s detecciones en %s días; FRP máximo %s MW.\n",
+                f$plataforma, num_es(f$detecciones, 0), f$dias,
+                num_es(f$frp_maximo)))
+  } else {
+    # Laguna del procesamiento estándar (S-NPP, mayo-junio de 2026): el
+    # cero no es una medida del sensor y se dice como lo que es.
+    cat(sprintf("- **%s** — sin detecciones: su procesamiento estándar tiene una laguna en esas fechas (ver su reporte).\n",
+                f$plataforma))
+  }
 }
 ```
 

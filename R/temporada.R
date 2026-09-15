@@ -175,20 +175,28 @@ indices_temporada <- function(diaria, rangos,
 
 # --- Intensidad (README, «Cuarto índice») -----------------------------------
 # Por año de fuego, sobre las detecciones de vegetación: mediana y percentil
-# 95 de la FRP (MW) y los controles de mezcla de satélites (fracción de Aqua)
-# y de hora (fracción nocturna). NA en los años sin detecciones.
-indices_intensidad <- function(puntos) {
+# 95 de la FRP (MW) y los controles de mezcla de satélites (AQ: fracción de
+# `satelite_control`, Aqua en MODIS) y de hora (fracción nocturna). NA en los
+# años sin detecciones. `satelite_control` NA (plataformas de un solo
+# satélite, README «Extensión a las plataformas VIIRS») deja AQ en NA.
+indices_intensidad <- function(puntos, satelite_control) {
   puntos |>
     sf::st_drop_geometry() |>
     dplyr::mutate(anio_fuego = anio_fuego(acq_date)) |>
     dplyr::summarise(
       frpi  = round(stats::median(frp, na.rm = TRUE), 1),
       frp95 = round(stats::quantile(frp, 0.95, na.rm = TRUE, names = FALSE), 1),
-      aq    = round(mean(satellite == "Aqua"), 3),
+      aq    = fraccion_satelite(satellite, satelite_control),
       noc   = round(mean(daynight == "N"), 3),
       .by = anio_fuego
     ) |>
     dplyr::arrange(anio_fuego)
+}
+
+# Fracción de detecciones del satélite de control; NA si no hay control.
+fraccion_satelite <- function(satellite, satelite_control) {
+  if (is.na(satelite_control)) return(NA_real_)
+  round(mean(satellite == satelite_control), 3)
 }
 
 # Agrega la intensidad a la tabla anual de índices (NA donde no hubo
@@ -206,7 +214,9 @@ unir_intensidad <- function(indices, intensidad) {
 umbral_p95 <- function(diaria, anios, prob = EXTREMOS_PERCENTIL) {
   base <- diaria[diaria$anio_fuego %in% anios & diaria$detecciones > 0, ]
   if (nrow(base) == 0) stop("Sin días de fuego en el periodo base.", call. = FALSE)
-  unname(stats::quantile(base$detecciones, prob))
+  # Redondeado a un decimal: el cuantil interpola entre conteos enteros y el
+  # CSV publicado no debe arrastrar ruido de coma flotante (108,79999...).
+  round(unname(stats::quantile(base$detecciones, prob)), 1)
 }
 
 # Por año de fuego: días que superan el umbral, detecciones acumuladas en
@@ -225,11 +235,15 @@ indices_extremos <- function(diaria, p95) {
 }
 
 # Agrega los días extremos a la tabla anual y marca los años no comparables
-# con el umbral: los que casi no tienen detecciones de Aqua (2001 y 2002).
-unir_extremos <- function(indices, extremos, aq_min = EXTREMOS_AQ_MIN) {
+# con el umbral: los que casi no tienen detecciones del satélite de control
+# (en MODIS, 2001 y 2002 sin Aqua). Sin satélite de control ningún año se
+# marca por este motivo.
+unir_extremos <- function(indices, extremos, satelite_control,
+                          aq_min = EXTREMOS_AQ_MIN) {
   indices |>
     dplyr::left_join(extremos, by = "anio_fuego") |>
-    dplyr::mutate(no_comparable = is.na(aq) | aq < aq_min) |>
+    dplyr::mutate(no_comparable = if (is.na(satelite_control)) FALSE else
+                    is.na(aq) | aq < aq_min) |>
     dplyr::relocate(nd95, d95p, d95ptot, p95, .before = parcial)
 }
 
@@ -240,14 +254,16 @@ temporada_confiable <- function(indices) {
 }
 
 # Nota en prosa por año, para la tabla del reporte ("" si no hay reservas).
-notas_temporada <- function(indices) {
+# `satelite_control` nombra al satélite ausente en los años no comparables.
+notas_temporada <- function(indices, satelite_control = NA) {
   no_comp <- if ("no_comparable" %in% names(indices)) indices$no_comparable else
     rep(FALSE, nrow(indices))
+  nota_no_comp <- paste0("sin ", satelite_control, ": días extremos no comparables")
   notas <- mapply(function(parcial, provisional, pocas, no_comp) {
     paste(c(if (parcial) "año parcial",
             if (provisional) "provisional",
             if (pocas) paste0("< ", TEMPORADA_MIN_DETECCIONES, " detecciones"),
-            if (no_comp) "sin Aqua: días extremos no comparables"),
+            if (no_comp) nota_no_comp),
           collapse = "; ")
   }, indices$parcial, indices$provisional, indices$pocas_detecciones, no_comp)
   unname(notas)
@@ -268,12 +284,12 @@ tabla_tipos_csv <- function(tipos, dest) {
 }
 
 # Widget DT de la tabla de temporada (para el reporte Quarto).
-crear_tabla_temporada <- function(indices, etiqueta_fuente) {
+crear_tabla_temporada <- function(indices, etiqueta_fuente, satelite_control = NA) {
   datos <- indices |>
     dplyr::mutate(
       inicio = ifelse(is.na(ini_fecha), "", fecha_es(ini_fecha, con_anio = FALSE)),
       fin    = ifelse(is.na(fin_fecha), "", fecha_es(fin_fecha, con_anio = FALSE)),
-      nota   = notas_temporada(indices)
+      nota   = notas_temporada(indices, satelite_control)
     ) |>
     dplyr::select(anio_fuego, dtot, inicio, fin, lon, df, n50, c10, frpi,
                   frp95, nd95, d95ptot, nota)
@@ -481,10 +497,10 @@ indices_consolidados <- function(puntos, celdas, anios,
 # fuego del periodo base: superficie terrestre, años con fuego, FREC (fracción
 # de años con fuego) y DENS (detecciones por km² de tierra y año). Celdas con
 # menos de `min_area` km² de tierra quedan en NA. Sobre el mismo periodo base
-# van la intensidad FRPI (mediana de FRP) y el control AQ (fracción de Aqua)
-# por celda, con NA por debajo de `minimo` detecciones (README, «Cuarto
-# índice»).
-indices_frecuencia <- function(puntos, celdas, grilla, anios,
+# van la intensidad FRPI (mediana de FRP) y el control AQ (fracción de
+# `satelite_control`; NA si la plataforma no lo tiene) por celda, con NA por
+# debajo de `minimo` detecciones (README, «Cuarto índice»).
+indices_frecuencia <- function(puntos, celdas, grilla, anios, satelite_control,
                                min_area = RASTER_MIN_AREA_KM2,
                                minimo = RASTER_MIN_DETECCIONES) {
   # Se fijan antes de entrar a la tabla: dentro de mutate(), `anios` pasa a
@@ -501,7 +517,7 @@ indices_frecuencia <- function(puntos, celdas, grilla, anios,
     dplyr::summarise(dtot_base = dplyr::n(),
                      anios = dplyr::n_distinct(anio_fuego),
                      frpi = round(stats::median(frp, na.rm = TRUE), 1),
-                     aq = round(mean(satellite == "Aqua"), 3),
+                     aq = fraccion_satelite(satellite, satelite_control),
                      .by = celda_id)
   grilla |>
     sf::st_drop_geometry() |>
@@ -560,6 +576,7 @@ tabla_temporada_celdas_csv <- function(consolidado, dest) {
 # análisis. Los metadatos llevan plataforma, periodo y umbral para que dos
 # rásteres no se comparen sin saber qué hay detrás.
 raster_consolidado <- function(consolidado, grilla, dest, plataforma,
+                               satelite_control = NA,
                                res = GRILLA_RES_ANALISIS,
                                minimo = RASTER_MIN_DETECCIONES,
                                fuera_max = RASTER_FUERA_MAX_PCT) {
@@ -583,6 +600,7 @@ raster_consolidado <- function(consolidado, grilla, dest, plataforma,
   }
   terra::metags(r) <- c(
     plataforma = plataforma,
+    satelite_control = if (is.na(satelite_control)) "ninguno (un solo satelite; aq en NA)" else satelite_control,
     periodo = paste0(min(consolidado$anio_inicio), "-", max(consolidado$anio_fin)),
     periodo_base_frec_dens = paste0(min(consolidado$base_inicio), "-",
                                     max(consolidado$base_fin)),
@@ -601,7 +619,8 @@ raster_consolidado <- function(consolidado, grilla, dest, plataforma,
                         "FREC: fraccion de anios del periodo base con fuego; DENS: ",
                         "detecciones por km2 de tierra y anio del periodo base; ",
                         "FRPI: mediana de la FRP (MW) en el periodo base; AQ: ",
-                        "fraccion de detecciones de Aqua en el periodo base")
+                        "fraccion de detecciones del satelite de control en el ",
+                        "periodo base (Aqua en MODIS; NA sin control)")
   )
   dir.create(dirname(dest), recursive = TRUE, showWarnings = FALSE)
   # FLT4S por N50F (0-0,5); las demás capas son enteras y caben igual.
@@ -649,9 +668,9 @@ ayudantes_temporada_celdas <- function(consolidado) {
     frpi_mediana = num_es(stats::median(consolidado$frpi, na.rm = TRUE), 1),
     frpi_min = num_es(min(consolidado$frpi, na.rm = TRUE), 1),
     frpi_max = num_es(max(consolidado$frpi, na.rm = TRUE), 1),
-    aq_mediana = num_es(100 * stats::median(consolidado$aq, na.rm = TRUE), 0),
-    aq_min = num_es(100 * min(consolidado$aq, na.rm = TRUE), 0),
-    aq_max = num_es(100 * max(consolidado$aq, na.rm = TRUE), 0),
+    aq_mediana = pct_o_na(stats::median(consolidado$aq, na.rm = TRUE)),
+    aq_min = pct_o_na(suppressWarnings(min(consolidado$aq, na.rm = TRUE))),
+    aq_max = pct_o_na(suppressWarnings(max(consolidado$aq, na.rm = TRUE))),
     n_validas_n50f = sum(consolidado$valida_n50f),
     n50f_min = num_es(min(consolidado$n50f, na.rm = TRUE), 2),
     n50f_max = num_es(max(consolidado$n50f, na.rm = TRUE), 2),
@@ -662,6 +681,17 @@ ayudantes_temporada_celdas <- function(consolidado) {
     ini_min = fecha_ref(min(ok$ini_dia)), ini_max = fecha_ref(max(ok$ini_dia)),
     fin_min = fecha_ref(min(ok$fin_dia)), fin_max = fecha_ref(max(ok$fin_dia))
   )
+}
+
+# Umbral P95 en prosa: entero si el cuantil cae en un entero (MODIS, 29) y
+# con un decimal si no (los cuantiles de VIIRS interpolan entre días).
+formato_p95 <- function(p95) {
+  num_es(p95, if (isTRUE(all.equal(p95, round(p95)))) 0 else 1)
+}
+
+# Porcentaje en prosa, o NA si el control no existe (todo AQ en NA).
+pct_o_na <- function(x) {
+  if (is.na(x) || !is.finite(x)) NA_character_ else num_es(100 * x, 0)
 }
 
 # Trama diagonal (tres líneas por celda) para marcar celdas en un mapa sin
@@ -857,9 +887,16 @@ grafico_concentracion <- function(indices, dest, etiqueta_fuente, fuente) {
   )
 }
 
-# Días extremos por año: ND95 y D95pTOT; los años sin Aqua también en gris.
-grafico_extremos <- function(indices, dest, etiqueta_fuente, fuente) {
-  p95 <- unique(stats::na.omit(indices$p95))[1]
+# Días extremos por año: ND95 y D95pTOT; los años sin el satélite de control
+# (no comparables) también en gris.
+grafico_extremos <- function(indices, dest, etiqueta_fuente, fuente,
+                             satelite_control = NA) {
+  p95 <- formato_p95(unique(stats::na.omit(indices$p95))[1])
+  rotulo_reserva <- if (is.na(satelite_control)) {
+    "Año parcial, provisional o con pocas detecciones"
+  } else {
+    paste0("Año parcial, provisional, con pocas detecciones o sin ", satelite_control)
+  }
   grafico_barras_anuales(
     indices,
     c(nd95 = paste0("ND95: días con más de ", p95, " detecciones (percentil 95 del periodo base)"),
@@ -869,7 +906,7 @@ grafico_extremos <- function(indices, dest, etiqueta_fuente, fuente) {
                        "días de fuego del periodo base"),
     dest, etiqueta_fuente, fuente,
     confiable = temporada_confiable(indices) & !indices$no_comparable,
-    rotulo_reserva = "Año parcial, provisional, con pocas detecciones o sin Aqua"
+    rotulo_reserva = rotulo_reserva
   )
 }
 
@@ -948,7 +985,7 @@ ayudantes_intensidad <- function(indices) {
     frpi_max = num_es(max(ok$frpi), 1), anio_frpi_max = ok$anio_fuego[which.max(ok$frpi)],
     frp95_media = num_es(mean(ok$frp95), 0),
     frp95_max = num_es(max(ok$frp95), 0), anio_frp95_max = ok$anio_fuego[which.max(ok$frp95)],
-    aq_media = num_es(100 * mean(ok$aq[ok$aq > 0]), 0),
+    aq_media = pct_o_na(mean(ok$aq[!is.na(ok$aq) & ok$aq > 0])),
     noc_media = num_es(100 * mean(ok$noc), 0)
   )
 }
@@ -956,7 +993,7 @@ ayudantes_intensidad <- function(indices) {
 ayudantes_extremos <- function(indices) {
   ok <- indices[temporada_confiable(indices) & !indices$no_comparable, ]
   list(
-    p95 = unique(stats::na.omit(indices$p95))[1],
+    p95 = formato_p95(unique(stats::na.omit(indices$p95))[1]),
     n_anios = nrow(ok),
     nd95_media = num_es(mean(ok$nd95), 1),
     nd95_max = max(ok$nd95), anio_nd95_max = ok$anio_fuego[which.max(ok$nd95)],

@@ -177,6 +177,20 @@ resumen_evento_plataformas <- function(clave_evento, claves, store) {
     purrr::list_rbind()
 }
 
+# Tramo de días consecutivos sin detecciones que contiene la ventana del
+# evento, en la serie diaria de la plataforma (serie_diaria()): describe una
+# laguna del producto con fechas reales en vez de escribirlas a mano.
+laguna_evento <- function(clave_evento, diaria) {
+  e <- evento(clave_evento)
+  diaria <- diaria[order(diaria$fecha), ]
+  con <- diaria$fecha[diaria$detecciones > 0]
+  antes <- con[con < e$inicio]
+  despues <- con[con > e$fin]
+  inicio <- if (length(antes)) max(antes) + 1 else min(diaria$fecha)
+  fin <- if (length(despues)) min(despues) - 1 else max(diaria$fecha)
+  list(inicio = inicio, fin = fin, dias = as.integer(fin - inicio) + 1L)
+}
+
 # Niveles de procesamiento de FIRMS que cubren la ventana del evento, en
 # prosa ("estándar", "tiempo casi real (provisional)" o ambos). Importa porque
 # un evento reciente cae casi siempre en la cola en tiempo casi real, cuyas

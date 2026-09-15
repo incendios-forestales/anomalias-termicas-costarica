@@ -254,7 +254,7 @@ que dependen de un puñado de días.
 
 ```{r}
 #| label: tabla-temporada
-crear_tabla_temporada(temporada, etq$fuente_fig)
+crear_tabla_temporada(temporada, etq$fuente_fig, etq$satelite_control)
 ```
 
 La tabla completa, con las fechas y las marcas por año, está disponible como
@@ -664,7 +664,14 @@ un solo píxel.
 #| label: evento-plataformas
 ev_plat <- resumen_evento_plataformas("catalina_2026", PLATAFORMAS$clave,
                                       almacen)
-ev_viirs <- ev_plat[ev_plat$clave != "modis", ]
+# Solo las VIIRS con detecciones: una laguna del procesamiento estándar
+# (S-NPP, mayo-junio de 2026) dejaría un cero que no habla del píxel.
+ev_viirs <- ev_plat[ev_plat$clave != "modis" & ev_plat$detecciones > 0, ]
+ev_laguna <- ev_plat$plataforma[ev_plat$clave != "modis" & ev_plat$detecciones == 0]
+prosa_laguna <- if (length(ev_laguna)) paste0(
+  " (", paste(ev_laguna, collapse = " y "), " no cuenta: su procesamiento ",
+  "estándar tiene una laguna en esas fechas, explicada en su reporte)"
+) else ""
 
 # La brecha con la cifra oficial se cuenta distinto según MCD64A1 haya
 # publicado ya todos los meses del evento o no: mientras falten gránulos la
@@ -687,9 +694,9 @@ prosa_brecha <- if (ev_ba$completa) paste0(
 ```
 
 Esas `r ev$n` detecciones son el dato más elocuente de esta sección, pero por
-lo que **no** dicen. Los tres reportes VIIRS registran entre
+lo que **no** dicen. Los `r nrow(ev_viirs)` reportes VIIRS con datos registran entre
 `r min(ev_viirs$detecciones)` y `r max(ev_viirs$detecciones)` detecciones del
-mismo incendio, en los mismos días y sobre el mismo humedal: entre
+mismo incendio, en los mismos días y sobre el mismo humedal`r prosa_laguna`: entre
 **`r round(min(ev_viirs$detecciones) / ev$n)` y
 `r round(max(ev_viirs$detecciones) / ev$n)` veces más** que MODIS. La
 diferencia no está en el fuego sino

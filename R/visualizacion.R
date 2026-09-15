@@ -249,8 +249,10 @@ crear_mapa_temporal <- function(puntos, area_web, cobertura, archivos_worldcover
                         " años (FREC ", num_es(frec, 2), "); ", num_es(dens, 2),
                         " detecciones por km² y año")),
           ifelse(is.na(frpi), "",
-                 paste0("<br><strong>FRP mediana:</strong> ", num_es(frpi, 1),
-                        " MW; <strong>de Aqua (tarde):</strong> ", num_es(100 * aq, 0), " %")),
+                 paste0("<br><strong>FRP mediana:</strong> ", num_es(frpi, 1), " MW")),
+          # AQ solo existe en las plataformas con satélite de control (MODIS)
+          ifelse(is.na(aq), "",
+                 paste0("; <strong>de Aqua (tarde):</strong> ", num_es(100 * aq, 0), " %")),
           dplyr::case_when(
             sin_estacion ~ "<br><em>Sin estación definida (bimodal o fuego todo el año): sin índices</em>",
             !valida ~ "<br><em>Bajo el umbral de detecciones: sin índices</em>",

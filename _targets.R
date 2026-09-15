@@ -13,10 +13,12 @@
 #
 # CÓMO LEER ESTE ARCHIVO
 # Las cuatro cadenas se generan con tarchetypes::tar_map a partir de
-# PLATAFORMAS (R/plataformas.R): cada target del bloque `tar_map` existe
-# cuatro veces, con el sufijo de la clave de plataforma (_modis, _snpp,
-# _noaa20, _noaa21). Es decir, `firms_pais` no existe como tal; existen
-# `firms_pais_modis`, `firms_pais_snpp`, etc.
+# PLATAFORMAS (R/plataformas.R): cada target del primer bloque `tar_map`
+# existe cuatro veces, con el sufijo de la clave de plataforma (_modis,
+# _snpp, _noaa20, _noaa21). Es decir, `firms_pais` no existe como tal;
+# existen `firms_pais_modis`, `firms_pais_snpp`, etc. Un segundo `tar_map`
+# calcula la suite de índices de temporada solo para las plataformas con
+# periodo base (_modis, _snpp, _noaa20).
 #
 # La descarga es reanudable: cada fragmento de fechas es una rama dinámica
 # respaldada por un CSV en data/raw/firms/; si la ejecución se interrumpe,
@@ -46,6 +48,16 @@ plataformas_pipeline <- dplyr::mutate(
   ultimo_ba     = rlang::syms(paste0("ultimo_mes_", tolower(ba_producto)))
 )
 plataformas_pipeline$ba_producto <- NULL
+
+# Valores del map de la suite de índices: solo las plataformas con periodo
+# base (R/plataformas.R). Los símbolos apuntan a los targets de la cadena
+# principal de cada plataforma; `satelite_control` es NA en las VIIRS.
+plataformas_indices <- dplyr::mutate(
+  plataformas_con_indices()[, c("clave", "etiqueta", "satelite_control")],
+  firms_pais = rlang::syms(paste0("firms_pais_", clave)),
+  rangos     = rlang::syms(paste0("rangos_", clave)),
+  etiquetas  = rlang::syms(paste0("etiquetas_", clave))
+)
 
 list(
   # --- Parámetros del pipeline (editar aquí) -------------------------------
@@ -318,134 +330,156 @@ list(
                format = "file")
   ),
 
-  # --- Año de fuego e índices anuales de temporada: solo MODIS --------------
-  # Primer índice de la suite (README, «Año de fuego e índices anuales»):
-  # longitud de la temporada (LON) con INI y FIN. Se conecta solo para MODIS
-  # en esta entrega, la serie con 25 años y dos satélites; las funciones son
-  # genéricas (R/temporada.R) y extender a VIIRS es mover estos targets al
-  # tar_map. Los índices usan solo detecciones de vegetación; las series
-  # publicadas siguen incluyendo todos los tipos.
-  tar_target(firms_vegetacion_modis, filtrar_vegetacion(firms_pais_modis)),
-  tar_target(tipos_modis, resumen_tipos(firms_pais_modis)),
-  tar_target(serie_diaria_modis,
-             serie_diaria(firms_vegetacion_modis, rangos_modis)),
-  tar_target(p95_modis, umbral_p95(serie_diaria_modis, anios_base("modis"))),
-  tar_target(temporada_modis,
-             unir_extremos(
-               unir_intensidad(indices_temporada(serie_diaria_modis, rangos_modis),
-                               indices_intensidad(firms_vegetacion_modis)),
-               indices_extremos(serie_diaria_modis, p95_modis))),
-  tar_target(fig_extremos_modis,
-             grafico_extremos(temporada_modis,
-                              "outputs/figs/modis/extremos_anual.png",
-                              etiquetas_modis$fuente_fig,
-                              etiquetas_modis$pie_firms),
-             format = "file"),
-  tar_target(tabla_temporada_modis,
-             tabla_temporada_csv(temporada_modis,
-                                 "outputs/tables/modis/temporada_anual.csv"),
-             format = "file"),
-  tar_target(tabla_tipos_modis,
-             tabla_tipos_csv(tipos_modis,
-                             "outputs/tables/modis/detecciones_por_tipo.csv"),
-             format = "file"),
-  tar_target(fig_temporada_modis,
-             grafico_temporada(temporada_modis,
-                               "outputs/figs/modis/temporada_anual.png",
-                               etiquetas_modis$fuente_fig,
-                               etiquetas_modis$pie_firms),
-             format = "file"),
-  tar_target(fig_intensidad_modis,
-             grafico_intensidad(temporada_modis,
-                                "outputs/figs/modis/intensidad_anual.png",
-                                etiquetas_modis$fuente_fig,
-                                etiquetas_modis$pie_firms),
-             format = "file"),
-  tar_target(fig_concentracion_modis,
-             grafico_concentracion(temporada_modis,
-                                   "outputs/figs/modis/concentracion_anual.png",
-                                   etiquetas_modis$fuente_fig,
-                                   etiquetas_modis$pie_firms),
-             format = "file"),
-  # Ráster consolidado: temporada climatológica por celda de 0,1° sobre los
-  # años de fuego completos y no provisionales.
-  tar_target(celdas_modis, asignar_celda(firms_vegetacion_modis, grilla_analisis)),
-  # Frecuencia y densidad sobre el periodo base de la plataforma (todas las
-  # celdas de la grilla); la tabla por celda une ambos consolidados.
-  tar_target(frecuencia_modis,
-             indices_frecuencia(firms_vegetacion_modis, celdas_modis,
-                                grilla_analisis, anios_base("modis"))),
-  tar_target(temporada_celdas_modis,
-             unir_consolidados(
-               indices_consolidados(firms_vegetacion_modis, celdas_modis,
-                                    anios_referencia(temporada_modis)),
-               frecuencia_modis, anios_referencia(temporada_modis))),
-  tar_target(tabla_temporada_celdas_modis,
-             tabla_temporada_celdas_csv(temporada_celdas_modis,
-                                        "outputs/tables/modis/temporada_celdas.csv"),
-             format = "file"),
-  tar_target(raster_temporada_modis,
-             raster_consolidado(temporada_celdas_modis, grilla_analisis,
-                                "outputs/rasters/modis/temporada_celdas.tif",
-                                etiquetas_modis$corta),
-             format = "file"),
-  tar_target(estilo_raster_modis,
-             escribir_estilo_qml("outputs/rasters/modis/temporada_celdas.qml"),
-             format = "file"),
-  tar_target(fig_temporada_celdas_modis,
-             grafico_temporada_celdas(temporada_celdas_modis, grilla_analisis,
-                                      pais_mapa,
-                                      "outputs/figs/modis/temporada_celdas_lon.png",
-                                      "lon", etiquetas_modis$fuente_fig,
-                                      etiquetas_modis$pie_firms),
-             format = "file"),
-  tar_target(fig_temporada_celdas_ini_modis,
-             grafico_temporada_celdas(temporada_celdas_modis, grilla_analisis,
-                                      pais_mapa,
-                                      "outputs/figs/modis/temporada_celdas_ini.png",
-                                      "ini_dia", etiquetas_modis$fuente_fig,
-                                      etiquetas_modis$pie_firms),
-             format = "file"),
-  tar_target(fig_temporada_celdas_n50f_modis,
-             grafico_temporada_celdas(temporada_celdas_modis, grilla_analisis,
-                                      pais_mapa,
-                                      "outputs/figs/modis/temporada_celdas_n50f.png",
-                                      "n50f", etiquetas_modis$fuente_fig,
-                                      etiquetas_modis$pie_firms),
-             format = "file"),
-  tar_target(fig_temporada_celdas_frec_modis,
-             grafico_temporada_celdas(temporada_celdas_modis, grilla_analisis,
-                                      pais_mapa,
-                                      "outputs/figs/modis/temporada_celdas_frec.png",
-                                      "frec", etiquetas_modis$fuente_fig,
-                                      etiquetas_modis$pie_firms),
-             format = "file"),
-  tar_target(fig_temporada_celdas_dens_modis,
-             grafico_temporada_celdas(temporada_celdas_modis, grilla_analisis,
-                                      pais_mapa,
-                                      "outputs/figs/modis/temporada_celdas_dens.png",
-                                      "dens", etiquetas_modis$fuente_fig,
-                                      etiquetas_modis$pie_firms),
-             format = "file"),
-  tar_target(fig_temporada_celdas_frpi_modis,
-             grafico_temporada_celdas(temporada_celdas_modis, grilla_analisis,
-                                      pais_mapa,
-                                      "outputs/figs/modis/temporada_celdas_frpi.png",
-                                      "frpi", etiquetas_modis$fuente_fig,
-                                      etiquetas_modis$pie_firms),
-             format = "file"),
+  # --- Año de fuego e índices anuales de temporada ------------------------
+  # Suite de índices del README («Año de fuego e índices anuales»), calculada
+  # por plataforma con las mismas definiciones y umbrales y sin mezclar
+  # detecciones de dos plataformas. Existe para las plataformas con periodo
+  # base en PLATAFORMAS (MODIS, S-NPP y NOAA-20; NOAA-21 queda fuera mientras
+  # no tenga procesamiento estándar). Los índices usan solo detecciones de
+  # vegetación; las series publicadas siguen incluyendo todos los tipos.
+  tar_map(
+    values = plataformas_indices,
+    names = clave,
+    descriptions = etiqueta,
+
+    tar_target(firms_vegetacion, filtrar_vegetacion(firms_pais)),
+    tar_target(tipos, resumen_tipos(firms_pais)),
+    tar_target(serie_diaria_plat, serie_diaria(firms_vegetacion, rangos)),
+    tar_target(p95, umbral_p95(serie_diaria_plat, anios_base(clave))),
+    tar_target(temporada,
+               unir_extremos(
+                 unir_intensidad(indices_temporada(serie_diaria_plat, rangos),
+                                 indices_intensidad(firms_vegetacion,
+                                                    satelite_control)),
+                 indices_extremos(serie_diaria_plat, p95),
+                 satelite_control)),
+    tar_target(fig_extremos,
+               grafico_extremos(temporada,
+                                file.path("outputs/figs", clave, "extremos_anual.png"),
+                                etiquetas$fuente_fig, etiquetas$pie_firms,
+                                satelite_control),
+               format = "file"),
+    tar_target(tabla_temporada,
+               tabla_temporada_csv(temporada,
+                                   file.path("outputs/tables", clave,
+                                             "temporada_anual.csv")),
+               format = "file"),
+    tar_target(tabla_tipos,
+               tabla_tipos_csv(tipos,
+                               file.path("outputs/tables", clave,
+                                         "detecciones_por_tipo.csv")),
+               format = "file"),
+    tar_target(fig_temporada,
+               grafico_temporada(temporada,
+                                 file.path("outputs/figs", clave, "temporada_anual.png"),
+                                 etiquetas$fuente_fig, etiquetas$pie_firms),
+               format = "file"),
+    tar_target(fig_intensidad,
+               grafico_intensidad(temporada,
+                                  file.path("outputs/figs", clave, "intensidad_anual.png"),
+                                  etiquetas$fuente_fig, etiquetas$pie_firms),
+               format = "file"),
+    tar_target(fig_concentracion,
+               grafico_concentracion(temporada,
+                                     file.path("outputs/figs", clave,
+                                               "concentracion_anual.png"),
+                                     etiquetas$fuente_fig, etiquetas$pie_firms),
+               format = "file"),
+    # Ráster consolidado: temporada climatológica por celda de 0,1° sobre los
+    # años de fuego completos y no provisionales; frecuencia, densidad e
+    # intensidad sobre el periodo base de la plataforma (todas las celdas).
+    tar_target(celdas, asignar_celda(firms_vegetacion, grilla_analisis)),
+    tar_target(frecuencia,
+               indices_frecuencia(firms_vegetacion, celdas, grilla_analisis,
+                                  anios_base(clave), satelite_control)),
+    tar_target(temporada_celdas,
+               unir_consolidados(
+                 indices_consolidados(firms_vegetacion, celdas,
+                                      anios_referencia(temporada)),
+                 frecuencia, anios_referencia(temporada))),
+    tar_target(tabla_temporada_celdas,
+               tabla_temporada_celdas_csv(temporada_celdas,
+                                          file.path("outputs/tables", clave,
+                                                    "temporada_celdas.csv")),
+               format = "file"),
+    tar_target(raster_temporada,
+               raster_consolidado(temporada_celdas, grilla_analisis,
+                                  file.path("outputs/rasters", clave,
+                                            "temporada_celdas.tif"),
+                                  etiquetas$corta, satelite_control),
+               format = "file"),
+    tar_target(estilo_raster,
+               escribir_estilo_qml(file.path("outputs/rasters", clave,
+                                             "temporada_celdas.qml")),
+               format = "file"),
+    # Un mapa estático por índice consolidado; el de AQ va aparte, abajo,
+    # porque solo existe en las plataformas con satélite de control.
+    tar_target(fig_temporada_celdas,
+               grafico_temporada_celdas(temporada_celdas, grilla_analisis,
+                                        pais_mapa,
+                                        file.path("outputs/figs", clave,
+                                                  "temporada_celdas_lon.png"),
+                                        "lon", etiquetas$fuente_fig,
+                                        etiquetas$pie_firms),
+               format = "file"),
+    tar_target(fig_temporada_celdas_ini,
+               grafico_temporada_celdas(temporada_celdas, grilla_analisis,
+                                        pais_mapa,
+                                        file.path("outputs/figs", clave,
+                                                  "temporada_celdas_ini.png"),
+                                        "ini_dia", etiquetas$fuente_fig,
+                                        etiquetas$pie_firms),
+               format = "file"),
+    tar_target(fig_temporada_celdas_fin,
+               grafico_temporada_celdas(temporada_celdas, grilla_analisis,
+                                        pais_mapa,
+                                        file.path("outputs/figs", clave,
+                                                  "temporada_celdas_fin.png"),
+                                        "fin_dia", etiquetas$fuente_fig,
+                                        etiquetas$pie_firms),
+               format = "file"),
+    tar_target(fig_temporada_celdas_n50f,
+               grafico_temporada_celdas(temporada_celdas, grilla_analisis,
+                                        pais_mapa,
+                                        file.path("outputs/figs", clave,
+                                                  "temporada_celdas_n50f.png"),
+                                        "n50f", etiquetas$fuente_fig,
+                                        etiquetas$pie_firms),
+               format = "file"),
+    tar_target(fig_temporada_celdas_frec,
+               grafico_temporada_celdas(temporada_celdas, grilla_analisis,
+                                        pais_mapa,
+                                        file.path("outputs/figs", clave,
+                                                  "temporada_celdas_frec.png"),
+                                        "frec", etiquetas$fuente_fig,
+                                        etiquetas$pie_firms),
+               format = "file"),
+    tar_target(fig_temporada_celdas_dens,
+               grafico_temporada_celdas(temporada_celdas, grilla_analisis,
+                                        pais_mapa,
+                                        file.path("outputs/figs", clave,
+                                                  "temporada_celdas_dens.png"),
+                                        "dens", etiquetas$fuente_fig,
+                                        etiquetas$pie_firms),
+               format = "file"),
+    tar_target(fig_temporada_celdas_frpi,
+               grafico_temporada_celdas(temporada_celdas, grilla_analisis,
+                                        pais_mapa,
+                                        file.path("outputs/figs", clave,
+                                                  "temporada_celdas_frpi.png"),
+                                        "frpi", etiquetas$fuente_fig,
+                                        etiquetas$pie_firms),
+               format = "file")
+  ),
+
+  # Ciclo diurno por celda (AQ): solo tiene sentido con dos satélites en una
+  # misma serie, es decir, en MODIS (README, «Extensión a las plataformas
+  # VIIRS»); por eso no va en el tar_map.
   tar_target(fig_temporada_celdas_aq_modis,
              grafico_temporada_celdas(temporada_celdas_modis, grilla_analisis,
                                       pais_mapa,
                                       "outputs/figs/modis/temporada_celdas_aq.png",
                                       "aq", etiquetas_modis$fuente_fig,
-                                      etiquetas_modis$pie_firms),
-             format = "file"),
-  tar_target(fig_temporada_celdas_fin_modis,
-             grafico_temporada_celdas(temporada_celdas_modis, grilla_analisis,
-                                      pais_mapa,
-                                      "outputs/figs/modis/temporada_celdas_fin.png",
-                                      "fin_dia", etiquetas_modis$fuente_fig,
                                       etiquetas_modis$pie_firms),
              format = "file"),
 

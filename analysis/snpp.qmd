@@ -116,8 +116,9 @@ aparece en los popups.
 Desde el control de capas pueden activarse además el área quemada reciente
 (píxeles de VNP64A1, con su fecha de quema en el popup, filtrados por el
 deslizador igual que las detecciones), la cobertura
-([ESA WorldCover 2021](https://esa-worldcover.org/)) y las áreas de
-conservación del SINAC.
+([ESA WorldCover 2021](https://esa-worldcover.org/)), las áreas de
+conservación del SINAC y la temporada de fuego consolidada por celda (ver
+la sección [Temporada de fuego](#temporada-de-fuego)).
 
 ```{r}
 #| label: mapa-interactivo
@@ -126,9 +127,13 @@ cobertura_mapa <- tar_read(cobertura_snpp, store = almacen)
 worldcover <- tar_read(archivos_worldcover, store = almacen)
 bbox <- tar_read(bbox_descarga, store = almacen)
 ac_web <- tar_read(ac_web, store = almacen)
+celdas_mapa <- celdas_temporada_sf(tar_read(temporada_celdas_snpp, store = almacen),
+                                   tar_read(grilla_analisis, store = almacen),
+                                   solo_con_fuego = TRUE)
 crear_mapa_temporal(firms_pais, pais_web, cobertura_mapa, worldcover, bbox,
                     etq$etiqueta_quemas, ac_web,
-                    quemas = area_quemada_pais)
+                    quemas = area_quemada_pais,
+                    celdas_temporada = celdas_mapa)
 ```
 
 ## Área quemada (VNP64A1)
@@ -202,6 +207,250 @@ ayuda a distinguir un año realmente tranquilo de un hueco del sensor.
 crear_tabla_resumen(firms_pais, etq$fuente_fig, etq$etiqueta_ba,
                     area_quemada_pais)
 ```
+
+## Temporada de fuego
+
+Esta sección aplica a la serie de Suomi-NPP la misma suite de índices
+anuales que el [reporte MODIS](../modis/#temporada-de-fuego), con las
+mismas definiciones, fracciones y umbrales, y sin mezclar detecciones de
+sensores distintos: son productos hermanos, calculados por plataforma. La
+unidad es el **año de fuego**, del 1 de setiembre al 31 de agosto y
+nombrado por el año en que termina, que contiene enteras la época seca del
+Pacífico según el IMN y la temporada de incendios del SINAC; el sustento
+está en el reporte MODIS y en el
+[README](https://github.com/incendios-forestales/anomalias-termicas-costarica#año-de-fuego-e-índices-anuales).
+Solo cuentan las detecciones de **vegetación** (columna `type` de FIRMS
+igual a 0 o ausente).
+
+Para cada año se calcula el **inicio** (`INI`) y el **fin** (`FIN`) de la
+temporada observada como los primeros días en que la suma acumulada de
+detecciones alcanza el 10 % y el 90 % del total anual, y la **longitud**
+(`LON`) como los días entre ambos. VIIRS ve entre cinco y ocho veces más
+detecciones de vegetación por año que MODIS, así que el mínimo de 300
+detecciones anuales se cumple siempre; como los tres índices dependen de
+fracciones y no del conteo, son comparables en nivel con los de MODIS,
+aunque cabe esperar un inicio algo más temprano, porque el píxel de 375 m
+ve las quemas pequeñas del arranque de la temporada que MODIS no registra.
+
+```{r}
+#| label: temporada
+temporada <- tar_read(temporada_snpp, store = almacen)
+tipos <- tar_read(tipos_snpp, store = almacen)
+tp <- ayudantes_temporada(temporada)
+```
+
+![](`r file.path("..", tar_read(fig_temporada_snpp, store = almacen))`)
+
+En los **`r tp$n_confiables` años completos** (`r tp$anios_confiables[1]` a
+`r tp$anios_confiables[2]`, sin reservas de lectura) la temporada dura en
+promedio **`r tp$lon_media` días**, entre los `r tp$lon_min` de
+`r tp$anio_lon_min` y los `r tp$lon_max` de `r tp$anio_lon_max`. La mediana
+del inicio cae el `r tp$ini_mediana` y la del fin el `r tp$fin_mediana`. El
+inicio más temprano fue el `r tp$ini_mas_temprano` y el más tardío el
+`r tp$ini_mas_tardio`; el fin más temprano, el `r tp$fin_mas_temprano`, y el
+más tardío, el `r tp$fin_mas_tardio`.
+
+Los años en gris tienen alguna reserva: el año de fuego 2012 es **parcial**
+(el procesamiento estándar de Suomi-NPP empieza el 20 de enero de 2012 y le
+faltan setiembre a diciembre de 2011 y las tres primeras semanas de enero),
+igual que el año de fuego recién iniciado; un año es **provisional** cuando
+parte de sus días proviene del procesamiento en tiempo casi real (hoy, los
+meses posteriores a
+`r fecha_es(max(tar_read(rangos_snpp, store = almacen)$fin[tar_read(rangos_snpp, store = almacen)$nivel == "SP"]))`).
+
+```{r}
+#| label: tabla-temporada
+crear_tabla_temporada(temporada, etq$fuente_fig, etq$satelite_control)
+```
+
+La tabla completa, con las fechas y las marcas por año, está disponible como
+[CSV](`r file.path("..", tar_read(tabla_temporada_snpp, store = almacen))`).
+
+### Concentración diaria del fuego
+
+`N50` es el número mínimo de días del año de fuego que, ordenados de mayor
+a menor, reúnen la mitad de las detecciones, y `C10` el porcentaje del
+total que ocurre en los 10 días más activos. Como `LON`, se definen por
+fracciones del total anual y son comparables entre plataformas.
+
+```{r}
+#| label: concentracion
+cc <- ayudantes_concentracion(temporada)
+```
+
+![](`r file.path("..", tar_read(fig_concentracion_snpp, store = almacen))`)
+
+En los años completos, la mitad del fuego del año cabe en promedio en
+**`r cc$n50_media` días**, entre los `r cc$n50_min` de `r cc$anio_n50_min`
+y los `r cc$n50_max` de `r cc$anio_n50_max`, sobre unos `r cc$df_media`
+días de fuego por año. Los 10 días más activos concentran en promedio el
+**`r cc$c10_media` %** de las detecciones, desde el `r cc$c10_min` % de
+`r cc$anio_c10_min` hasta el `r cc$c10_max` % de `r cc$anio_c10_max`.
+
+### Intensidad del fuego
+
+`FRPI` es la mediana de la **potencia radiativa del fuego** (FRP, en
+megavatios) de las detecciones de vegetación del año de fuego y `FRP95` su
+percentil 95. En VIIRS la FRP es por píxel de 375 m, un mismo fuego se
+reparte en varios píxeles y el algoritmo la deriva de la banda M13, así que
+**sus valores no se comparan con los de MODIS**, que rondan los 15 MW de
+mediana: solo se comparan entre años de esta misma serie. Suomi-NPP es un
+solo satélite, de modo que no existe aquí el control de mezcla de
+satélites (`AQ`) de la serie MODIS; sí se conserva la fracción nocturna
+(`noc`), mayor que en MODIS porque el píxel de 375 m detecta de noche
+fuegos pequeños.
+
+```{r}
+#| label: intensidad
+ci <- ayudantes_intensidad(temporada)
+```
+
+![](`r file.path("..", tar_read(fig_intensidad_snpp, store = almacen))`)
+
+En los años completos la FRP mediana es de **`r ci$frpi_media` MW**, entre
+los `r ci$frpi_min` de `r ci$anio_frpi_min` y los `r ci$frpi_max` de
+`r ci$anio_frpi_max`; el percentil 95 promedia `r ci$frp95_media` MW y
+alcanzó `r ci$frp95_max` MW en `r ci$anio_frp95_max`. El `r ci$noc_media` %
+de las detecciones son nocturnas.
+
+### Días extremos
+
+Cuánto del fuego del año ocurre en días que, por su número de detecciones,
+son extremos respecto del registro: el umbral `P95` es el percentil 95 de
+las detecciones diarias en los días con fuego del **periodo base
+`r paste0(min(anios_base("snpp")), "–", max(anios_base("snpp")))`**, que en
+esta plataforma coincide con los años completos del registro (un solo
+satélite en órbita mantenida, sin los cambios de instrumental que acortan
+el de MODIS). El umbral es propio de la serie y no se compara con el de
+MODIS.
+
+```{r}
+#| label: extremos
+ce <- ayudantes_extremos(temporada)
+```
+
+![](`r file.path("..", tar_read(fig_extremos_snpp, store = almacen))`)
+
+El umbral es de **`r ce$p95` detecciones por día**. En los
+`r ce$n_anios` años completos hubo en promedio `r ce$nd95_media` días
+extremos por año, con un máximo de `r ce$nd95_max` en
+`r ce$anio_nd95_max`; esos días concentran en promedio el
+`r ce$d95ptot_media` % de las detecciones del año, y hasta el
+`r ce$d95ptot_max` % en `r ce$anio_d95ptot_max`.
+`r if (ce$n_sin_extremos > 0) paste0("Hubo ", ce$n_sin_extremos, " años sin ningún día extremo (", ce$anios_sin_extremos, ").") else "Todos los años completos tuvieron al menos un día extremo."`
+
+### Temporada consolidada por celda
+
+```{r}
+#| label: temporada-celdas
+consolidado <- tar_read(temporada_celdas_snpp, store = almacen)
+tc <- ayudantes_temporada_celdas(consolidado)
+```
+
+Para cada celda de 0,1° (~11 km) de la grilla común a las plataformas se
+juntan las detecciones de vegetación de los años de fuego completos
+(`r tc$periodo`) y se calculan `INI`, `FIN` y `LON` sobre esa distribución
+de fechas: la temporada climatológica de la celda. Las celdas con menos de
+`r RASTER_MIN_DETECCIONES` detecciones acumuladas quedan sin índices y se
+dibujan en gris, y las que tienen más del `r RASTER_FUERA_MAX_PCT` % de sus
+detecciones fuera de diciembre a mayo (`FUERA`) se marcan **sin estación
+definida** y van con trama. Los umbrales son los mismos que en MODIS; como
+VIIRS acumula muchas más detecciones, los cumplen más celdas, lo que da un
+mapa más completo pero no más preciso donde ambas plataformas lo tienen.
+
+![](`r file.path("..", tar_read(fig_temporada_celdas_snpp, store = almacen))`)
+
+De las `r tc$n_con_fuego` celdas con alguna detección, `r tc$n_validas`
+alcanzan el umbral y `r tc$n_sin_estacion` de ellas quedan sin estación
+definida`r if (tc$n_sin_estacion > 0) paste0(", con entre ", tc$fuera_sin_estacion, " % de sus detecciones fuera de diciembre a mayo") else ""`
+(en las demás la mediana es `r tc$fuera_mediana_unimodal` %). En las
+`r tc$n_con_indices` celdas con índices la temporada consolidada dura
+entre `r tc$lon_min` y `r tc$lon_max` días (mediana `r tc$lon_mediana`). El
+inicio más temprano de celda cae el `r tc$ini_min` y el más tardío el
+`r tc$ini_max`; el fin, entre el `r tc$fin_min` y el `r tc$fin_max`. En el
+mapa de longitud la escala de color se acota en `r RASTER_LON_TOPE` días.
+
+::: {layout-ncol=2}
+![](`r file.path("..", tar_read(fig_temporada_celdas_ini_snpp, store = almacen))`)
+
+![](`r file.path("..", tar_read(fig_temporada_celdas_fin_snpp, store = almacen))`)
+:::
+
+`N50F` es la versión por celda de la concentración: la proporción de los
+días de fuego de la celda que reúnen la mitad de sus detecciones (0,5
+repartido; hacia 0, en oleadas), con un umbral de
+`r RASTER_MIN_DETECCIONES_CONCENTRACION` detecciones que cumplen
+`r tc$n_validas_n50f` celdas, con valores entre `r tc$n50f_min` y
+`r tc$n50f_max` (mediana `r tc$n50f_mediana`).
+
+![](`r file.path("..", tar_read(fig_temporada_celdas_n50f_snpp, store = almacen))`)
+
+### Frecuencia y densidad por celda
+
+Para cada celda de la grilla, incluidas las que nunca tuvieron fuego,
+`FREC` es la fracción de años con al menos una detección y `DENS` las
+detecciones por km² de superficie terrestre y por año, ambas sobre el
+**periodo base `r tc$periodo_base`**. Las celdas con menos de
+`r RASTER_MIN_AREA_KM2` km² de tierra quedan en gris. Las densidades son
+propias de VIIRS y no se comparan con las de MODIS, que ve unas cinco
+veces menos detecciones; `FREC` tampoco es comparable del todo, porque una
+celda con fuegos pequeños «arde más años» para el píxel de 375 m.
+
+::: {layout-ncol=2}
+![](`r file.path("..", tar_read(fig_temporada_celdas_frec_snpp, store = almacen))`)
+
+![](`r file.path("..", tar_read(fig_temporada_celdas_dens_snpp, store = almacen))`)
+:::
+
+De las `r tc$n_celdas_grilla` celdas que tocan el país,
+`r tc$n_sin_fuego_base` no tuvieron ninguna detección de vegetación en el
+periodo base; `r tc$n_frec_alta` celdas arden tres de cada cuatro años o
+más y `r tc$n_frec_baja` lo hacen menos de uno de cada cuatro. La densidad
+mediana entre las celdas con fuego es de `r tc$dens_mediana_con_fuego`
+detecciones por km² y año, con un máximo de `r tc$dens_max`.
+
+### Intensidad por celda
+
+Sobre las detecciones del periodo base, cada celda con al menos
+`r RASTER_MIN_DETECCIONES` detecciones lleva su FRP mediana (`FRPI`). No
+hay mapa de ciclo diurno (`AQ`): ese control mide la mezcla de dos
+satélites en una misma serie y aquí hay uno solo.
+
+![](`r file.path("..", tar_read(fig_temporada_celdas_frpi_snpp, store = almacen))`)
+
+En las `r tc$n_validas_base` celdas que alcanzan el umbral, la FRP mediana
+va de `r tc$frpi_min` a `r tc$frpi_max` MW (mediana entre celdas,
+`r tc$frpi_mediana`).
+
+Los índices por celda están disponibles como
+[CSV](`r file.path("..", tar_read(tabla_temporada_celdas_snpp, store = almacen))`)
+y como
+[GeoTIFF](`r file.path("..", tar_read(raster_temporada_snpp, store = almacen))`)
+con las mismas diez bandas con nombre que el de MODIS (`ini_dia`,
+`fin_dia`, `lon`, `fuera`, `n50f`, `dtot`, `frec`, `dens`, `frpi` y `aq`;
+esta última vacía en VIIRS), la plataforma y los periodos en los
+metadatos, y un estilo
+[`.qml`](`r file.path("..", tar_read(estilo_raster_snpp, store = almacen))`)
+de QGIS con la simbología de `LON`. Las mismas celdas pueden activarse
+como capa del [mapa interactivo](#mapa-interactivo).
+
+### Detecciones excluidas por tipo de fuente
+
+FIRMS clasifica cada detección del procesamiento estándar por tipo de
+fuente: vegetación, volcán activo, otra fuente estática en tierra o mar.
+En el registro de Suomi-NPP hay **`r num_es(sum(tipos$excluidas), 0)`**
+detecciones de los tres últimos tipos, que las series mensuales y los
+mapas de este reporte sí incluyen pero los índices de temporada apartan.
+La cola en tiempo casi real no trae el campo, de modo que sus detecciones
+(*sin tipo*) cuentan como vegetación.
+
+```{r}
+#| label: tabla-tipos
+crear_tabla_tipos(tipos, etq$fuente_fig)
+```
+
+Disponible también como
+[CSV](`r file.path("..", tar_read(tabla_tipos_snpp, store = almacen))`).
 
 ## Detecciones por área de conservación
 
@@ -325,24 +574,53 @@ principal fue la `r e$combustible`, una planta invasora que arde incluso sobre
 el agua. Tenemos entonces una fecha de ignición, una causa y una superficie
 oficial: tres cosas con las que auditar los productos satelitales.
 
-**Lo que vio esta plataforma.** VIIRS en Suomi-NPP registró
-**`r ev$n` detecciones** en la ventana del evento repartidas en
-`r ev$n_dias` días, del `r fecha_es(ev$primera, con_anio = FALSE)` al
-`r fecha_es(ev$ultima)` —es decir, el fuego apareció en las imágenes
-`r ev$latencia_prosa` después de la ignición reportada—, con una potencia
-radiativa acumulada de `r num_es(ev$frp_total, 0)` MW y un máximo de
-`r num_es(ev$frp_maximo)` MW en un solo píxel. `r ev$n_nocturnas` de esas
-detecciones son nocturnas: el fuego no se apagaba de noche.
-
-![](`r file.path("..", tar_read(fig_evento_snpp, store = almacen))`)
-
-**Dónde ardió.** El **`r ev$pct_sector` %** de las detecciones del episodio
-tiene como polígono dominante el *`r e$sector`* del Registro Nacional de
-Humedales, y el **`r ev$pct_clase` %** cae en footprints donde WorldCover ve
-*`r tolower(ev$clase_objetivo)`*. Es un ejemplo concreto del hallazgo de la
-sección anterior: parte del "pastizal" que arde en Costa Rica no es potrero
-sino humedal estacional, y en este caso sabemos por la fuente periodística
-que lo que ardió fue un typhal sobre agua.
+```{r}
+#| label: evento-prosa
+#| output: asis
+# El procesamiento estándar de Suomi-NPP puede traer lagunas (FIRMS publicó
+# vacío el tramo de finales de abril a inicios de junio de 2026 al
+# reprocesar la cola en tiempo casi real): si la ventana del evento cae en
+# una, la sección lo dice en vez de fallar o inventar fechas.
+if (ev$n > 0) {
+  cat(paste0(
+    "**Lo que vio esta plataforma.** VIIRS en Suomi-NPP registró **", ev$n,
+    " detecciones** en la ventana del evento repartidas en ", ev$n_dias,
+    " días, del ", fecha_es(ev$primera, con_anio = FALSE), " al ",
+    fecha_es(ev$ultima), " —es decir, el fuego apareció en las imágenes ",
+    ev$latencia_prosa, " después de la ignición reportada—, con una potencia ",
+    "radiativa acumulada de ", num_es(ev$frp_total, 0), " MW y un máximo de ",
+    num_es(ev$frp_maximo), " MW en un solo píxel. ", ev$n_nocturnas,
+    " de esas detecciones son nocturnas: el fuego no se apagaba de noche.\n\n",
+    "![](", file.path("..", tar_read(fig_evento_snpp, store = almacen)), ")\n\n",
+    "**Dónde ardió.** El **", ev$pct_sector, " %** de las detecciones del ",
+    "episodio tiene como polígono dominante el *", e$sector, "* del Registro ",
+    "Nacional de Humedales, y el **", ev$pct_clase, " %** cae en footprints ",
+    "donde WorldCover ve *", tolower(ev$clase_objetivo), "*. Es un ejemplo ",
+    "concreto del hallazgo de la sección anterior: parte del \"pastizal\" que ",
+    "arde en Costa Rica no es potrero sino humedal estacional, y en este caso ",
+    "sabemos por la fuente periodística que lo que ardió fue un typhal sobre ",
+    "agua.\n"
+  ))
+} else {
+  laguna <- laguna_evento("catalina_2026",
+                          tar_read(serie_diaria_plat_snpp, store = almacen))
+  cat(paste0(
+    "**Lo que vio esta plataforma: nada.** El procesamiento estándar de ",
+    "Suomi-NPP que publica FIRMS no contiene ninguna detección en el país ",
+    "entre el ", fecha_es(laguna$inicio), " y el ", fecha_es(laguna$fin),
+    " (", laguna$dias, " días seguidos en cero, en plena temporada). Es una ",
+    "laguna del producto y no una ausencia de fuego: las otras tres ",
+    "plataformas registraron el episodio, y la cola en tiempo casi real de ",
+    "esta misma plataforma, que este reporte usó hasta que FIRMS la ",
+    "reemplazó por el estándar, había contado 102 detecciones en 3 días ",
+    "(corrida del 13 de setiembre de 2026). Suomi-NPP excede su vida útil ",
+    "de diseño y su producto de fuego activo ha mostrado huecos; este es ",
+    "uno. Si FIRMS completa el reprocesamiento, esta sección volverá a ",
+    "mostrar sus cifras.\n\n",
+    "![](", file.path("..", tar_read(fig_evento_snpp, store = almacen)), ")\n"
+  ))
+}
+```
 
 **Lo que el área quemada no vio.** Aquí está el resultado que más obliga a
 matizar el resto del reporte. Para `r meses_en_prosa(ev$meses_quemas)`,

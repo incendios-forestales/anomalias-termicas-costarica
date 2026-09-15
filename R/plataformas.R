@@ -22,18 +22,34 @@
 #                periodo base (años de fuego) de los índices que dependen del
 #                conteo absoluto (README, «Tercer índice»): para MODIS,
 #                2003–2022, los años con Terra y Aqua completos y sin deriva
-#                orbital. NA mientras no se fije para la plataforma.
+#                orbital; para las VIIRS coincide con su periodo de
+#                referencia (README, «Extensión a las plataformas VIIRS»).
+#                NA excluye a la plataforma de la suite de índices (NOAA-21,
+#                sin procesamiento estándar).
+#   satelite_control
+#                valor de `satellite` cuya fracción es el control AQ de la
+#                intensidad (README, «Cuarto índice»): Aqua en MODIS, el
+#                paso de la tarde en una serie de dos satélites. NA en las
+#                plataformas de un solo satélite: AQ queda en NA y no marca
+#                años no comparables.
 #
 # NOAA-20 y NOAA-21 no tienen producto de área quemada propio (VJ164A1 no está
 # publicado; verificado en CMR el 2026-08-04), así que toman el de Suomi-NPP y
 # lo declaran en la etiqueta.
 PLATAFORMAS <- tibble::tribble(
-  ~clave,   ~etiqueta,             ~corta,          ~fuente_sp,        ~fuente_nrt,          ~ba_producto, ~ba_etiqueta,     ~ba_creditos,          ~ba_version,             ~base_inicio, ~base_fin,
-  "modis",  "MODIS (Terra/Aqua)",  "MODIS",         "MODIS_SP",        "MODIS_NRT",          "MCD64A1",    "MCD64A1",        "MCD64A1",             "MCD64A1 v6.1",          2003L,        2022L,
-  "snpp",   "VIIRS (Suomi-NPP)",   "VIIRS S-NPP",   "VIIRS_SNPP_SP",   "VIIRS_SNPP_NRT",     "VNP64A1",    "VNP64A1",        "VNP64A1",             "VNP64A1 v2",            NA,           NA,
-  "noaa20", "VIIRS (NOAA-20)",     "VIIRS NOAA-20", "VIIRS_NOAA20_SP", "VIIRS_NOAA20_NRT",   "VNP64A1",    "VNP64A1, S-NPP", "VNP64A1, Suomi-NPP",  "VNP64A1 v2, Suomi-NPP", NA,           NA,
-  "noaa21", "VIIRS (NOAA-21)",     "VIIRS NOAA-21", NA,                "VIIRS_NOAA21_NRT",   "VNP64A1",    "VNP64A1, S-NPP", "VNP64A1, Suomi-NPP",  "VNP64A1 v2, Suomi-NPP", NA,           NA
+  ~clave,   ~etiqueta,             ~corta,          ~fuente_sp,        ~fuente_nrt,          ~ba_producto, ~ba_etiqueta,     ~ba_creditos,          ~ba_version,             ~base_inicio, ~base_fin, ~satelite_control,
+  "modis",  "MODIS (Terra/Aqua)",  "MODIS",         "MODIS_SP",        "MODIS_NRT",          "MCD64A1",    "MCD64A1",        "MCD64A1",             "MCD64A1 v6.1",          2003L,        2022L,     "Aqua",
+  "snpp",   "VIIRS (Suomi-NPP)",   "VIIRS S-NPP",   "VIIRS_SNPP_SP",   "VIIRS_SNPP_NRT",     "VNP64A1",    "VNP64A1",        "VNP64A1",             "VNP64A1 v2",            2013L,        2025L,     NA,
+  "noaa20", "VIIRS (NOAA-20)",     "VIIRS NOAA-20", "VIIRS_NOAA20_SP", "VIIRS_NOAA20_NRT",   "VNP64A1",    "VNP64A1, S-NPP", "VNP64A1, Suomi-NPP",  "VNP64A1 v2, Suomi-NPP", 2019L,        2025L,     NA,
+  "noaa21", "VIIRS (NOAA-21)",     "VIIRS NOAA-21", NA,                "VIIRS_NOAA21_NRT",   "VNP64A1",    "VNP64A1, S-NPP", "VNP64A1, Suomi-NPP",  "VNP64A1 v2, Suomi-NPP", NA,           NA,        NA
 )
+
+# Plataformas que forman parte de la suite de índices de temporada: las que
+# tienen periodo base. NOAA-21 queda fuera mientras no tenga procesamiento
+# estándar (README, «Extensión a las plataformas VIIRS»).
+plataformas_con_indices <- function() {
+  PLATAFORMAS[!is.na(PLATAFORMAS$base_inicio) & !is.na(PLATAFORMAS$base_fin), ]
+}
 
 # Años de fuego del periodo base de una plataforma; error claro si no está
 # fijado, porque un índice por conteo sin periodo base no debe calcularse.
@@ -80,6 +96,8 @@ etiquetas_plataforma <- function(clave) {
   list(
     plataforma       = p$etiqueta,
     corta            = p$corta,
+    # Satélite cuya fracción es el control AQ (NA: un solo satélite)
+    satelite_control = p$satelite_control,
     id_fuente        = id,
     ids_fuente       = ids,
     # Subtítulo del video: todas las fuentes que componen lo que se ve

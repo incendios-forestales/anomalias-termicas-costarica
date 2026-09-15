@@ -69,8 +69,12 @@ Se construye índice por índice, MODIS primero, y el README es el contrato:
 cada índice se define ahí (con sustento y referencias verificadas en
 Crossref) ANTES de escribir código, en un commit de documentación aparte.
 Luego: funciones genéricas en R/temporada.R, pruebas sintéticas, targets
-solo para MODIS fuera del `tar_map`, sección en analysis/modis.qmd, commit
-de código, corrida y commit «Corrida del AAAA-MM-DD (<índice>)».
+en el segundo `tar_map` de `_targets.R` (plataformas con periodo base:
+MODIS, S-NPP y NOAA-20; NOAA-21 queda fuera hasta tener procesamiento
+estándar), sección en analysis/{modis,snpp,noaa20}.qmd, commit de código,
+corrida y commit «Corrida del AAAA-MM-DD (<índice>)». Dentro de ese
+`tar_map`, un target no puede llamarse como una función que invoque
+(`serie_diaria_plat` existe por eso).
 
 Invariantes propios de la suite (cambiarlos invalida índices publicados):
 
@@ -87,6 +91,10 @@ Invariantes propios de la suite (cambiarlos invalida índices publicados):
   (`base_inicio`/`base_fin`; MODIS 2003–2022).
 - Nunca mezclar detecciones de plataformas distintas en un índice o ráster;
   las comparaciones entre plataformas son productos aparte.
+- El control AQ es la fracción de `satelite_control` (columna de
+  `PLATAFORMAS`: Aqua en MODIS, NA en las VIIRS). Con NA, AQ queda en NA en
+  tablas y ráster, no hay mapa de ciclo diurno y ningún año se marca no
+  comparable. Periodos base VIIRS: S-NPP 2013–2025, NOAA-20 2019–2025.
 - Umbrales: 300 detecciones/año (nacional), 30/celda (LON, FRPI, AQ),
   100/celda (N50F), 10 km² de tierra (FREC, DENS), 25 % fuera de dic–may
   (celda sin estación definida).

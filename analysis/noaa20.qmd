@@ -104,7 +104,9 @@ mostrar cada una con su ficha, así que el mapa las divide en dos capas: los
 el **registro completo** como una capa de puntos ligera (WebGL), apagada al
 inicio. El botón ⛶ abre el mapa en pantalla completa. Como en todos los
 productos VIIRS, la confianza de cada detección es categórica —baja, nominal
-o alta— y no un porcentaje como en MODIS.
+o alta— y no un porcentaje como en MODIS. Desde el control de capas puede
+activarse también la temporada de fuego consolidada por celda (ver la
+sección [Temporada de fuego](#temporada-de-fuego)).
 
 ```{r}
 #| label: mapa-interactivo
@@ -113,9 +115,13 @@ cobertura_mapa <- tar_read(cobertura_noaa20, store = almacen)
 worldcover <- tar_read(archivos_worldcover, store = almacen)
 bbox <- tar_read(bbox_descarga, store = almacen)
 ac_web <- tar_read(ac_web, store = almacen)
+celdas_mapa <- celdas_temporada_sf(tar_read(temporada_celdas_noaa20, store = almacen),
+                                   tar_read(grilla_analisis, store = almacen),
+                                   solo_con_fuego = TRUE)
 crear_mapa_temporal(firms_pais, pais_web, cobertura_mapa, worldcover, bbox,
                     etq$etiqueta_quemas, ac_web,
-                    quemas = area_quemada_pais)
+                    quemas = area_quemada_pais,
+                    celdas_temporada = celdas_mapa)
 ```
 
 ## Estadísticas
@@ -154,6 +160,197 @@ Al comparar este registro con el de [Suomi-NPP](../snpp/) conviene recordar
 que ambos llevan el mismo instrumento: las diferencias entre las dos series
 reflejan sobre todo las horas de paso y los episodios que cada plataforma
 alcanzó a observar, no una diferencia de sensibilidad.
+
+## Temporada de fuego
+
+Esta sección aplica a la serie de NOAA-20 la misma suite de índices
+anuales que los reportes de [MODIS](../modis/#temporada-de-fuego) y de
+[Suomi-NPP](../snpp/#temporada-de-fuego), con las mismas definiciones,
+fracciones y umbrales y sin mezclar detecciones de plataformas distintas.
+La unidad es el **año de fuego**, del 1 de setiembre al 31 de agosto y
+nombrado por el año en que termina; solo cuentan las detecciones de
+**vegetación** (columna `type` de FIRMS igual a 0 o ausente). El sustento
+de cada índice está en el reporte MODIS y en el
+[README](https://github.com/incendios-forestales/anomalias-termicas-costarica#año-de-fuego-e-índices-anuales);
+aquí se resumen sus resultados para esta plataforma.
+
+Lo particular de NOAA-20 es la brevedad del registro: el procesamiento
+estándar empieza el 1 de abril de 2018, así que el año de fuego 2018 es
+parcial y los años completos van de 2019 en adelante. Su lectura natural es
+el contraste con Suomi-NPP, el mismo instrumento cincuenta minutos antes:
+donde los dos coinciden, el resultado no depende de qué pasadas alcanzó a
+ver cada satélite.
+
+```{r}
+#| label: temporada
+temporada <- tar_read(temporada_noaa20, store = almacen)
+tipos <- tar_read(tipos_noaa20, store = almacen)
+tp <- ayudantes_temporada(temporada)
+```
+
+![](`r file.path("..", tar_read(fig_temporada_noaa20, store = almacen))`)
+
+En los **`r tp$n_confiables` años completos** (`r tp$anios_confiables[1]` a
+`r tp$anios_confiables[2]`) la temporada, del 10 % al 90 % de las
+detecciones acumuladas, dura en promedio **`r tp$lon_media` días**, entre
+los `r tp$lon_min` de `r tp$anio_lon_min` y los `r tp$lon_max` de
+`r tp$anio_lon_max`. La mediana del inicio cae el `r tp$ini_mediana` y la
+del fin el `r tp$fin_mediana`; el inicio más temprano fue el
+`r tp$ini_mas_temprano` y el fin más tardío el `r tp$fin_mas_tardio`. Los
+años en gris son el parcial de 2018, el año recién iniciado y el año
+**provisional**, con días del procesamiento en tiempo casi real (hoy, los
+posteriores a
+`r fecha_es(max(tar_read(rangos_noaa20, store = almacen)$fin[tar_read(rangos_noaa20, store = almacen)$nivel == "SP"]))`).
+
+```{r}
+#| label: tabla-temporada
+crear_tabla_temporada(temporada, etq$fuente_fig, etq$satelite_control)
+```
+
+La tabla completa está disponible como
+[CSV](`r file.path("..", tar_read(tabla_temporada_noaa20, store = almacen))`).
+
+### Concentración diaria del fuego
+
+```{r}
+#| label: concentracion
+cc <- ayudantes_concentracion(temporada)
+```
+
+![](`r file.path("..", tar_read(fig_concentracion_noaa20, store = almacen))`)
+
+La mitad del fuego del año cabe en promedio en **`r cc$n50_media` días**
+(`N50`), entre los `r cc$n50_min` de `r cc$anio_n50_min` y los
+`r cc$n50_max` de `r cc$anio_n50_max`, y los 10 días más activos
+concentran el **`r cc$c10_media` %** de las detecciones (`C10`), desde el
+`r cc$c10_min` % de `r cc$anio_c10_min` hasta el `r cc$c10_max` % de
+`r cc$anio_c10_max`.
+
+### Intensidad del fuego
+
+```{r}
+#| label: intensidad
+ci <- ayudantes_intensidad(temporada)
+```
+
+![](`r file.path("..", tar_read(fig_intensidad_noaa20, store = almacen))`)
+
+La FRP mediana de las detecciones de vegetación (`FRPI`) es de
+**`r ci$frpi_media` MW** en los años completos, entre los `r ci$frpi_min`
+de `r ci$anio_frpi_min` y los `r ci$frpi_max` de `r ci$anio_frpi_max`; el
+percentil 95 (`FRP95`) promedia `r ci$frp95_media` MW y alcanzó
+`r ci$frp95_max` MW en `r ci$anio_frp95_max`. Son valores por píxel de
+375 m y no se comparan con los de MODIS, solo entre años de esta serie y,
+con cautela, con los de Suomi-NPP. NOAA-20 es un solo satélite, así que no
+existe aquí el control de mezcla de satélites (`AQ`); el `r ci$noc_media` %
+de las detecciones son nocturnas (`noc`).
+
+### Días extremos
+
+El umbral `P95` es el percentil 95 de las detecciones diarias en los días
+con fuego del **periodo base
+`r paste0(min(anios_base("noaa20")), "–", max(anios_base("noaa20")))`**,
+que coincide con los años completos del registro. Es un periodo corto: al
+quitar cualquiera de sus años el umbral se mueve varias detecciones, más
+que en Suomi-NPP o en MODIS, de modo que los días extremos de esta
+plataforma se leen como provisionales hasta que el registro crezca.
+
+```{r}
+#| label: extremos
+ce <- ayudantes_extremos(temporada)
+```
+
+![](`r file.path("..", tar_read(fig_extremos_noaa20, store = almacen))`)
+
+El umbral es de **`r ce$p95` detecciones por día**. En los `r ce$n_anios`
+años completos hubo en promedio `r ce$nd95_media` días extremos por año,
+con un máximo de `r ce$nd95_max` en `r ce$anio_nd95_max`; esos días
+concentran en promedio el `r ce$d95ptot_media` % de las detecciones del
+año, y hasta el `r ce$d95ptot_max` % en `r ce$anio_d95ptot_max`.
+`r if (ce$n_sin_extremos > 0) paste0("Hubo ", ce$n_sin_extremos, " años sin ningún día extremo (", ce$anios_sin_extremos, ").") else "Todos los años completos tuvieron al menos un día extremo."`
+
+### Índices consolidados por celda
+
+```{r}
+#| label: temporada-celdas
+consolidado <- tar_read(temporada_celdas_noaa20, store = almacen)
+tc <- ayudantes_temporada_celdas(consolidado)
+```
+
+Sobre la grilla común de 0,1° se juntan las detecciones de vegetación de
+los años de fuego completos (`r tc$periodo`) y se calculan por celda
+`INI`, `FIN` y `LON` (temporada climatológica), `FUERA` (fracción fuera de
+diciembre a mayo; por encima del `r RASTER_FUERA_MAX_PCT` %, celda sin
+estación definida, con trama) y `N50F` (concentración), con los mismos
+umbrales que en las otras plataformas: `r RASTER_MIN_DETECCIONES`
+detecciones para fechar la temporada y
+`r RASTER_MIN_DETECCIONES_CONCENTRACION` para la concentración.
+
+![](`r file.path("..", tar_read(fig_temporada_celdas_noaa20, store = almacen))`)
+
+De las `r tc$n_con_fuego` celdas con alguna detección, `r tc$n_validas`
+alcanzan el umbral y `r tc$n_sin_estacion` quedan sin estación definida.
+En las `r tc$n_con_indices` celdas con índices la temporada consolidada
+dura entre `r tc$lon_min` y `r tc$lon_max` días (mediana
+`r tc$lon_mediana`); el inicio de celda va del `r tc$ini_min` al
+`r tc$ini_max` y el fin del `r tc$fin_min` al `r tc$fin_max`. `N50F` se
+calcula en `r tc$n_validas_n50f` celdas, con valores entre `r tc$n50f_min`
+y `r tc$n50f_max` (mediana `r tc$n50f_mediana`).
+
+::: {layout-ncol=2}
+![](`r file.path("..", tar_read(fig_temporada_celdas_ini_noaa20, store = almacen))`)
+
+![](`r file.path("..", tar_read(fig_temporada_celdas_fin_noaa20, store = almacen))`)
+:::
+
+![](`r file.path("..", tar_read(fig_temporada_celdas_n50f_noaa20, store = almacen))`)
+
+`FREC` (fracción de años con fuego), `DENS` (detecciones por km² de tierra
+y año) y `FRPI` (FRP mediana) se calculan sobre el **periodo base
+`r tc$periodo_base`**, que con siete años deja a `FREC` en múltiplos de un
+séptimo. De las `r tc$n_celdas_grilla` celdas que tocan el país,
+`r tc$n_sin_fuego_base` no tuvieron ninguna detección de vegetación en el
+periodo base; `r tc$n_frec_alta` arden tres de cada cuatro años o más. La
+densidad mediana entre las celdas con fuego es de
+`r tc$dens_mediana_con_fuego` detecciones por km² y año, con un máximo de
+`r tc$dens_max`; la FRP mediana de las `r tc$n_validas_base` celdas que
+alcanzan el umbral va de `r tc$frpi_min` a `r tc$frpi_max` MW. Ninguno de
+los tres se compara en nivel con MODIS. No hay mapa de ciclo diurno (`AQ`),
+porque ese control mide la mezcla de dos satélites en una misma serie.
+
+::: {layout-ncol=2}
+![](`r file.path("..", tar_read(fig_temporada_celdas_frec_noaa20, store = almacen))`)
+
+![](`r file.path("..", tar_read(fig_temporada_celdas_dens_noaa20, store = almacen))`)
+:::
+
+![](`r file.path("..", tar_read(fig_temporada_celdas_frpi_noaa20, store = almacen))`)
+
+Los índices por celda están disponibles como
+[CSV](`r file.path("..", tar_read(tabla_temporada_celdas_noaa20, store = almacen))`)
+y como
+[GeoTIFF](`r file.path("..", tar_read(raster_temporada_noaa20, store = almacen))`)
+con las mismas diez bandas con nombre que el de MODIS (la banda `aq`,
+vacía en VIIRS), acompañado de un estilo
+[`.qml`](`r file.path("..", tar_read(estilo_raster_noaa20, store = almacen))`)
+de QGIS con la simbología de `LON`. Las mismas celdas pueden activarse
+como capa del [mapa interactivo](#mapa-interactivo).
+
+### Detecciones excluidas por tipo de fuente
+
+En el registro estándar de NOAA-20 hay
+**`r num_es(sum(tipos$excluidas), 0)`** detecciones de volcanes, fuentes
+estáticas y mar, que las series mensuales y los mapas sí incluyen pero los
+índices de temporada apartan; la cola en tiempo casi real no trae el campo
+y cuenta como vegetación.
+
+```{r}
+#| label: tabla-tipos
+crear_tabla_tipos(tipos, etq$fuente_fig)
+```
+
+Disponible también como
+[CSV](`r file.path("..", tar_read(tabla_tipos_noaa20, store = almacen))`).
 
 ## Detecciones por área de conservación
 

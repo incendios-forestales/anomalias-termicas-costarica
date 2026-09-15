@@ -260,13 +260,13 @@ test_that("indices_frecuencia cubre toda la grilla y usa el periodo base", {
     coords = c("lon", "lat"), crs = 4326)
   celdas <- asignar_celda(puntos, analisis)
   fr <- indices_frecuencia(puntos, celdas, analisis, anios = 2020:2023,
-                           min_area = 1, minimo = 5L)
+                           satelite_control = "Aqua", min_area = 1, minimo = 5L)
   # Intensidad y control de satélite por celda sobre el periodo base.
   expect_equal(fr$frpi[fr$celda_id == "c0985_m08525"], 30)     # mediana de 5..160
   expect_equal(fr$aq[fr$celda_id == "c0985_m08525"], round(4 / 6, 3))
   expect_true(all(is.na(fr$frpi[fr$celda_id != "c0985_m08525"])))
   fr_u <- indices_frecuencia(puntos, celdas, analisis, anios = 2020:2023,
-                             min_area = 1, minimo = 30L)
+                             satelite_control = "Aqua", min_area = 1, minimo = 30L)
   expect_true(all(is.na(fr_u$frpi)))
   expect_true(all(fr_u$frec[fr_u$celda_id == "c0985_m08525"] == 0.5))
   expect_equal(nrow(fr), nrow(analisis))
@@ -279,11 +279,11 @@ test_that("indices_frecuencia cubre toda la grilla y usa el periodo base", {
   expect_true(all(sin$dtot_base == 0 & sin$frec == 0 & sin$dens == 0))
   # Fuera del periodo base no cuenta.
   fr2 <- indices_frecuencia(puntos, celdas, analisis, anios = 2021:2023,
-                            min_area = 1)
+                            satelite_control = "Aqua", min_area = 1)
   expect_equal(fr2$anios[fr2$celda_id == "c0985_m08525"], 1L)
   # Umbral de superficie: con un mínimo imposible, todo NA.
   fr3 <- indices_frecuencia(puntos, celdas, analisis, anios = 2020:2023,
-                            min_area = 1e6)
+                            satelite_control = "Aqua", min_area = 1e6)
   expect_true(all(is.na(fr3$frec)))
   # La unión conserva todas las celdas, con ceros donde no hubo fuego.
   cons <- indices_consolidados(puntos, celdas, anios = 2020:2023, minimo = 3L,
@@ -297,6 +297,22 @@ test_that("indices_frecuencia cubre toda la grilla y usa el periodo base", {
   # El periodo de referencia es el vector de años, no la columna `anios`.
   expect_true(all(u$anio_inicio == 2020L & u$anio_fin == 2023L))
   expect_true(all(u$base_inicio == 2020L & u$base_fin == 2023L))
+  # Sin satélite de control (VIIRS), AQ queda en NA y lo demás no cambia.
+  fr_v <- indices_frecuencia(puntos, celdas, analisis, anios = 2020:2023,
+                             satelite_control = NA, min_area = 1, minimo = 5L)
+  expect_true(all(is.na(fr_v$aq)))
+  expect_equal(fr_v$frpi, fr$frpi)
+  expect_equal(fr_v$frec, fr$frec)
+})
+
+test_that("plataformas_con_indices son las que tienen periodo base", {
+  con <- plataformas_con_indices()
+  expect_equal(con$clave, c("modis", "snpp", "noaa20"))
+  expect_equal(anios_base("snpp"), 2013:2025)
+  expect_equal(anios_base("noaa20"), 2019:2025)
+  expect_equal(plataforma("modis")$satelite_control, "Aqua")
+  expect_true(is.na(plataforma("snpp")$satelite_control))
+  expect_true(is.na(etiquetas_plataforma("noaa20")$satelite_control))
 })
 
 test_that("anios_base falla con claridad si la plataforma no lo tiene", {
@@ -313,7 +329,7 @@ test_that("indices_intensidad resume FRP y controles por año de fuego", {
     satellite = c("Terra", "Terra", "Terra", "Terra", "Aqua", "Aqua", "Terra", "Terra"),
     daynight = c("D", "D", "N", "N", "D", "D", "D", "D")
   )
-  ix <- indices_intensidad(puntos)
+  ix <- indices_intensidad(puntos, satelite_control = "Aqua")
   expect_equal(ix$anio_fuego, c(2021L, 2022L))
   expect_equal(ix$frpi, c(2.5, 10))
   expect_equal(ix$frp95[2], 10)
@@ -327,6 +343,11 @@ test_that("indices_intensidad resume FRP y controles por año de fuego", {
   u <- unir_intensidad(anual, ix)
   expect_equal(u$frpi, c(2.5, 10))
   expect_true(all(c("frpi", "frp95", "aq", "noc") %in% names(u)))
+  # Plataforma de un solo satélite: AQ en NA, FRP y NOC iguales.
+  ix_v <- indices_intensidad(puntos, satelite_control = NA)
+  expect_true(all(is.na(ix_v$aq)))
+  expect_equal(ix_v$frpi, ix$frpi)
+  expect_equal(ix_v$noc, ix$noc)
 })
 
 
@@ -351,11 +372,21 @@ test_that("umbral_p95 e indices_extremos siguen la lógica del ETCCDI", {
   expect_true(all(ex$p95 == 1))
   # Umbral estricto: con el 99 % nada supera en 2021.
   expect_error(umbral_p95(d, anios = 2030L), "periodo base")
-  anual <- unir_intensidad(indices_temporada(d, rangos), indices_intensidad(puntos))
-  u <- unir_extremos(anual, ex)
+  anual <- unir_intensidad(indices_temporada(d, rangos),
+                           indices_intensidad(puntos, "Aqua"))
+  u <- unir_extremos(anual, ex, satelite_control = "Aqua")
   expect_false(any(u$no_comparable))          # todo Aqua
   anual$aq[anual$anio_fuego == 2020L] <- 0
-  u2 <- unir_extremos(anual, ex)
+  u2 <- unir_extremos(anual, ex, satelite_control = "Aqua")
   expect_equal(u2$no_comparable, c(TRUE, FALSE, FALSE))
-  expect_match(notas_temporada(u2)[1], "sin Aqua")
+  expect_match(notas_temporada(u2, "Aqua")[1], "sin Aqua")
+  # Sin satélite de control (VIIRS) ningún año es no comparable, aunque AQ
+  # esté en NA, y la nota no menciona satélite alguno.
+  anual_v <- unir_intensidad(indices_temporada(d, rangos),
+                             indices_intensidad(puntos, NA))
+  u3 <- unir_extremos(anual_v, ex, satelite_control = NA)
+  expect_false(any(u3$no_comparable))
+  expect_false(any(grepl("comparables", notas_temporada(u3, NA))))
+  expect_equal(formato_p95(29), "29")
+  expect_equal(formato_p95(108.8), "108,8")
 })
