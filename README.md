@@ -195,7 +195,8 @@ anterior está publicado; esta sección documenta los cinco primeros, la
 **longitud de la temporada**, la **concentración diaria del fuego**, la
 **frecuencia y densidad del fuego**, la **intensidad del fuego** y los
 **días extremos**, cada uno en su versión anual o espacial consolidada, y
-solo lo necesario para calcularlos. Nada de esta sección
+solo lo necesario para calcularlos, y cierra con las reglas de su
+**extensión a las plataformas VIIRS**. Nada de esta sección
 altera las series mensuales, los videos ni los mapas ya publicados.
 
 ### Año de fuego
@@ -486,8 +487,8 @@ y 2002 tienen la mitad de las pasadas, y termina en 2022 porque Terra dejó
 de mantener su hora de paso en 2020 y Aqua en 2022, y desde entonces sus
 horas de cruce derivan. Los índices por fracciones (`LON`, `FUERA`, `N50F`)
 siguen usando todos los años completos, 2002–2025, porque no les afecta.
-El periodo base queda declarado por plataforma (para las VIIRS se fijará
-cuando se extiendan los índices) y es el que usarán después los índices por
+El periodo base queda declarado por plataforma (el de las VIIRS, en
+«Extensión a las plataformas VIIRS») y es el que usan los índices por
 percentil. La consecuencia práctica: `DENS` y `FREC` describen 2003–2022 y
 no el presente; su versión reciente vendrá como comparación de periodos,
 no como actualización continua.
@@ -591,9 +592,9 @@ la detectabilidad de la serie: un día con 29 detecciones de Terra y Aqua
 no es comparable con uno de solo Terra. Por eso los años de fuego 2001 y
 2002 se marcan como **no comparables** (sin Aqua, su `ND95` es de un solo
 día) y los años posteriores a 2022 se leen con la fracción de Aqua (`AQ`)
-de la tabla a la vista. `P95` es específico de la plataforma: para las
-VIIRS se recalculará sobre su propio periodo base cuando se extienda la
-suite.
+de la tabla a la vista. `P95` es específico de la plataforma: cada VIIRS
+lo calcula sobre su propio periodo base («Extensión a las plataformas
+VIIRS»).
 
 **Lectura.** En el registro MODIS, `ND95` va de 0 a 12 días por año y
 `D95pTOT` de 0 a 43 %: en 2022 diez días concentraron el 43 % de las
@@ -608,7 +609,80 @@ país.
 un percentil (2,6 detecciones por celda y año); la desagregación natural
 es por área de conservación, cuando se incorpore.
 
+### Extensión a las plataformas VIIRS
+
+La suite se calcula **por plataforma**, con las mismas definiciones, las
+mismas fracciones y los mismos umbrales, sobre la misma grilla, y nunca
+juntando detecciones de dos plataformas: cada VIIRS tiene su tabla anual,
+su consolidado por celda y su GeoTIFF, hermanos de los de MODIS y no
+mezclados con ellos. Lo que cambia entre plataformas es lo que sigue.
+
+**Periodo de referencia y periodo base.** El periodo de referencia (años
+de fuego completos y no provisionales) sale del registro de cada
+plataforma: el procesamiento estándar de Suomi-NPP empieza el 20 de enero
+de 2012 y el de NOAA-20 el 1 de abril de 2018, así que los años de fuego
+2012 y 2018 son parciales y los periodos de referencia son **2013–2025**
+para S-NPP y **2019–2025** para NOAA-20. En MODIS el periodo base es más
+corto que el de referencia porque descarta los años con un solo satélite y
+los de deriva orbital; en las VIIRS no hay motivo instrumental equivalente
+(una sola plataforma por serie, en órbita heliosincrónica mantenida a las
+13:30), así que el **periodo base coincide con el de referencia**:
+2013–2025 (trece años) para S-NPP y 2019–2025 (siete) para NOAA-20. Como
+en MODIS, es una constante de `PLATAFORMAS` y no se extiende sola al
+cerrarse cada año: ampliarlo es una decisión explícita que recalcula
+`FREC`, `DENS`, `FRPI` por celda y `P95`, y por eso cambia índices
+publicados. El de NOAA-20 es corto: su `P95` se apoya en unos 1 500 días de
+fuego y al quitar un año oscila entre 92 y 108 detecciones (en S-NPP, con
+unos 2 800 días, entre 107 y 114), de modo que sus días extremos se leen
+como provisionales hasta que el registro crezca.
+
+**Control de satélite.** `AQ` mide la mezcla de dos satélites en una misma
+serie (la fracción del paso de la tarde, Aqua) y solo tiene sentido en
+MODIS. Cada plataforma VIIRS es un solo satélite, así que `AQ` queda en NA
+en su tabla anual, en su tabla por celda y en la banda `aq` de su GeoTIFF,
+no se dibuja el mapa de ciclo diurno y ningún año se marca como no
+comparable por ese motivo. Qué satélite actúa de control es una columna de
+`PLATAFORMAS` (`satelite_control`: Aqua para MODIS, NA para las VIIRS) y no
+un nombre escrito en las funciones. `NOC` se conserva y es mayor en VIIRS
+(en torno al 20–30 % de las detecciones frente al 10–35 % de MODIS) porque
+el píxel de 375 m detecta de noche fuegos pequeños que MODIS no ve; eso
+lo hace, también, no comparable en nivel entre sensores.
+
+**NOAA-21 queda fuera de la suite** mientras FIRMS no publique su
+procesamiento estándar: toda su serie es tiempo casi real, así que no tiene
+ningún año de fuego completo y no provisional del que sacar un periodo de
+referencia o base, y su cola no trae `type`, con lo que el filtro de
+vegetación no apartaría volcanes ni fuentes estáticas. Entra sola cuando
+tenga periodo base en `PLATAFORMAS`; sus series, mapas y videos siguen
+publicándose como hasta ahora.
+
+**Umbrales iguales, lectura distinta.** VIIRS produce entre cinco y ocho
+veces más detecciones de vegetación por año que MODIS (S-NPP, 1 800–8 600
+por año de fuego), así que el mínimo de 300 detecciones anuales se cumple
+siempre y los umbrales por celda validan muchas más celdas: con S-NPP,
+269 de las 456 celdas con fuego alcanzan las 30 detecciones (163 de 406 en
+MODIS) y el 17 % de las celda-años (1 % en MODIS). Los umbrales no se
+ajustan por plataforma, porque son mínimos de estabilidad estadística y no
+de comparabilidad; la consecuencia es que los mapas VIIRS tienen más
+celdas con índice, no que sean más precisos donde MODIS también los tiene.
+
+**Qué se compara y qué no.** Entre plataformas son comparables en nivel
+los índices por fracciones y fechas: `INI`, `FIN`, `LON`, `FUERA`, `N50`,
+`C10` y `N50F`. No lo son los que dependen del conteo o del píxel: `DTOT`,
+`DENS`, `ND95`, `P95` y `D95p` (más detecciones por fuego), `FREC` en
+parte (una celda con fuego pequeño arde «más años» para VIIRS) y `FRPI` y
+`FRP95` (la FRP de VIIRS es por píxel de 375 m, un fuego se reparte en
+varios píxeles y el algoritmo la deriva de otra banda; la mediana ronda
+4–5 MW frente a 15–18 MW en MODIS). Las comparaciones formales en el
+periodo de traslape, diferencias de `INI` y `LON` por celda, mapa de
+acuerdo entre plataformas y anomalías estandarizadas de los índices de
+conteo, son productos aparte y no forman parte de esta extensión.
+
 ### Salidas
+
+Todas las salidas existen por plataforma (MODIS, VIIRS S-NPP y VIIRS
+NOAA-20), en `outputs/<tipo>/<plataforma>/`, y aparecen en el reporte de
+cada una.
 
 - Tabla con una fila por año de fuego: año, marca de parcial/provisional,
   `DTOT`, `INI`, `FIN` (día y fecha) y `LON`. Es el CSV publicado.
