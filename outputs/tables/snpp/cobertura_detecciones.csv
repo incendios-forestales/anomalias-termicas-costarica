@@ -1,11 +1,11 @@
 clase,fraccion_promedio,detecciones_dominante
-Bosque,0.639,58123
-Pastizal,0.278,19885
-Cultivos,0.057,4882
-Zonas construidas,0.011,727
+Bosque,0.64,57920
+Pastizal,0.276,19646
+Cultivos,0.057,4874
+Zonas construidas,0.011,725
 Suelo desnudo / vegetación escasa,0.006,593
-Cuerpos de agua,0.003,115
+Cuerpos de agua,0.003,114
 Matorral,0.003,5
-Humedal herbáceo,0.002,121
-Manglar,0.001,103
+Humedal herbáceo,0.002,117
+Manglar,0.001,101
 Nieve y hielo,0,0
