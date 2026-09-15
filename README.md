@@ -195,8 +195,10 @@ anterior está publicado; esta sección documenta los cinco primeros, la
 **longitud de la temporada**, la **concentración diaria del fuego**, la
 **frecuencia y densidad del fuego**, la **intensidad del fuego** y los
 **días extremos**, cada uno en su versión anual o espacial consolidada, y
-solo lo necesario para calcularlos, y cierra con las reglas de su
-**extensión a las plataformas VIIRS**. Nada de esta sección
+solo lo necesario para calcularlos, sigue con las reglas de su
+**extensión a las plataformas VIIRS** y cierra con la **comparación entre
+plataformas en el traslape**, el único lugar del proyecto donde dos
+plataformas se miran juntas. Nada de esta sección
 altera las series mensuales, los videos ni los mapas ya publicados.
 
 ### Año de fuego
@@ -676,7 +678,89 @@ varios píxeles y el algoritmo la deriva de otra banda; la mediana ronda
 4–5 MW frente a 15–18 MW en MODIS). Las comparaciones formales en el
 periodo de traslape, diferencias de `INI` y `LON` por celda, mapa de
 acuerdo entre plataformas y anomalías estandarizadas de los índices de
-conteo, son productos aparte y no forman parte de esta extensión.
+conteo, son productos aparte y se definen en la subsección siguiente.
+
+### Comparación entre plataformas en el traslape
+
+Las series no se suman ni se empalman, pero sí se pueden **comparar** en
+los años que dos plataformas observaron a la vez. Es la única parte del
+proyecto en que dos plataformas aparecen en un mismo producto, y lo hacen
+como dos columnas o dos mapas puestos lado a lado, nunca como una mezcla
+de detecciones. Responde a dos preguntas: si los hallazgos de la serie
+larga (MODIS) se sostienen en el sensor que la relevará, y qué parte de la
+diferencia entre plataformas es propiedad del fuego y qué parte del
+píxel. La literatura da la expectativa: el píxel de 375 m de VIIRS
+detecta fuegos más pequeños y más fríos que el de 1 km de MODIS
+(Schroeder et al. 2014; Giglio et al. 2016), produce varias veces más
+detecciones sobre los mismos fuegos (Fu et al. 2020) y reporta una FRP
+por píxel que no equivale a la de MODIS (Li et al. 2018).
+
+**Pares y periodo de traslape.** Se comparan pares ordenados `(A, B)` de
+plataformas con periodo base; las diferencias son siempre **`B` − `A`**.
+El **periodo de traslape** de un par es la intersección de sus periodos
+de referencia (años de fuego completos y no provisionales en ambas):
+
+| Par | Traslape | Lectura |
+|---|---|---|
+| MODIS → VIIRS S-NPP | 2013–2025 (13 años) | El par principal: la serie larga frente a su relevo |
+| MODIS → VIIRS NOAA-20 | 2019–2025 (7) | Comprobación del anterior con la otra VIIRS |
+| VIIRS S-NPP → VIIRS NOAA-20 | 2019–2025 (7) | Control: el mismo instrumento en dos plataformas; lo que difiera aquí no es el píxel |
+
+Un `ΔINI` negativo significa que `B` empieza antes que `A`. Con 13 años
+las correlaciones se reportan; con 7 solo se describen. Los pares se
+derivan de `PLATAFORMAS`: una plataforma entra en la comparación cuando
+tiene periodo base, y NOAA-21 se incorporará sola cuando lo tenga.
+
+**Producto 1: índices anuales lado a lado.** Para los índices
+comparables en nivel (`INI`, `FIN`, `LON`, `N50`, `C10`), una tabla por
+par con el valor de cada plataforma en cada año del traslape y su
+diferencia, y un resumen con la mediana y el rango de la diferencia y la
+correlación de Spearman entre las dos series anuales. La correlación
+dice si las dos plataformas ordenan igual los años (una temporada larga
+lo es para ambas); la mediana de la diferencia, si hay un sesgo
+sistemático, como el adelanto de `INI` que cabe esperar en VIIRS por las
+quemas pequeñas de inicio de temporada.
+
+**Producto 2: anomalías estandarizadas de los índices de conteo.** Los
+índices que dependen del conteo (`DTOT`, `ND95`, `D95pTOT`) no se
+comparan en nivel, pero sí como **anomalía estandarizada**: el valor de
+cada año menos la media del traslape, dividido entre la desviación típica
+del traslape, calculada por plataforma. Es adimensional y responde a la
+pregunta que importa, si un año fue extremo para las dos plataformas a
+la vez, sin que el número absoluto de detecciones intervenga. Se
+presentan las dos series de anomalías por año, la correlación de
+Spearman, la fracción de años en que ambas tienen el mismo signo y los
+años que cada plataforma sitúa en su máximo y su mínimo. Cuando las
+plataformas coinciden, el hallazgo no es artefacto de ninguna
+(«contraste», en la introducción de este README).
+
+**Producto 3: consolidados por celda en el traslape.** Para cada par se
+recalculan los consolidados por celda de las dos plataformas **sobre los
+años del traslape** (el periodo de referencia es un parámetro justamente
+para esto), con la misma grilla y los mismos umbrales, y se derivan:
+
+| Código | Definición | Unidad |
+|---|---|---|
+| `ACUERDO` | Clase de cada celda con fuego en alguna de las dos: índices en ambas; solo en `B`; solo en `A`; en ninguna (bajo el umbral en las dos); estación discordante (sin estación definida en una sola) | categoría |
+| `ΔINI`, `ΔFIN`, `ΔLON` | `B` − `A` en las celdas con índices en ambas | días |
+| `ρ(DENS)` | Correlación de Spearman entre las densidades de las dos plataformas sobre todas las celdas con al menos 10 km² de tierra, con `DENS` recalculada sobre el traslape | 0–1 |
+
+`ACUERDO` dice dónde se puede comparar y dónde no: las celdas «solo en
+`B`» son el mapa de lo que el píxel fino añade. Las diferencias por celda
+se resumen con su mediana, su rango intercuartílico y la fracción de
+celdas con `|ΔINI|` de 15 días o menos. `ρ(DENS)` mide si las dos
+plataformas dibujan la misma geografía del fuego aunque cuenten
+detecciones distintas; es una comparación de orden, no de nivel, y por
+eso es la única que involucra `DENS`. `FREC` no se compara por celda: en
+un traslape corto es un múltiplo de una fracción pequeña y el píxel fino
+la sesga hacia arriba.
+
+**Lo que no se hace.** No hay serie intercalibrada ni factor de
+conversión entre plataformas; las diferencias se publican como tales.
+No se comparan `FRPI` ni `FRP95` (Li et al. 2018) ni los umbrales `P95`.
+Los productos de comparación no alimentan ningún índice de las
+plataformas ni se actualizan con la cola en tiempo casi real: cambian
+solo cuando se cierra un año de fuego completo en ambas.
 
 ### Salidas
 
@@ -713,6 +797,14 @@ cada una.
   a incluir todas las celdas de la grilla (las sin fuego con ceros y los
   demás índices en NA); mapas estáticos de `FREC` y `DENS`; ambos valores
   en la ficha del mapa interactivo.
+- Comparación en el traslape, por par de plataformas y en
+  `outputs/<tipo>/comparacion/`: tabla anual lado a lado con diferencias y
+  anomalías estandarizadas (CSV), tabla por celda con los consolidados de
+  ambas, las diferencias y la clase de acuerdo (CSV), GeoTIFF con las
+  bandas `acuerdo`, `dif_ini`, `dif_fin` y `dif_lon`, figuras de índices
+  anuales y de anomalías por año, y mapas de acuerdo y de `ΔINI` y `ΔLON`.
+  Se publican en un reporte propio, `comparacion/`, enlazado desde la
+  portada.
 
 ### Referencias
 
@@ -745,9 +837,16 @@ cada una.
   E. E. N. (2020). Global fire season severity analysis and forecasting.
   *Computers & Geosciences*.
   <https://www.sciencedirect.com/science/article/abs/pii/S0098300419302808>
+- Fu, Y., Li, R., Wang, X., Bergeron, Y., Valeria, O. y Chavardès, R. D.
+  (2020). Fire detection and fire radiative power in forests and
+  low-biomass lands in Northeast Asia: MODIS versus VIIRS fire products.
+  *Remote Sensing*, 12(18), 2870. <https://doi.org/10.3390/rs12182870>
 - Giglio, L. (2007). Characterization of the tropical diurnal fire cycle
   using VIRS and MODIS observations. *Remote Sensing of Environment*,
   108(4), 407–421. <https://doi.org/10.1016/j.rse.2006.11.018>
+- Giglio, L., Schroeder, W. y Justice, C. O. (2016). The collection 6
+  MODIS active fire detection algorithm and fire products. *Remote Sensing
+  of Environment*, 178, 31–41. <https://doi.org/10.1016/j.rse.2016.02.054>
 - Giglio, L., Csiszar, I. y Justice, C. O. (2006). Global distribution and
   seasonality of active fires as observed with the Terra and Aqua MODIS
   sensors. *Journal of Geophysical Research: Biogeosciences*, 111, G02016.
@@ -756,12 +855,20 @@ cada una.
   characterization of biomass-burning patterns using satellite measurements
   of fire radiative energy. *Remote Sensing of Environment*, 112(6),
   2950–2962. <https://doi.org/10.1016/j.rse.2008.02.009>
+- Li, F., Zhang, X., Kondragunta, S. y Csiszar, I. (2018). Comparison of
+  fire radiative power estimates from VIIRS and MODIS observations.
+  *Journal of Geophysical Research: Atmospheres*, 123(9), 4545–4563.
+  <https://doi.org/10.1029/2017JD027823>
 - Liebmann, B. et al. (2012). Seasonality of African precipitation from 1996
   to 2009. *Journal of Climate*, 25, 4304–4322.
   <https://doi.org/10.1175/JCLI-D-11-00157.1>
 - Martín-Vide, J. (2004). Spatial distribution of a daily precipitation
   concentration index in peninsular Spain. *International Journal of
   Climatology*, 24(8), 959–971. <https://doi.org/10.1002/joc.1030>
+- Schroeder, W., Oliva, P., Giglio, L. y Csiszar, I. A. (2014). The New
+  VIIRS 375 m active fire detection data product: Algorithm description
+  and initial assessment. *Remote Sensing of Environment*, 143, 85–96.
+  <https://doi.org/10.1016/j.rse.2013.12.008>
 - SINAC (2012). *Estrategia Nacional de Manejo Integral del Fuego en Costa
   Rica 2012–2021*. Sistema Nacional de Áreas de Conservación, MINAE.
   <https://www.sinac.go.cr/ES/partciudygober/Documents/Estrategia%20Nacional%20Manejo%20del%20Fuego.pdf>
@@ -921,8 +1028,8 @@ fragmento, teselas) en [`R/constantes.R`](R/constantes.R).
 - **Isla del Coco**: incorporarla como área separada (con su propio bbox de
   descarga) si alguna vez interesa, en lugar de estirar el bbox nacional.
 - Desagregar también por provincia o cantón, además del área de conservación.
-- Comparar formalmente las cuatro plataformas en sus traslapes, en vez de
-  solo publicarlas lado a lado.
+- Incorporar NOAA-21 a la suite de índices y a la comparación cuando FIRMS
+  publique su procesamiento estándar.
 - Vigilar el fin de las misiones Terra y Aqua en 2027 y decidir cuál serie
   pasa a ser la de referencia del proyecto.
 - Aprovechar las bandas `Burn Date Uncertainty` y `QA` de los productos de
