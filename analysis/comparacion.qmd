@@ -1,0 +1,273 @@
+---
+title: "Anomalías térmicas en Costa Rica — comparación entre plataformas"
+subtitle: "MODIS y VIIRS lado a lado en los años que observaron a la vez"
+author: "Organización Incendios Forestales"
+date: today
+lang: es
+format:
+  html:
+    embed-resources: true
+    toc: true
+    toc-title: "Contenido"
+    theme: cosmo
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: configuracion
+library(targets)
+almacen <- here::here("_targets")
+tar_source(here::here("R"))
+pares <- pares_comparacion()
+etq <- purrr::map(stats::setNames(PLATAFORMAS$clave, PLATAFORMAS$clave),
+                  etiquetas_plataforma)
+# Par principal: la serie larga frente a su relevo.
+par_principal <- "modis_snpp"
+```
+
+## Qué es esto
+
+Las cuatro series de este proyecto **no se suman ni se empalman**: cada
+plataforma ve el fuego con su píxel y sus horas de paso, y una serie
+combinada mostraría el instrumental y no el régimen de fuego. Lo que sí se
+puede hacer, y es lo que hace este reporte, es **compararlas en los años
+que observaron a la vez**. Responde a dos preguntas: si los hallazgos de la
+serie larga de MODIS se sostienen en el sensor VIIRS que la relevará cuando
+Terra y Aqua terminen en 2027, y qué parte de la diferencia entre
+plataformas es propiedad del fuego y qué parte del píxel.
+
+Los índices son los de la [suite de temporada](../modis/#temporada-de-fuego)
+de cada plataforma, y las definiciones están en el
+[README](https://github.com/incendios-forestales/anomalias-termicas-costarica#comparación-entre-plataformas-en-el-traslape).
+Se comparan **pares ordenados** de plataformas, siempre como **B − A**, en
+el **periodo de traslape**: los años de fuego (setiembre–agosto) completos y
+no provisionales en ambas. La literatura da la expectativa: el píxel de
+375 m de VIIRS detecta fuegos más pequeños y más fríos que el de 1 km de
+MODIS (Schroeder et al. 2014; Giglio et al. 2016), produce varias veces más
+detecciones sobre los mismos fuegos (Fu et al. 2020) y reporta una potencia
+radiativa por píxel que no equivale a la de MODIS (Li et al. 2018). De ahí
+cabía esperar que VIIRS adelantara el inicio de la temporada; el resultado,
+abajo, es otro. Por eso
+se comparan en nivel solo los índices por fracciones y fechas (`INI`,
+`FIN`, `LON`, `N50`, `C10`), los de conteo (`DTOT`, `ND95`, `D95pTOT`) solo
+como anomalías estandarizadas, y la FRP no se compara.
+
+```{r}
+#| label: pares
+#| output: asis
+for (i in seq_len(nrow(pares))) {
+  tr <- tar_read_raw(paste0("traslape_", pares$par[i]), store = almacen)
+  cat(sprintf("- **%s → %s**: traslape %d–%d (%d años).%s\n",
+              etq[[pares$a[i]]]$corta, etq[[pares$b[i]]]$corta,
+              min(tr), max(tr), length(tr),
+              if (pares$par[i] == par_principal) " Es el par principal." else
+                if (pares$a[i] == "snpp") " Control: el mismo instrumento en dos plataformas." else ""))
+}
+```
+
+Con trece años las correlaciones se reportan; con siete solo se describen.
+El tercer par es un **control**: Suomi-NPP y NOAA-20 llevan el mismo VIIRS y
+pasan con cincuenta minutos de diferencia, así que lo que difiera entre
+ellos no es el píxel sino las pasadas que cada satélite alcanzó a ver.
+
+## MODIS → VIIRS S-NPP
+
+```{r}
+#| label: principal
+anual <- tar_read(comparacion_anual_modis_snpp, store = almacen)
+resumen <- tar_read(resumen_anual_modis_snpp, store = almacen)
+celdas <- tar_read(comparacion_celdas_modis_snpp, store = almacen)
+rc <- tar_read(resumen_celdas_modis_snpp, store = almacen)
+traslape <- tar_read(traslape_modis_snpp, store = almacen)
+cp <- ayudantes_comparacion(anual, resumen, rc, traslape)
+```
+
+### Índices anuales lado a lado
+
+Los `r cp$n_anios` años de fuego del traslape (`r cp$traslape`) son los
+años completos de Suomi-NPP; para MODIS son la segunda mitad de su
+registro. Cada índice se calculó por plataforma, con sus propias
+detecciones de vegetación, y aquí solo se ponen uno junto al otro.
+
+![](`r file.path("..", tar_read(fig_comparacion_anual_modis_snpp, store = almacen))`)
+
+**El resultado contradice la expectativa.** El píxel fino no adelanta el
+inicio: a escala nacional VIIRS fecha `INI` con una mediana de
+**`r cp$ini_mediana_dif` días** respecto de MODIS (entre `r cp$ini_min_dif`
+y `r cp$ini_max_dif`; positivo significa después), y es un rezago
+sistemático, presente en todos los años del traslape, aunque las dos
+plataformas ordenen los años de forma parecida (ρ de Spearman
+`r cp$ini_rho`). El **fin** coincide: difiere en `r cp$fin_mediana_dif`
+días en mediana y su ρ es `r cp$fin_rho`. Como el fin coincide y el inicio
+no, la **longitud** de la temporada es `r cp$lon_mediana_dif` días en
+mediana para VIIRS (entre `r cp$lon_min_dif` y `r cp$lon_max_dif`;
+ρ `r cp$lon_rho`): más corta, no más larga. La sección por celda, abajo,
+dice dónde está la diferencia: en las celdas comparables los inicios casi
+coinciden, así que el rezago nacional es un efecto de composición y no de
+detección temprana. Las detecciones que VIIRS añade se concentran en las
+celdas y los días del pico de la temporada, y ese peso extra en febrero y
+marzo hace que el 10 % acumulado nacional se alcance más tarde.
+
+**Concentración.** VIIRS ve el fuego algo más repartido en el tiempo:
+`N50` es `r cp$n50_mediana_dif` días mayor en mediana (ρ `r cp$n50_rho`) y
+`C10` `r cp$c10_mediana_dif` puntos porcentuales menor (ρ `r cp$c10_rho`),
+lo esperable de un sensor que detecta fuegos pequeños en más días. Pero
+las correlaciones dicen que una temporada larga o concentrada lo es para
+las dos plataformas: el orden de los años es propiedad del fuego, y el
+nivel, del sensor.
+
+```{r}
+#| label: tabla-principal
+crear_tabla_comparacion_anual(anual, etq$modis, etq$snpp)
+```
+
+```{r}
+#| label: resumen-principal
+crear_tabla_resumen_comparacion(resumen, etq$modis, etq$snpp)
+```
+
+La tabla completa, con los tres índices de conteo y sus anomalías, está
+disponible como
+[CSV](`r file.path("..", tar_read(tabla_comparacion_anual_modis_snpp, store = almacen))`).
+
+### Anomalías estandarizadas de los índices de conteo
+
+VIIRS cuenta entre cinco y ocho veces más detecciones que MODIS, así que
+`DTOT`, `ND95` y `D95pTOT` no se comparan en nivel. Sí se comparan como
+**anomalía estandarizada**: el valor de cada año menos la media del
+traslape, dividido entre su desviación típica, por plataforma. La pregunta
+pasa a ser si un año fue extremo para las dos a la vez.
+
+![](`r file.path("..", tar_read(fig_anomalias_modis_snpp, store = almacen))`)
+
+Las anomalías del total anual coinciden en signo en el
+**`r cp$dtot_mismo_signo` %** de los años (ρ `r cp$dtot_rho`): MODIS sitúa
+su máximo en `r cp$dtot_max_a` y VIIRS en `r cp$dtot_max_b`, y su mínimo
+en `r cp$dtot_min_a` y `r cp$dtot_min_b`. Los días extremos coinciden en
+signo en el `r cp$nd95_mismo_signo` % de los años (ρ `r cp$nd95_rho`; año
+máximo `r cp$nd95_max_a` para MODIS y `r cp$nd95_max_b` para VIIRS), y la
+fracción del año en días extremos tiene ρ `r cp$d95ptot_rho`. Cuando dos
+instrumentos independientes coinciden en qué años fueron extremos, el
+hallazgo no es artefacto de ninguno.
+
+### Consolidados por celda en el traslape
+
+Los mapas por celda de cada plataforma usan periodos distintos (MODIS,
+2002–2025; S-NPP, 2013–2025). Para compararlos se **recalcularon ambos
+sobre los años del traslape**, con la misma grilla de 0,1° y el mismo
+umbral de `r RASTER_MIN_DETECCIONES` detecciones, y se clasificó cada celda
+según dónde hay índices.
+
+![](`r file.path("..", tar_read(fig_acuerdo_modis_snpp, store = almacen))`)
+
+De las `r cp$n_con_fuego` celdas con fuego en alguna de las dos,
+**`r cp$n_ambas` tienen índices en ambas**, `r cp$n_solo_b` solo en VIIRS,
+`r cp$n_solo_a` solo en MODIS, `r cp$n_ninguna` en ninguna y
+`r cp$n_discordante` tienen estación definida en una sola. Las celdas
+«solo en VIIRS» son el mapa de lo que el píxel fino añade: fuego que MODIS
+ve demasiado poco para fechar. En las `r cp$n_ambas` celdas comparables
+**los inicios casi coinciden**: la mediana de `ΔINI` es de
+`r cp$dif_ini_mediana` días (rango intercuartílico `r cp$dif_ini_q1` a
+`r cp$dif_ini_q3`), el `r cp$pct_acuerdo_ini` % de las celdas coincide en el
+inicio a `r COMPARACION_ACUERDO_INI_DIAS` días o menos y VIIRS empieza antes
+solo en el `r cp$pct_b_antes` % de ellas. El fin difiere en
+`r cp$dif_fin_mediana` días y la longitud en `r cp$dif_lon_mediana` (rango
+intercuartílico `r cp$dif_lon_q1` a `r cp$dif_lon_q3`). Es lo que permite
+leer el rezago nacional de `r cp$ini_mediana_dif` días como composición:
+celda a celda las dos plataformas ven la misma temporada, y la diferencia
+aparece al sumar el país, donde las celdas del pico pesan más en VIIRS.
+
+::: {layout-ncol=2}
+![](`r file.path("..", tar_read(fig_dif_ini_modis_snpp, store = almacen))`)
+
+![](`r file.path("..", tar_read(fig_dif_lon_modis_snpp, store = almacen))`)
+:::
+
+Las densidades no se comparan en nivel, pero sí en orden: sobre las
+`r cp$n_dens` celdas con al menos `r RASTER_MIN_AREA_KM2` km² de tierra, la
+correlación de Spearman entre la densidad de MODIS y la de VIIRS en el
+traslape es **`r cp$rho_dens`**. Las dos plataformas dibujan la misma
+geografía del fuego aunque cuenten detecciones distintas.
+
+Los productos por celda están disponibles como
+[CSV](`r file.path("..", tar_read(tabla_comparacion_celdas_modis_snpp, store = almacen))`)
+y como
+[GeoTIFF](`r file.path("..", tar_read(raster_comparacion_modis_snpp, store = almacen))`)
+con cuatro bandas: `acuerdo` (1 índices en ambas, 2 solo en B, 3 solo en A,
+4 en ninguna, 5 estación discordante), `dif_ini`, `dif_fin` y `dif_lon`, en
+días, B − A.
+
+## Los otros pares
+
+```{r}
+#| label: otros
+#| output: asis
+otros <- pares[pares$par != par_principal, ]
+for (i in seq_len(nrow(otros))) {
+  k <- otros$par[i]
+  ea <- etq[[otros$a[i]]]; eb <- etq[[otros$b[i]]]
+  an <- tar_read_raw(paste0("comparacion_anual_", k), store = almacen)
+  rs <- tar_read_raw(paste0("resumen_anual_", k), store = almacen)
+  rcel <- tar_read_raw(paste0("resumen_celdas_", k), store = almacen)
+  tr <- tar_read_raw(paste0("traslape_", k), store = almacen)
+  c2 <- ayudantes_comparacion(an, rs, rcel, tr)
+  cat(sprintf("### %s → %s\n\n", ea$corta, eb$corta))
+  cat(sprintf(paste0(
+    "Traslape %s (%d años; solo descripción). Mediana de B − A: inicio %s ",
+    "días, fin %s, longitud %s, N50 %s, C10 %s puntos. Anomalías del total ",
+    "anual con el mismo signo en el %s %% de los años; años máximos %d (%s) ",
+    "y %d (%s). Por celda: %d con índices en ambas, %d solo en %s, %d solo ",
+    "en %s; mediana de ΔINI %s días (%s %% de las celdas a %d días o menos) ",
+    "y de ΔLON %s; ρ de Spearman de las densidades %s.\n\n"),
+    c2$traslape, c2$n_anios, c2$ini_mediana_dif, c2$fin_mediana_dif,
+    c2$lon_mediana_dif, c2$n50_mediana_dif, c2$c10_mediana_dif,
+    c2$dtot_mismo_signo, c2$dtot_max_a, ea$corta, c2$dtot_max_b, eb$corta,
+    c2$n_ambas, c2$n_solo_b, eb$corta, c2$n_solo_a, ea$corta,
+    c2$dif_ini_mediana, c2$pct_acuerdo_ini, COMPARACION_ACUERDO_INI_DIAS,
+    c2$dif_lon_mediana, c2$rho_dens))
+  cat(sprintf("![](%s)\n\n", file.path("..", tar_read_raw(paste0("fig_comparacion_anual_", k), store = almacen))))
+  cat(sprintf("![](%s)\n\n", file.path("..", tar_read_raw(paste0("fig_acuerdo_", k), store = almacen))))
+  cat(sprintf("Tablas: [anual](%s), [por celda](%s); [GeoTIFF](%s); figuras de [anomalías](%s), [ΔINI](%s) y [ΔLON](%s).\n\n",
+              file.path("..", tar_read_raw(paste0("tabla_comparacion_anual_", k), store = almacen)),
+              file.path("..", tar_read_raw(paste0("tabla_comparacion_celdas_", k), store = almacen)),
+              file.path("..", tar_read_raw(paste0("raster_comparacion_", k), store = almacen)),
+              file.path("..", tar_read_raw(paste0("fig_anomalias_", k), store = almacen)),
+              file.path("..", tar_read_raw(paste0("fig_dif_ini_", k), store = almacen)),
+              file.path("..", tar_read_raw(paste0("fig_dif_lon_", k), store = almacen))))
+}
+```
+
+El par S-NPP → NOAA-20 es la vara de medir: dos satélites con el mismo
+instrumento deberían diferir poco, y lo que difieran acota cuánto de la
+diferencia MODIS → VIIRS puede atribuirse a las pasadas y no al píxel.
+
+## Lo que no se hace
+
+No hay serie intercalibrada ni factor de conversión entre plataformas: las
+diferencias se publican como tales. No se comparan la FRP ni los umbrales
+`P95`, que son propios de cada sensor. Estos productos no alimentan ningún
+índice de las plataformas ni se actualizan con la cola en tiempo casi
+real: cambian solo cuando se cierra un año de fuego completo en ambas.
+NOAA-21 entrará en la comparación cuando FIRMS publique su procesamiento
+estándar y tenga años completos.
+
+## Fuentes de datos
+
+- **NASA FIRMS** — MODIS Collection 6.1 (MODIS_SP y MODIS_NRT) y VIIRS
+  375 m de Suomi-NPP y NOAA-20 (VIIRS_SNPP_SP/NRT, VIIRS_NOAA20_SP/NRT).
+  <https://firms.modaps.eosdis.nasa.gov/>.
+- Fu, Y. et al. (2020). Fire detection and fire radiative power in forests
+  and low-biomass lands in Northeast Asia: MODIS versus VIIRS fire
+  products. *Remote Sensing*, 12(18), 2870.
+- Giglio, L., Schroeder, W. y Justice, C. O. (2016). The collection 6 MODIS
+  active fire detection algorithm and fire products. *Remote Sensing of
+  Environment*, 178, 31–41.
+- Li, F., Zhang, X., Kondragunta, S. y Csiszar, I. (2018). Comparison of
+  fire radiative power estimates from VIIRS and MODIS observations.
+  *Journal of Geophysical Research: Atmospheres*, 123(9), 4545–4563.
+- Schroeder, W., Oliva, P., Giglio, L. y Csiszar, I. A. (2014). The New
+  VIIRS 375 m active fire detection data product. *Remote Sensing of
+  Environment*, 143, 85–96.

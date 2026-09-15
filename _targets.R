@@ -59,6 +59,23 @@ plataformas_indices <- dplyr::mutate(
   etiquetas  = rlang::syms(paste0("etiquetas_", clave))
 )
 
+# Valores del map de la comparación entre plataformas (R/comparacion.R): un
+# par ordenado (A, B) por fila, con los targets de la suite de cada una.
+pares_pipeline <- pares_comparacion() |>
+  dplyr::mutate(
+    temporada_a = rlang::syms(paste0("temporada_", a)),
+    temporada_b = rlang::syms(paste0("temporada_", b)),
+    vegetacion_a = rlang::syms(paste0("firms_vegetacion_", a)),
+    vegetacion_b = rlang::syms(paste0("firms_vegetacion_", b)),
+    celdas_a = rlang::syms(paste0("celdas_", a)),
+    celdas_b = rlang::syms(paste0("celdas_", b)),
+    etiquetas_a = rlang::syms(paste0("etiquetas_", a)),
+    etiquetas_b = rlang::syms(paste0("etiquetas_", b)),
+    control_a = purrr::map_chr(a, \(k) plataforma(k)$satelite_control),
+    control_b = purrr::map_chr(b, \(k) plataforma(k)$satelite_control),
+    rotulo = paste(a, "→", b)
+  )
+
 list(
   # --- Parámetros del pipeline (editar aquí) -------------------------------
   # El rango se recorta automáticamente al disponible en FIRMS, por lo que
@@ -483,6 +500,83 @@ list(
                                       etiquetas_modis$pie_firms),
              format = "file"),
 
+  # --- Comparación entre plataformas en el traslape ------------------------
+  # README, «Comparación entre plataformas en el traslape»: por par ordenado
+  # (A, B), sobre los años completos y no provisionales de ambas. Los
+  # consolidados por celda se recalculan sobre esos años; nada de aquí
+  # alimenta los índices de las plataformas.
+  tar_map(
+    values = pares_pipeline,
+    names = par,
+    descriptions = rotulo,
+
+    tar_target(traslape, anios_traslape(temporada_a, temporada_b)),
+    tar_target(comparacion_anual,
+               comparar_anual(temporada_a, temporada_b, traslape)),
+    tar_target(resumen_anual, resumen_comparacion_anual(comparacion_anual)),
+    tar_target(traslape_celdas_a,
+               unir_consolidados(
+                 indices_consolidados(vegetacion_a, celdas_a, traslape),
+                 indices_frecuencia(vegetacion_a, celdas_a, grilla_analisis,
+                                    traslape, control_a),
+                 traslape)),
+    tar_target(traslape_celdas_b,
+               unir_consolidados(
+                 indices_consolidados(vegetacion_b, celdas_b, traslape),
+                 indices_frecuencia(vegetacion_b, celdas_b, grilla_analisis,
+                                    traslape, control_b),
+                 traslape)),
+    tar_target(comparacion_celdas,
+               comparar_celdas(traslape_celdas_a, traslape_celdas_b)),
+    tar_target(resumen_celdas, resumen_comparacion_celdas(comparacion_celdas)),
+    tar_target(tabla_comparacion_anual,
+               tabla_comparacion_csv(comparacion_anual,
+                                     file.path("outputs/tables/comparacion",
+                                               paste0(par, "_anual.csv"))),
+               format = "file"),
+    tar_target(tabla_comparacion_celdas,
+               tabla_comparacion_csv(comparacion_celdas,
+                                     file.path("outputs/tables/comparacion",
+                                               paste0(par, "_celdas.csv"))),
+               format = "file"),
+    tar_target(raster_comparacion,
+               escribir_raster_comparacion(comparacion_celdas, grilla_analisis,
+                                           file.path("outputs/rasters/comparacion",
+                                                     paste0(par, ".tif")),
+                                           etiquetas_a, etiquetas_b, traslape),
+               format = "file"),
+    tar_target(fig_comparacion_anual,
+               grafico_comparacion_anual(comparacion_anual,
+                                         file.path("outputs/figs/comparacion",
+                                                   paste0(par, "_anual.png")),
+                                         etiquetas_a, etiquetas_b, traslape),
+               format = "file"),
+    tar_target(fig_anomalias,
+               grafico_anomalias(comparacion_anual,
+                                 file.path("outputs/figs/comparacion",
+                                           paste0(par, "_anomalias.png")),
+                                 etiquetas_a, etiquetas_b, traslape),
+               format = "file"),
+    tar_target(fig_acuerdo,
+               mapa_acuerdo(comparacion_celdas, grilla_analisis, pais_mapa,
+                            file.path("outputs/figs/comparacion",
+                                      paste0(par, "_acuerdo.png")),
+                            etiquetas_a, etiquetas_b, traslape),
+               format = "file"),
+    tar_target(fig_dif_ini,
+               mapa_diferencia(comparacion_celdas, grilla_analisis, pais_mapa,
+                               file.path("outputs/figs/comparacion",
+                                         paste0(par, "_dif_ini.png")),
+                               "dif_ini", etiquetas_a, etiquetas_b, traslape),
+               format = "file"),
+    tar_target(fig_dif_lon,
+               mapa_diferencia(comparacion_celdas, grilla_analisis, pais_mapa,
+                               file.path("outputs/figs/comparacion",
+                                         paste0(par, "_dif_lon.png")),
+                               "dif_lon", etiquetas_a, etiquetas_b, traslape),
+               format = "file")
+  ),
+
   # --- Figura comparativa de las cuatro plataformas ------------------------
   tar_target(fig_series_plataformas,
              grafico_series_plataformas(
@@ -533,6 +627,17 @@ list(
     dir.create("noaa21", showWarnings = FALSE)
     file.copy("analysis/noaa21.html", "noaa21/index.html", overwrite = TRUE)
     "noaa21/index.html"
+  }, format = "file"),
+
+  tar_quarto(reporte_comparacion, "analysis/comparacion.qmd",
+             extra_files = list.files("R", pattern = "[.][Rr]$",
+                                      full.names = TRUE)),
+  tar_target(pagina_comparacion, {
+    reporte_comparacion
+    dir.create("comparacion", showWarnings = FALSE)
+    file.copy("analysis/comparacion.html", "comparacion/index.html",
+              overwrite = TRUE)
+    "comparacion/index.html"
   }, format = "file"),
 
   # --- Portada: entrada común en la raíz del sitio -------------------------

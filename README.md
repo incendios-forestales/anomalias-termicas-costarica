@@ -755,6 +755,22 @@ eso es la única que involucra `DENS`. `FREC` no se compara por celda: en
 un traslape corto es un múltiplo de una fracción pequeña y el píxel fino
 la sesga hacia arriba.
 
+**Lectura (traslape 2013–2025, MODIS → S-NPP).** La expectativa del
+adelanto no se cumple: a escala nacional VIIRS fecha `INI` 14 días
+**después** que MODIS en mediana (de 2 a 28, en todos los años), el fin
+coincide (0 días, ρ 0,94) y la temporada resulta 15 días más corta. Por
+celda, en cambio, los inicios casi coinciden (mediana de `ΔINI` +2 días,
+83 % de las celdas a 15 días o menos), así que el rezago nacional es un
+efecto de composición: las detecciones que VIIRS añade se concentran en
+las celdas y los días del pico, y ese peso desplaza el 10 % acumulado del
+país. Las dos plataformas ordenan igual los años (ρ 0,66 a 0,94 según el
+índice), coinciden en signo en el 92 % de las anomalías de `DTOT` y `ND95`
+(ρ 0,98 y 0,76) y dibujan la misma geografía del fuego (ρ de `DENS`
+entre celdas 0,89). De 457 celdas con fuego, 107 son comparables, 144
+tienen índices solo en VIIRS y ninguna solo en MODIS. El par de control
+S-NPP → NOAA-20 difiere en 0 días de inicio, 1 de longitud y tiene ρ de
+`DENS` 0,96: la diferencia con MODIS es del píxel, no de las pasadas.
+
 **Lo que no se hace.** No hay serie intercalibrada ni factor de
 conversión entre plataformas; las diferencias se publican como tales.
 No se comparan `FRPI` ni `FRP95` (Li et al. 2018) ni los umbrales `P95`.

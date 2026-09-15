@@ -249,7 +249,12 @@ for (i in seq_len(nrow(resumen))) {
 Cada uno incluye mapa animado, video resumen, mapa interactivo con deslizador
 temporal, series y climatología, desagregación por área de conservación,
 análisis de cobertura de la tierra y el contraste con el Registro Nacional de
-Humedales.
+Humedales. MODIS, Suomi-NPP y NOAA-20 llevan además la suite de índices de
+la temporada de fuego (longitud, concentración, frecuencia, intensidad y
+días extremos), y un reporte aparte, **[la comparación entre
+plataformas](comparacion/)**, las pone lado a lado en los años que
+observaron a la vez: índices anuales, anomalías estandarizadas y mapas de
+acuerdo por celda.
 
 ## Fuentes de datos
 

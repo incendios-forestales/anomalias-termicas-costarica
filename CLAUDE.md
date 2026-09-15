@@ -41,7 +41,8 @@ recomputados, 4 778 saltados); la histórica completa desde cero, ~2 horas.
 
 ## Publicación
 
-`tar_make()` regenera `index.html` y `{modis,snpp,noaa20,noaa21}/index.html`.
+`tar_make()` regenera `index.html`, `{modis,snpp,noaa20,noaa21}/index.html`
+y `comparacion/index.html`.
 Publicar = commit + push de esos productos y de `outputs/` a `main` (mensaje
 tipo «Corrida del AAAA-MM-DD», separado de cambios de código). Pages sirve
 `main` raíz: <https://incendios-forestales.github.io/anomalias-termicas-costarica/>
@@ -98,6 +99,16 @@ Invariantes propios de la suite (cambiarlos invalida índices publicados):
 - Umbrales: 300 detecciones/año (nacional), 30/celda (LON, FRPI, AQ),
   100/celda (N50F), 10 km² de tierra (FREC, DENS), 25 % fuera de dic–may
   (celda sin estación definida).
+- Comparación entre plataformas (R/comparacion.R, README «Comparación entre
+  plataformas en el traslape»): tercer `tar_map` sobre `pares_comparacion()`
+  (pares ordenados A→B de las plataformas con periodo base; diferencias
+  siempre B − A; traslape = intersección de periodos de referencia). Es el
+  ÚNICO sitio donde dos plataformas comparten un producto, y solo lado a
+  lado; los consolidados se recalculan sobre el traslape y no alimentan nada
+  de las plataformas. Reporte propio en analysis/comparacion.qmd →
+  `comparacion/`. `tar_source()` carga comparacion.R antes que
+  constantes.R: nada de nivel superior ahí puede usar constantes de otros
+  archivos (por eso `colores_par()` es función).
 - `terra::metags()` descarta TODAS las etiquetas si un valor contiene «=»;
   los joins de dplyr sobre sf fallan en los qmd (sf no está cargado): unir
   sin geometría y volver a pegar con `st_sf()`.
