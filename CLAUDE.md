@@ -47,6 +47,16 @@ Publicar = commit + push de esos productos y de `outputs/` a `main` (mensaje
 tipo «Corrida del AAAA-MM-DD», separado de cambios de código). Pages sirve
 `main` raíz: <https://incendios-forestales.github.io/anomalias-termicas-costarica/>
 
+## Interfaz de salidas (README, «Las salidas como interfaz»)
+
+`outputs/` es la interfaz estable para consumidores externos (el geovisor
+en su propio repositorio). `manifiesto` (R/manifiesto.R) escribe
+`outputs/manifest.json` al final de cada corrida leyendo el disco;
+`geometrias` publica grilla, AC y país en GeoJSON. Renombrar o eliminar un
+archivo o columna de `outputs/` obliga a subir `MANIFIESTO_CONTRATO`;
+agregar no. El hash SHA-256 se serializa con `sha256_hex()` porque el
+objeto `hash` de openssl rompe jsonlite dentro de tar_make.
+
 ## Invariantes de diseño (no romper)
 
 - Las series de las 4 plataformas NUNCA se suman ni empalman.

@@ -740,5 +740,26 @@ list(
     portada
     file.copy("analysis/portada.html", "index.html", overwrite = TRUE)
     "index.html"
-  }, format = "file")
+  }, format = "file"),
+
+  # --- Las salidas como interfaz (README) ----------------------------------
+  # Geometrías en GeoJSON para consumidores externos y manifiesto de la
+  # corrida, escrito al final leyendo outputs/ del disco (depende de las
+  # páginas para ejecutarse después de todo lo que publica).
+  tar_target(geometrias,
+             escribir_geometrias(grilla_analisis, ac_areas, pais_web),
+             format = "file"),
+  tar_target(manifiesto,
+             escribir_manifiesto(
+               "outputs/manifest.json",
+               rangos = list(modis = rangos_modis, snpp = rangos_snpp,
+                             noaa20 = rangos_noaa20, noaa21 = rangos_noaa21),
+               pares = pares_pipeline[, c("par", "a", "b")],
+               traslapes = list(modis_snpp = traslape_modis_snpp,
+                                modis_noaa20 = traslape_modis_noaa20,
+                                snpp_noaa20 = traslape_snpp_noaa20),
+               dependencias = list(geometrias, pagina_portada, pagina_modis,
+                                   pagina_snpp, pagina_noaa20, pagina_noaa21,
+                                   pagina_comparacion)),
+             format = "file")
 )
