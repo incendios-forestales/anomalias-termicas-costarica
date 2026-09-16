@@ -559,6 +559,55 @@ Los índices de un AC se comparan entre años y con otras AC de esta misma
 plataforma; entre plataformas, solo mediante el
 [reporte de comparación](../comparacion/).
 
+### Fase ENSO
+
+Es el primer factor externo con que se confrontan los índices anuales. El
+Niño reduce la lluvia de la vertiente del Pacífico de Centroamérica
+(Ropelewski y Halpert 1987) y en Costa Rica la variabilidad de la lluvia
+mensual está ligada al ENSO (Waylen, Caviedes y Quesada 1996); la pregunta
+es si los años Niño tienen temporadas más largas, más tempranas o con más
+fuego en el registro de esta plataforma. Se usa el **Índice Oceánico El
+Niño** (ONI) del CPC de la NOAA en el trimestre **diciembre–febrero** que
+cae dentro del año de fuego, justo antes de la temporada, ventana fijada
+antes de mirar los datos, y la fase del CPC (cinco trimestres consecutivos
+con |ONI| ≥ 0,5 °C). Los índices de conteo entran como anomalías sobre el
+periodo base para que la detectabilidad no intervenga. MODIS aporta la serie más larga, veintitrés años completos con varios episodios de cada signo.
+
+```{r}
+#| label: enso
+enso <- tar_read(enso_modis, store = almacen)
+enso_resumen <- tar_read(enso_resumen_modis, store = almacen)
+en <- ayudantes_enso(enso, enso_resumen)
+```
+
+![](`r file.path("..", tar_read(fig_enso_modis, store = almacen))`)
+
+De los `r en$n_anios` años completos, `r en$n_nino` son de El Niño
+(`r en$anios_nino`), `r en$n_nina` de La Niña (`r en$anios_nina`) y
+`r en$n_neutra` neutros; el ONI de DJF va de `r en$oni_max` °C en
+`r en$anio_oni_max` a `r en$oni_min` °C en `r en$anio_oni_min`. La
+longitud mediana de la temporada es de `r en$lon_nino` días en años Niño,
+`r en$lon_neutra` en neutros y `r en$lon_nina` en Niña (ρ de Spearman con
+el ONI `r en$lon_rho`, p `r en$lon_p`); el inicio mediano cae el
+`r en$ini_nino`, el `r en$ini_neutra` y el `r en$ini_nina` (ρ `r en$ini_rho`,
+p `r en$ini_p`), y la anomalía del número de detecciones es de
+`r en$dtot_nino`, `r en$dtot_neutra` y `r en$dtot_nina` desviaciones típicas
+(ρ `r en$dtot_rho`, p `r en$dtot_p`). La asociación más fuerte es con
+`r en$indice_rho_max` (ρ `r en$rho_max`)`r if (en$n_p05 > 0) paste0(", y ", en$n_p05, if (en$n_p05 == 1) " índice alcanza" else " índices alcanzan", " p < 0,05 (", en$indices_p05, ")") else ", y ningún índice alcanza p < 0,05"`.
+Con estas muestras el resultado es descriptivo: dice cómo se ordenan los
+años, no predice.
+
+```{r}
+#| label: tabla-enso
+crear_tabla_resumen_enso(enso_resumen, etq$fuente_fig)
+```
+
+Las tablas están disponibles como CSV:
+[índices por año con ONI y fase](`r file.path("..", tar_read(tabla_enso_modis, store = almacen))`)
+y [resumen por fase](`r file.path("..", tar_read(tabla_enso_resumen_modis, store = almacen))`).
+La serie ONI es de la
+[NOAA CPC](https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php).
+
 ### Detecciones excluidas por tipo de fuente
 
 FIRMS clasifica cada detección del procesamiento estándar por tipo de

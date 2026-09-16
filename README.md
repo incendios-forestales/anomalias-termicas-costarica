@@ -889,6 +889,20 @@ completos y no provisionales:
 - Figura de dispersión `ONI_DJF` contra `LON`, `INI` y la anomalía de
   `DTOT`, con cada año rotulado y coloreado por fase.
 
+**Lectura (2026-09).** El ENSO no mueve las fechas de la temporada pero
+sí la cantidad de fuego. En MODIS (24 años completos, 9 Niño, 9 Niña, 6
+neutros) `LON` e `INI` no se asocian con el ONI de DJF (ρ −0,07 y 0,01);
+solo `FIN` se adelanta algo en años Niño (ρ −0,42, p = 0,04). En cambio,
+la anomalía de `DTOT` tiene ρ 0,62 (p = 0,001), y los años Niña se
+distinguen más que los Niño: mediana de −0,9 desviaciones típicas frente
+a +0,2 en Niño y +0,7 en neutros; `ND95` y `D95pTOT` siguen el mismo
+patrón (ρ 0,49 y 0,48, p ≈ 0,02). S-NPP lo repite en sus 13 años (`DTOT`
+ρ 0,66, `ND95` ρ 0,71; `LON` e `INI` sin asociación) y NOAA-20, con 7,
+apunta en la misma dirección sin alcanzar significación. La señal está en
+cuánto arde y en cuántos días de quema masiva hay, no en cuándo empieza
+la temporada, y es más una ausencia de fuego en La Niña que un exceso en
+El Niño.
+
 **Lo que no se hace.** No se ajusta ningún modelo ni se predice: con dos
 decenas de años y un puñado de episodios Niño, el producto describe la
 asociación y la deja a la vista. No se usan otros índices (MEI, SOI,

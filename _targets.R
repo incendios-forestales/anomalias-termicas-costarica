@@ -112,6 +112,13 @@ list(
   tar_target(ac_web, simplificar_para_web(preparar_ac(areas_conservacion))),
   # AC con su superficie terrestre: la «grilla» del consolidado por AC.
   tar_target(ac_areas, superficie_ac(areas_conservacion, pais)),
+  # ONI del CPC de la NOAA (R/enso.R): se comprueba en cada corrida y se
+  # vuelve a descargar solo si el archivo tiene más de un mes; el hash del
+  # archivo decide si algo cambia aguas abajo.
+  tar_target(archivo_oni, descargar_oni(), format = "file",
+             cue = tar_cue(mode = "always")),
+  tar_target(oni_fases, fases_oni(leer_oni(archivo_oni))),
+  tar_target(oni_anio_fuego, oni_por_anio_fuego(oni_fases)),
   tar_target(paisaje_pais,
              composicion_paisaje(pais, archivos_worldcover, bbox_descarga)),
   tar_target(archivos_dem, descargar_dem_terrarium(bbox_descarga),
@@ -536,6 +543,23 @@ list(
                mapa_ac(temporada_ac_consolidado, ac_areas, pais_mapa,
                        file.path("outputs/figs", clave, "temporada_ac_mapa_dens.png"),
                        "dens", etiquetas$fuente_fig, etiquetas$pie_firms),
+               format = "file"),
+    # Fase ENSO (README, «Fase ENSO y los índices anuales»; R/enso.R):
+    # años completos y no provisionales con su ONI de DJF y su fase.
+    tar_target(enso, unir_enso(temporada, oni_anio_fuego, anios_base(clave))),
+    tar_target(enso_resumen, resumen_enso(enso)),
+    tar_target(tabla_enso,
+               tabla_temporada_csv(enso, file.path("outputs/tables", clave,
+                                                   "enso_anual.csv")),
+               format = "file"),
+    tar_target(tabla_enso_resumen,
+               tabla_temporada_csv(enso_resumen,
+                                   file.path("outputs/tables", clave,
+                                             "enso_resumen.csv")),
+               format = "file"),
+    tar_target(fig_enso,
+               grafico_enso(enso, file.path("outputs/figs", clave, "enso.png"),
+                            etiquetas$fuente_fig, etiquetas$pie_firms),
                format = "file")
   ),
 

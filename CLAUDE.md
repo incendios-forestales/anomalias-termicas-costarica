@@ -119,6 +119,13 @@ Invariantes propios de la suite (cambiarlos invalida índices publicados):
   Nombres: target `ac_areas` ≠ función `superficie_ac`, target
   `temporada_ac_consolidado` ≠ función `consolidar_ac` (un target no puede
   llamarse como una función que invoque dentro del `tar_map`).
+- Fase ENSO (R/enso.R, README «Fase ENSO y los índices anuales»): ONI del
+  CPC descargado a `data/raw/oni/` (target `archivo_oni` con cue always;
+  se rebaja solo si tiene más de 30 días); ventana fijada A PRIORI en DJF
+  y fase por la regla de cinco trimestres del CPC. No agregar otras
+  ventanas ni índices (MEI, SOI) sin definirlos antes en el README; es
+  descriptivo (medianas por fase, ρ de Spearman con p), sin modelos.
+  Target `enso_resumen` ≠ función `resumen_enso`.
 - `terra::metags()` descarta TODAS las etiquetas si un valor contiene «=»;
   los joins de dplyr sobre sf fallan en los qmd (sf no está cargado): unir
   sin geometría y volver a pegar con `st_sf()`.
