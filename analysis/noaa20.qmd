@@ -336,6 +336,78 @@ vacía en VIIRS), acompañado de un estilo
 de QGIS con la simbología de `LON`. Las mismas celdas pueden activarse
 como capa del [mapa interactivo](#mapa-interactivo).
 
+### Temporada por área de conservación
+
+Los mapas por celda no tienen versión anual porque una celda reúne pocas
+detecciones en un año; el **área de conservación** (AC) del SINAC sí las
+reúne, y es la unidad con la que se gestiona el fuego. Cada detección de
+vegetación se asigna al AC que la contiene y los índices de la suite se
+calculan por AC y año de fuego con las mismas definiciones que la tabla
+nacional: `INI`, `FIN`, `LON`, `N50` y `C10` cuando el AC suma al menos
+`r AC_MIN_DETECCIONES_TEMPORADA` detecciones en el año (el 10 % de cien son
+diez detecciones; con menos la fecha saltaría con un día de quemas), la FRP
+mediana con `r AC_MIN_DETECCIONES_FRP`, y los días extremos contra el
+percentil 95 de los propios días de fuego del AC en el periodo base. El periodo base de NOAA-20 tiene siete años, así que los umbrales P95 por AC y las anomalías se leen como provisionales hasta que el registro crezca.
+
+```{r}
+#| label: temporada-ac
+temporada_ac <- tar_read(temporada_ac_noaa20, store = almacen)
+consolidado_ac <- tar_read(temporada_ac_consolidado_noaa20, store = almacen)
+ta <- ayudantes_temporada_ac(temporada_ac, consolidado_ac)
+```
+
+![](`r file.path("..", tar_read(fig_mosaico_ac_lon_noaa20, store = almacen))`)
+
+De los `r ta$n_ac_anios` pares AC-año completos, `r ta$n_ac_anios_con_lon`
+(`r ta$pct_con_lon` %) alcanzan el umbral y tienen temporada fechada.
+`r if (nchar(ta$ac_nunca)) paste0("Nunca lo alcanzan ", ta$ac_nunca, ": con esta plataforma no reúnen cien detecciones de vegetación en ningún año. ") else "Todas las AC lo alcanzan en algún año. "`La
+temporada más larga en promedio es la de **`r ta$lon_ac_max`**
+(`r ta$lon_ac_max_valor` días) y la más corta la de `r ta$lon_ac_min`
+(`r ta$lon_ac_min_valor`). La lectura por filas dice si un año largo lo fue
+en todo el país o solo en una región; la lectura por columnas, qué AC
+arrastran la temporada nacional.
+
+![](`r file.path("..", tar_read(fig_mosaico_ac_z_noaa20, store = almacen))`)
+
+La anomalía estandarizada del número de detecciones (`Z_DTOT`, respecto de
+la media y la desviación típica de cada AC en el periodo base) es
+comparable entre AC porque es adimensional. El año con más AC por encima
+de una desviación típica fue **`r ta$anio_mas_pos`** (`r ta$n_mas_pos` AC)
+y el año con más AC por debajo, `r ta$anio_mas_neg` (`r ta$n_mas_neg`).
+
+```{r}
+#| label: tabla-ac-consolidado
+crear_tabla_ac_consolidado(consolidado_ac, etq$fuente_fig, con_aq = FALSE)
+```
+
+El consolidado por AC se calcula con las mismas funciones y umbrales que
+el ráster por celda, tomando cada AC como una celda con su superficie
+terrestre. La temporada climatológica más larga es la de
+**`r ta$cons_lon_max`** (`r ta$cons_lon_max_valor` días) y la más corta la de
+`r ta$cons_lon_min` (`r ta$cons_lon_min_valor`); el inicio más temprano cae
+en `r ta$cons_ini_min` (`r ta$cons_ini_min_fecha`) y el más tardío en
+`r ta$cons_ini_max` (`r ta$cons_ini_max_fecha`).
+`r if (ta$n_sin_estacion > 0) paste0(ta$cons_sin_estacion, if (ta$n_sin_estacion == 1) " queda" else " quedan", " sin estación definida: más del ", RASTER_FUERA_MAX_PCT, " % de sus detecciones cae fuera de diciembre a mayo, el patrón bimodal del Caribe.") else "Todas las AC tienen una estación definida."`
+La densidad sobre el periodo base va de `r ta$dens_max_valor`
+detecciones por km² y año en `r ta$dens_max` a `r ta$dens_min_valor` en
+`r ta$dens_min`: `r ta$razon_dens` veces de diferencia entre los extremos
+del país.
+
+::: {layout-ncol=3}
+![](`r file.path("..", tar_read(fig_mapa_ac_lon_noaa20, store = almacen))`)
+
+![](`r file.path("..", tar_read(fig_mapa_ac_ini_noaa20, store = almacen))`)
+
+![](`r file.path("..", tar_read(fig_mapa_ac_dens_noaa20, store = almacen))`)
+:::
+
+Las tablas están disponibles como CSV:
+[índices anuales por AC](`r file.path("..", tar_read(tabla_temporada_ac_noaa20, store = almacen))`)
+y [consolidado por AC](`r file.path("..", tar_read(tabla_temporada_ac_consolidado_noaa20, store = almacen))`).
+Los índices de un AC se comparan entre años y con otras AC de esta misma
+plataforma; entre plataformas, solo mediante el
+[reporte de comparación](../comparacion/).
+
 ### Detecciones excluidas por tipo de fuente
 
 En el registro estándar de NOAA-20 hay

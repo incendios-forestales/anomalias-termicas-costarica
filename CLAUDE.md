@@ -109,6 +109,16 @@ Invariantes propios de la suite (cambiarlos invalida índices publicados):
   `comparacion/`. `tar_source()` carga comparacion.R antes que
   constantes.R: nada de nivel superior ahí puede usar constantes de otros
   archivos (por eso `colores_par()` es función).
+- Desagregación por AC (R/temporada_ac.R, README «Desagregación por área
+  de conservación»): dentro del `tar_map` de la suite, por plataforma. Los
+  índices anuales por AC reutilizan serie_diaria()/indices_temporada() con
+  umbral 100 (INI/FIN/LON/N50/C10/FRP95), 30 (FRPI/AQ/NOC) y 100 días de
+  fuego del AC en el periodo base para P95; el consolidado por AC reutiliza
+  indices_consolidados()/indices_frecuencia() tomando cada AC como celda
+  (`celda_id` = siglas, superficie terrestre de `ac_areas`). Sin FREC.
+  Nombres: target `ac_areas` ≠ función `superficie_ac`, target
+  `temporada_ac_consolidado` ≠ función `consolidar_ac` (un target no puede
+  llamarse como una función que invoque dentro del `tar_map`).
 - `terra::metags()` descarta TODAS las etiquetas si un valor contiene «=»;
   los joins de dplyr sobre sf fallan en los qmd (sf no está cargado): unir
   sin geometría y volver a pegar con `st_sf()`.
