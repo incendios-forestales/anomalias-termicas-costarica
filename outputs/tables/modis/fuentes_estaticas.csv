@@ -1,0 +1,38 @@
+celda_id,n_est,n_volcan,n_fija,n_total,pct_est,anios_est,primer_anio,ultimo_anio,diurna,manana,frp_est,conf_est,lat,lon,disp_m,es_fuente,firma,localidad
+c1045_m08475,415,415,0,415,100,10,2001,2010,0.46,0.52,9.6,55,10.4625,-84.7034,684,TRUE,Cráter volcánico,"La Fortuna, San Carlos (volcán Arenal)"
+c0995_m08475,179,0,179,291,61.5,22,2003,2026,0.98,0.78,10.2,43,9.9809,-84.7166,2515,TRUE,Reflejo urbano diurno (probable),"Los Ángeles de Barranca, Puntarenas"
+c0985_m08375,109,0,109,141,77.3,24,2003,2026,1,0.89,10,46,9.9046,-83.6804,484,TRUE,Reflejo urbano diurno (probable),Casco urbano de Turrialba
+c1005_m08355,76,0,76,78,97.4,18,2003,2026,1,0.92,8.7,46,10.0979,-83.5059,415,TRUE,Reflejo urbano diurno (probable),Siquirres
+c1055_m08545,75,0,75,344,21.8,23,2004,2026,1,0.59,10.6,55,10.6313,-85.4341,1332,TRUE,Sin clasificar,Liberia
+c0995_m08305,67,0,67,67,100,23,2002,2026,1,0.76,12.1,20,9.9867,-83.0425,788,TRUE,Reflejo urbano diurno (probable),Limón
+c1035_m08515,55,0,55,462,11.9,21,2003,2026,0.98,0.69,8.6,57,10.4272,-85.0926,439,TRUE,Sin clasificar,Cañas
+c1015_m08385,46,0,46,58,79.3,18,2005,2026,1,0.76,9.6,48,10.2138,-83.7875,384,TRUE,Reflejo urbano diurno (probable),"Guápiles, Pococí"
+c0995_m08425,38,0,38,51,74.5,19,2001,2025,0.74,0.5,12.1,68,9.9839,-84.1938,3910,TRUE,Sin clasificar,"La Ribera y La Uruca, entre Belén y San José"
+c0995_m08415,35,0,35,40,87.5,15,2002,2023,0.91,0.37,9.2,63,9.974,-84.1232,2816,TRUE,Sin clasificar,"Ulloa, Heredia"
+c1005_m08455,35,0,35,41,85.4,17,2003,2026,1,0.94,10.9,48,10.0897,-84.4707,712,TRUE,Reflejo urbano diurno (probable),San Ramón
+c0975_m08395,31,0,31,35,88.6,14,2006,2025,1,0.87,8.2,38,9.8349,-83.8723,1161,TRUE,Reflejo urbano diurno (probable),"Aguacaliente de Cartago y Llanos de Santa Lucía, Paraíso"
+c0935_m08375,30,0,30,37,81.1,17,2005,2026,1,0.9,8.9,40,9.3714,-83.7032,416,TRUE,Reflejo urbano diurno (probable),San Isidro de El General
+c1025_m08565,24,0,24,196,12.2,13,2003,2026,1,0.83,8,62,10.2602,-85.584,313,TRUE,Reflejo urbano diurno (probable),"Santa Cruz, Guanacaste"
+c1005_m08555,20,0,20,177,11.3,12,2012,2025,1,0.8,7.9,47,10.1436,-85.4524,407,TRUE,Reflejo urbano diurno (probable),Nicoya
+c1005_m08435,18,0,18,57,31.6,14,2001,2025,1,0.72,9.2,64,10.0715,-84.3086,1002,TRUE,Reflejo urbano diurno (probable),NA
+c0985_m08455,17,0,17,212,8,13,2004,2026,1,0.71,7,66,9.91,-84.5225,232,TRUE,Reflejo urbano diurno (probable),NA
+c0985_m08415,16,0,16,17,94.1,10,2005,2023,0.94,0.62,11.2,47,9.9223,-84.0982,4679,TRUE,Sin clasificar,NA
+c0995_m08385,13,13,0,14,92.9,3,2017,2024,0.46,0.54,10.5,43,10.0165,-83.7658,718,TRUE,Cráter volcánico,Santa Cruz de Turrialba (cráter del Turrialba)
+c0995_m08435,11,0,11,163,6.7,8,2001,2021,0.91,0.55,10.5,69,9.985,-84.2612,809,TRUE,Sin clasificar,NA
+c1005_m08475,8,0,8,51,15.7,5,2006,2016,1,0.38,13.8,69,10.086,-84.7251,866,FALSE,Sin clasificar,NA
+c0995_m08485,6,0,6,186,3.2,5,2004,2010,1,0,35.5,64,9.9948,-84.7555,778,FALSE,Sin clasificar,NA
+c0855_m08295,5,0,5,35,14.3,5,2005,2025,1,0.4,6.8,56,8.6447,-82.9406,790,FALSE,Sin clasificar,NA
+c1005_m08545,5,0,5,116,4.3,5,2015,2025,1,1,6.8,50,10.1425,-85.4492,328,FALSE,Reflejo urbano diurno (probable),NA
+c1065_m08545,4,0,4,150,2.7,3,2003,2023,1,0.25,25.1,82,10.6522,-85.427,1371,FALSE,Sin clasificar,NA
+c0995_m08315,4,0,4,5,80,4,2005,2022,1,0,26.7,29,9.9869,-83.0596,1679,FALSE,Sin clasificar,NA
+c0985_m08425,4,0,4,17,23.5,3,2013,2020,1,0.25,18.4,70,9.9458,-84.1645,1956,FALSE,Sin clasificar,NA
+c1015_m08555,4,0,4,219,1.8,4,2015,2025,1,0.5,9.4,50,10.1515,-85.4536,266,FALSE,Sin clasificar,NA
+c0985_m08405,4,0,4,9,44.4,3,2019,2025,1,0.5,8.8,31,9.9012,-83.9925,971,FALSE,Sin clasificar,NA
+c0995_m08405,3,0,3,4,75,3,2008,2020,1,0.67,16.9,43,9.9723,-84.0209,1771,FALSE,Sin clasificar,NA
+c0995_m08445,3,0,3,49,6.1,3,2013,2020,0.67,0.67,17.9,68,9.9738,-84.3812,1048,FALSE,Sin clasificar,NA
+c0865_m08295,3,0,3,7,42.9,3,2021,2023,1,1,7,49,8.6503,-82.9416,53,FALSE,Reflejo urbano diurno (probable),NA
+c0985_m08395,2,0,2,3,66.7,2,2004,2014,1,0,11.2,50,9.8777,-83.8934,4915,FALSE,Sin clasificar,NA
+c1055_m08555,2,0,2,499,0.4,2,2008,2014,1,0,30.4,80,10.6413,-85.456,67,FALSE,Sin clasificar,NA
+c1005_m08445,2,0,2,23,8.7,2,2018,2022,1,1,8.2,38,10.0572,-84.434,96,FALSE,Reflejo urbano diurno (probable),NA
+c0995_m08535,1,0,1,61,1.6,1,2020,2020,1,1,9.9,52,9.9987,-85.2503,0,FALSE,Reflejo urbano diurno (probable),NA
+c1025_m08445,1,0,1,1,100,1,2021,2021,1,1,9.7,19,10.3272,-84.4298,0,FALSE,Reflejo urbano diurno (probable),NA

@@ -1,0 +1,6 @@
+celda_id,n_est,n_volcan,n_fija,n_total,pct_est,anios_est,primer_anio,ultimo_anio,diurna,manana,frp_est,conf_est,lat,lon,disp_m,es_fuente,firma,localidad
+c0995_m08425,87,0,87,343,25.4,6,2018,2026,0.05,NA,0.5,NA,9.9686,-84.1558,307,TRUE,Fuente térmica nocturna persistente,"La Ribera y La Uruca, entre Belén y San José"
+c0975_m08395,79,0,79,145,54.5,9,2018,2026,0,NA,0.7,NA,9.8316,-83.9049,150,TRUE,Fuente térmica nocturna persistente,"Aguacaliente de Cartago y Llanos de Santa Lucía, Paraíso"
+c1015_m08425,66,66,0,68,97.1,6,2019,2026,0.05,NA,1.3,NA,10.198,-84.2315,213,TRUE,Cráter volcánico,San Juan de Poás (cráter del Poás)
+c0995_m08385,45,45,0,53,84.9,5,2018,2022,0.07,NA,1.2,NA,10.0193,-83.7646,167,TRUE,Cráter volcánico,Santa Cruz de Turrialba (cráter del Turrialba)
+c1015_m08525,31,0,31,457,6.8,3,2024,2026,0.03,NA,0.8,NA,10.2001,-85.1824,154,TRUE,Fuente térmica nocturna persistente,Colorado de Abangares
