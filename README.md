@@ -196,9 +196,10 @@ anterior está publicado; esta sección documenta los cinco primeros, la
 **frecuencia y densidad del fuego**, la **intensidad del fuego** y los
 **días extremos**, cada uno en su versión anual o espacial consolidada, y
 solo lo necesario para calcularlos, sigue con las reglas de su
-**extensión a las plataformas VIIRS** y cierra con la **comparación entre
+**extensión a las plataformas VIIRS**, la **comparación entre
 plataformas en el traslape**, el único lugar del proyecto donde dos
-plataformas se miran juntas. Nada de esta sección
+plataformas se miran juntas, y la **desagregación por área de
+conservación**, la dimensión interanual espacial de la suite. Nada de esta sección
 altera las series mensuales, los videos ni los mapas ya publicados.
 
 ### Año de fuego
@@ -778,6 +779,64 @@ Los productos de comparación no alimentan ningún índice de las
 plataformas ni se actualizan con la cola en tiempo casi real: cambian
 solo cuando se cierra un año de fuego completo en ambas.
 
+### Desagregación por área de conservación
+
+Los índices por celda no tienen versión anual porque una celda de 0,1°
+reúne pocas detecciones en un año. La unidad que sí las reúne, y con la
+que el SINAC gestiona el fuego y publica sus estadísticas (SINAC 2012), es
+el **área de conservación** (AC): diez unidades continentales, de 2 771
+km² (Pacífico Central) a 8 924 km² (Huetar Norte). Cada detección de
+vegetación se asigna al AC que contiene su punto, con la misma capa y la
+misma regla que la tabla de detecciones por AC de cada reporte; las pocas
+que no caen en ninguna («Sin asignar», desajustes de borde) se cuentan en
+la tabla pero no reciben índices. Todo es **por plataforma**, con las
+definiciones de la suite nacional aplicadas a las detecciones de cada AC.
+
+**Índices anuales por AC.** Por AC y año de fuego, sobre la serie diaria
+del AC (con ceros explícitos):
+
+| Código | Definición | Umbral |
+|---|---|---|
+| `DTOT`, `DF` | Detecciones y días con fuego del AC en el año | ninguno |
+| `INI`, `FIN`, `LON` | Como en la suite nacional: 10 % y 90 % acumulados del AC | `DTOT` ≥ 100 |
+| `N50`, `C10` | Concentración diaria del AC | `DTOT` ≥ 100 |
+| `FRPI`, `AQ`, `NOC` | Mediana de la FRP y controles | `DTOT` ≥ 30 |
+| `FRP95` | Percentil 95 de la FRP | `DTOT` ≥ 100 |
+| `P95`, `ND95`, `D95p`, `D95pTOT` | Días extremos del AC contra el percentil 95 de sus propios días de fuego del periodo base | ≥ 100 días de fuego del AC en el periodo base |
+| `Z_DTOT` | Anomalía estandarizada de `DTOT` respecto de la media y la desviación típica del AC en el periodo base | ninguno |
+
+El umbral de 100 para fechar la temporada sigue el razonamiento del
+nacional (300): el 10 % de 100 son diez detecciones, y con menos la fecha
+saltaría con un solo día de quemas; es el mismo mínimo que `N50F` por
+celda. Con MODIS lo cumplen sobre todo las AC del Pacífico y la zona
+norte (Tempisque, Guanacaste, Arenal Tempisque, La Amistad Pacífico,
+Pacífico Central casi todos los años; Huetar Norte, Central y Osa algunos)
+y nunca las del Caribe (La Amistad Caribe, Tortuguero), que casi no arden;
+con VIIRS lo cumplen tres de cada cuatro AC-años. `P95` es propio de cada
+AC y de cada plataforma (en MODIS, de 5 a 13 detecciones diarias en las AC
+del Pacífico; en S-NPP, de 10 a 58), así que `ND95` compara años dentro de
+un AC, nunca AC entre sí. `Z_DTOT` sí es comparable entre AC porque es
+adimensional: dice en qué AC un año fue anómalo, y es el análogo por AC de
+las anomalías de la comparación entre plataformas. Los años parciales y
+provisionales llevan las mismas marcas que la tabla nacional.
+
+**Consolidado por AC.** Sobre los años del periodo de referencia, con las
+mismas definiciones y umbrales que el ráster por celda: `INI`, `FIN`, `LON`
+y `FUERA` (con la marca de sin estación definida por encima del 25 %),
+`N50F`, y sobre el periodo base `DENS` (detecciones por km² de tierra del
+AC y año), `FRPI` y `AQ`. No hay `FREC` por AC: todas arden todos los años.
+El consolidado se calcula con las mismas funciones que las celdas, tomando
+cada AC como una «celda» con su superficie terrestre, para que ningún
+umbral ni definición difiera entre las dos escalas.
+
+**Lectura.** La tabla anual por AC es la dimensión interanual espacial que
+faltaba: responde si la temporada de 2023 fue larga en todo el país o solo
+en el Pacífico norte, y si un año extremo en Tempisque lo fue también en
+Osa. Los índices de un AC se comparan entre años y con otras AC de la
+misma plataforma; entre plataformas, solo mediante los productos de
+comparación. No hay ráster: el AC es un polígono, y los mapas son
+coropletas de los consolidados.
+
 ### Salidas
 
 Todas las salidas existen por plataforma (MODIS, VIIRS S-NPP y VIIRS
@@ -821,6 +880,12 @@ cada una.
   anuales y de anomalías por año, y mapas de acuerdo y de `ΔINI` y `ΔLON`.
   Se publican en un reporte propio, `comparacion/`, enlazado desde la
   portada.
+- Desagregación por área de conservación, por plataforma en
+  `outputs/<tipo>/<plataforma>/`: tabla AC × año de fuego con todos los
+  índices anuales y sus marcas (CSV), tabla consolidada por AC (CSV),
+  figuras de `LON` y de `Z_DTOT` por AC y año (mosaicos), y mapas
+  coropléticos de `LON`, `INI` y `DENS` consolidados por AC; sección
+  «Temporada por área de conservación» en el reporte de cada plataforma.
 
 ### Referencias
 
