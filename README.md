@@ -1243,6 +1243,45 @@ porque Costa Rica cruza las teselas h09v07 y h09v08.
 Constantes adicionales (área de estudio, buffer de descarga, tamaño de
 fragmento, teselas) en [`R/constantes.R`](R/constantes.R).
 
+## Las salidas como interfaz
+
+La carpeta `outputs/`, publicada en GitHub Pages junto con los reportes, es
+la **interfaz estable** del proyecto para cualquier consumidor externo, en
+particular el geovisor interactivo que se desarrolla en un repositorio
+aparte. La regla es que el consumidor **lee lo publicado y no recalcula
+nada**: los índices que muestre son exactamente los del pipeline, con sus
+definiciones, umbrales y marcas.
+
+**Manifiesto.** Cada corrida escribe `outputs/manifest.json` con:
+
+- `contrato`: versión de la interfaz (entera; sube solo cuando se renombra o
+  elimina un archivo o una columna, nunca al agregar).
+- `corrida`: fecha de la corrida y último día observado por plataforma, con
+  el fin del procesamiento estándar.
+- `plataformas`: clave, etiqueta, nombre corto, si forma parte de la suite
+  de índices, periodo base y satélite de control, tal como están en
+  `PLATAFORMAS`.
+- `pares`: los pares de la comparación y su periodo de traslape.
+- `archivos`: cada archivo de `outputs/` con su tipo (`tables`, `figs`,
+  `rasters`, `geometrias`), plataforma o par, nombre, tamaño y suma
+  SHA-256, tomados del disco al final de la corrida.
+
+**Geometrías.** `outputs/geometrias/` publica en GeoJSON (WGS84,
+simplificadas para la web) lo que los CSV referencian por identificador:
+`grilla_analisis.geojson` (celdas de 0,1° con `celda_id`, `lon_sw`,
+`lat_sw` y `area_km2`), `areas_conservacion.geojson` (`siglas_ac`,
+`nombre_ac`, `area_km2`) y `pais.geojson` (el límite continental). Con
+ellas y las tablas por celda y por AC, un consumidor dibuja sus propios
+mapas sin abrir los GeoTIFF.
+
+**Reglas del contrato.** Los nombres de archivo y de columna de las tablas
+CSV son estables; agregar columnas o archivos no cambia el contrato,
+renombrar o eliminar sí y sube `contrato`. Las claves de unión son
+`celda_id`, `siglas_ac`, `anio_fuego` y la clave de plataforma. Los
+valores ausentes van como `NA`; las marcas (`parcial`, `provisional`,
+`pocas_detecciones`, `no_comparable`, `valida`, `sin_estacion`) viajan con
+las tablas y el consumidor debe respetarlas.
+
 ## Estructura del repositorio
 
 ```
@@ -1250,8 +1289,13 @@ fragmento, teselas) en [`R/constantes.R`](R/constantes.R).
 ├── R/                  # funciones: descarga (FIRMS, CMR, WFS), procesamiento,
 │                       #   cobertura de la tierra, áreas de conservación,
 │                       #   eventos documentados, visualización y tablas
-├── R/temporada.R       # año de fuego e índices de temporada (LON) y ráster
+├── R/temporada.R       # año de fuego e índices de temporada y ráster por celda
 ├── R/grilla.R          # grilla de análisis común (0,05° y 0,1°, WGS84)
+├── R/comparacion.R     # comparación entre plataformas en el traslape
+├── R/temporada_ac.R    # índices por área de conservación
+├── R/enso.R            # fase ENSO (ONI del CPC) contra los índices anuales
+├── R/fuentes_estaticas.R # mapa de fuentes estáticas (tipos 1 y 2)
+├── R/manifiesto.R      # manifest.json y geometrías de outputs/
 ├── tests/testthat/     # pruebas unitarias con datos sintéticos
 ├── analysis/portada.qmd # portada         → index.html (GitHub Pages)
 ├── analysis/modis.qmd   # reporte MODIS   → modis/index.html
@@ -1260,7 +1304,8 @@ fragmento, teselas) en [`R/constantes.R`](R/constantes.R).
 ├── analysis/noaa21.qmd  # reporte NOAA-21 → noaa21/index.html
 ├── data/raw/           # caché de datos crudos (no versionada)
 ├── outputs/            # figuras, mapas y tablas, en una carpeta por
-│                       #   plataforma: figs/modis/, figs/snpp/, ...
+│                       #   plataforma: figs/modis/, figs/snpp/, ...;
+│                       #   manifest.json y geometrias/ (interfaz estable)
 ├── Dockerfile          # rocker/geospatial + paquetes del proyecto
 ├── docker-compose.yml  # RStudio Server (puerto 8787)
 └── renv.lock           # versiones fijadas de paquetes
