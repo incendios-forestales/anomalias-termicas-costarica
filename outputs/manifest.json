@@ -1,0 +1,5133 @@
+{
+  "contrato": 1,
+  "proyecto": "anomalias-termicas-costarica",
+  "generado": "2026-09-15T21:00:02-0600",
+  "corrida": "2026-09-15",
+  "plataformas": [
+    {
+      "clave": "modis",
+      "etiqueta": "MODIS (Terra/Aqua)",
+      "corta": "MODIS",
+      "en_suite": true,
+      "base_inicio": 2003,
+      "base_fin": 2022,
+      "satelite_control": "Aqua",
+      "registro_inicio": "2001-01-01",
+      "fin_estandar": "2026-06-30",
+      "ultimo_dia": "2026-09-16"
+    },
+    {
+      "clave": "snpp",
+      "etiqueta": "VIIRS (Suomi-NPP)",
+      "corta": "VIIRS S-NPP",
+      "en_suite": true,
+      "base_inicio": 2013,
+      "base_fin": 2025,
+      "satelite_control": null,
+      "registro_inicio": "2012-01-20",
+      "fin_estandar": "2026-06-30",
+      "ultimo_dia": "2026-09-15"
+    },
+    {
+      "clave": "noaa20",
+      "etiqueta": "VIIRS (NOAA-20)",
+      "corta": "VIIRS NOAA-20",
+      "en_suite": true,
+      "base_inicio": 2019,
+      "base_fin": 2025,
+      "satelite_control": null,
+      "registro_inicio": "2018-04-01",
+      "fin_estandar": "2026-06-30",
+      "ultimo_dia": "2026-09-15"
+    },
+    {
+      "clave": "noaa21",
+      "etiqueta": "VIIRS (NOAA-21)",
+      "corta": "VIIRS NOAA-21",
+      "en_suite": false,
+      "base_inicio": null,
+      "base_fin": null,
+      "satelite_control": null,
+      "registro_inicio": "2024-01-17",
+      "fin_estandar": null,
+      "ultimo_dia": "2026-09-16"
+    }
+  ],
+  "pares": [
+    {
+      "par": "modis_snpp",
+      "a": "modis",
+      "b": "snpp",
+      "traslape_inicio": 2013,
+      "traslape_fin": 2025,
+      "anios": 13
+    },
+    {
+      "par": "modis_noaa20",
+      "a": "modis",
+      "b": "noaa20",
+      "traslape_inicio": 2019,
+      "traslape_fin": 2025,
+      "anios": 7
+    },
+    {
+      "par": "snpp_noaa20",
+      "a": "snpp",
+      "b": "noaa20",
+      "traslape_inicio": 2019,
+      "traslape_fin": 2025,
+      "anios": 7
+    }
+  ],
+  "archivos": [
+    {
+      "tipo": "figs",
+      "plataforma": null,
+      "par": "modis_noaa20",
+      "nombre": "modis_noaa20_acuerdo.png",
+      "ruta": "outputs/figs/comparacion/modis_noaa20_acuerdo.png",
+      "bytes": 224999,
+      "sha256": "97b931c80bf0a3ec6c7548ccfe430577e160fea41f91ec37c642d7919c35e0db"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": null,
+      "par": "modis_noaa20",
+      "nombre": "modis_noaa20_anomalias.png",
+      "ruta": "outputs/figs/comparacion/modis_noaa20_anomalias.png",
+      "bytes": 129024,
+      "sha256": "800ca623a6d7cae0671b694702e51ca7b45049a96ae5bea22eb68d00ad359f17"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": null,
+      "par": "modis_noaa20",
+      "nombre": "modis_noaa20_anual.png",
+      "ruta": "outputs/figs/comparacion/modis_noaa20_anual.png",
+      "bytes": 268207,
+      "sha256": "7f78222d1c870952a3c97248b033c1c338abfbd4a3e0be899e44f9759cbb9325"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": null,
+      "par": "modis_noaa20",
+      "nombre": "modis_noaa20_dif_ini.png",
+      "ruta": "outputs/figs/comparacion/modis_noaa20_dif_ini.png",
+      "bytes": 215900,
+      "sha256": "78e4ee7665503838c0020a9b9fe28a97a84e323f8dae57b3a8bcc3d08461dafb"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": null,
+      "par": "modis_noaa20",
+      "nombre": "modis_noaa20_dif_lon.png",
+      "ruta": "outputs/figs/comparacion/modis_noaa20_dif_lon.png",
+      "bytes": 219102,
+      "sha256": "0edae2d7d70d85104a391caee5a88ef4530d72ac3c8fe944bce5a38205e9f5f4"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": null,
+      "par": "modis_snpp",
+      "nombre": "modis_snpp_acuerdo.png",
+      "ruta": "outputs/figs/comparacion/modis_snpp_acuerdo.png",
+      "bytes": 225605,
+      "sha256": "159232f707a52a691e479b3cd3020b06d6bf24e271469d8b9b87c748a5d19cc7"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": null,
+      "par": "modis_snpp",
+      "nombre": "modis_snpp_anomalias.png",
+      "ruta": "outputs/figs/comparacion/modis_snpp_anomalias.png",
+      "bytes": 116390,
+      "sha256": "90af01e89f2bc1426dda79f1422aa3dd649065ecb5c5c1bf085920941c99c385"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": null,
+      "par": "modis_snpp",
+      "nombre": "modis_snpp_anual.png",
+      "ruta": "outputs/figs/comparacion/modis_snpp_anual.png",
+      "bytes": 298585,
+      "sha256": "57d14494992481fb1682a9f033581e097f893e006d60f2726a7387a644b50a36"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": null,
+      "par": "modis_snpp",
+      "nombre": "modis_snpp_dif_ini.png",
+      "ruta": "outputs/figs/comparacion/modis_snpp_dif_ini.png",
+      "bytes": 211540,
+      "sha256": "e2220d9741f254761ace8046dc90d6763ed0f28068475414a9d9e4ec738674e6"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": null,
+      "par": "modis_snpp",
+      "nombre": "modis_snpp_dif_lon.png",
+      "ruta": "outputs/figs/comparacion/modis_snpp_dif_lon.png",
+      "bytes": 215137,
+      "sha256": "4bb8b842f94bae0d8f91a6f2e31e1e0a97469f32d8cec8afbc50b801a6239ad4"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": null,
+      "par": "snpp_noaa20",
+      "nombre": "snpp_noaa20_acuerdo.png",
+      "ruta": "outputs/figs/comparacion/snpp_noaa20_acuerdo.png",
+      "bytes": 224896,
+      "sha256": "c3cef53bebe177f090b97b0501ce3c9f2afbdd88eebd05ae64bbdef7828d5973"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": null,
+      "par": "snpp_noaa20",
+      "nombre": "snpp_noaa20_anomalias.png",
+      "ruta": "outputs/figs/comparacion/snpp_noaa20_anomalias.png",
+      "bytes": 125510,
+      "sha256": "d24c2e28ef582fff0e961c11a566bf60792c83642a6d6a056c37c7f798962530"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": null,
+      "par": "snpp_noaa20",
+      "nombre": "snpp_noaa20_anual.png",
+      "ruta": "outputs/figs/comparacion/snpp_noaa20_anual.png",
+      "bytes": 289827,
+      "sha256": "fb158ca383b840a4ca35285b9649aeee13a3dc8357d921c027947c0234015f32"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": null,
+      "par": "snpp_noaa20",
+      "nombre": "snpp_noaa20_dif_ini.png",
+      "ruta": "outputs/figs/comparacion/snpp_noaa20_dif_ini.png",
+      "bytes": 216259,
+      "sha256": "9e742f004d2dc0df113d42f544b02431d4bc633641613768afb706c1d9273943"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": null,
+      "par": "snpp_noaa20",
+      "nombre": "snpp_noaa20_dif_lon.png",
+      "ruta": "outputs/figs/comparacion/snpp_noaa20_dif_lon.png",
+      "bytes": 219431,
+      "sha256": "018625a6ae0a3654581dac47264d1ae3c31067d6613f7c43d6a4fd149ec97de8"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "animacion_mensual.gif",
+      "ruta": "outputs/figs/modis/animacion_mensual.gif",
+      "bytes": 2262558,
+      "sha256": "4ed757b8c59de70bf76576fdeba27358189a207cf3e1798b2479ab565c3a0262"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "animacion_mensual.mp4",
+      "ruta": "outputs/figs/modis/animacion_mensual.mp4",
+      "bytes": 1144240,
+      "sha256": "7097f22e8144e325bb4ac82b781bfa7a867227f9fa63e076dd6c79b8602a8846"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "area_quemada_mensual.png",
+      "ruta": "outputs/figs/modis/area_quemada_mensual.png",
+      "bytes": 66565,
+      "sha256": "d6f0ae13b48d8d4ce1d1bad74075be0ba3725b2afc14d040089f4369487ecf9c"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "cartel_resumen.png",
+      "ruta": "outputs/figs/modis/cartel_resumen.png",
+      "bytes": 62188,
+      "sha256": "d65ade684808a1fe92a4c5489492045259d710b5618653b51a3376403c3f2260"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "climatologia_comparada.png",
+      "ruta": "outputs/figs/modis/climatologia_comparada.png",
+      "bytes": 80617,
+      "sha256": "9b261ab443643087c954adafaa1d22d98088a4521a7c3a8935c8cbc385b6a8aa"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "crosstalk.min.css",
+      "ruta": "outputs/figs/modis/climatologia_mensual_files/crosstalk-1.2.2/css/crosstalk.min.css",
+      "bytes": 1306,
+      "sha256": "47bfd8c2b16c29c0c5d03656963e26730f7c566f8f7ea9dd4448bbaaca09ca0d"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "crosstalk.js",
+      "ruta": "outputs/figs/modis/climatologia_mensual_files/crosstalk-1.2.2/js/crosstalk.js",
+      "bytes": 49030,
+      "sha256": "6640e1c8218f1f8479ac6fab11b07362e48e82c739ef1f167bb9a504756e169a"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "crosstalk.js.map",
+      "ruta": "outputs/figs/modis/climatologia_mensual_files/crosstalk-1.2.2/js/crosstalk.js.map",
+      "bytes": 54853,
+      "sha256": "e042433b718cb57864be57b6e912cfdfff37e75f0be9d6d27ea91460c964b7cc"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "crosstalk.min.js",
+      "ruta": "outputs/figs/modis/climatologia_mensual_files/crosstalk-1.2.2/js/crosstalk.min.js",
+      "bytes": 18925,
+      "sha256": "abd7f07e2e8acbe5ba7aa3dc76712efaece662fb65560fbbcb3e8fb1df66b2e9"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "crosstalk.min.js.map",
+      "ruta": "outputs/figs/modis/climatologia_mensual_files/crosstalk-1.2.2/js/crosstalk.min.js.map",
+      "bytes": 50338,
+      "sha256": "5ffcb3703b9f002b255ef30d30a0521c08e5c5894c53b8726da6502654a1063a"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "crosstalk.scss",
+      "ruta": "outputs/figs/modis/climatologia_mensual_files/crosstalk-1.2.2/scss/crosstalk.scss",
+      "bytes": 1816,
+      "sha256": "a2a4d7222509d20ef1ee56291714feceb25fee06e666f37af8e61dc35986d9cd"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "fill.css",
+      "ruta": "outputs/figs/modis/climatologia_mensual_files/htmltools-fill-0.5.9/fill.css",
+      "bytes": 585,
+      "sha256": "0f41825dd6d8bb9923f39a10cd5de929daf009243c64e3e30fc008e45b8c3325"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "htmlwidgets.js",
+      "ruta": "outputs/figs/modis/climatologia_mensual_files/htmlwidgets-1.6.4/htmlwidgets.js",
+      "bytes": 33190,
+      "sha256": "4578d2a0732228ac3381eb2b3dfd81d30dc1d8000beb96a1b20e4f2088b2b9a4"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "jquery-AUTHORS.txt",
+      "ruta": "outputs/figs/modis/climatologia_mensual_files/jquery-3.5.1/jquery-AUTHORS.txt",
+      "bytes": 13369,
+      "sha256": "2e30eead6100c8d506d8606bf67d11713807a179bdca57a9e49974df5eaadbf4"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "jquery.js",
+      "ruta": "outputs/figs/modis/climatologia_mensual_files/jquery-3.5.1/jquery.js",
+      "bytes": 287630,
+      "sha256": "416a3b2c3bf16d64f6b5b6d0f7b079df2267614dd6847fc2f3271b4409233c37"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "jquery.min.js",
+      "ruta": "outputs/figs/modis/climatologia_mensual_files/jquery-3.5.1/jquery.min.js",
+      "bytes": 89476,
+      "sha256": "f7f6a5894f1d19ddad6fa392b2ece2c5e578cbf7da4ea805b6885eb6985b6e3d"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "jquery.min.map",
+      "ruta": "outputs/figs/modis/climatologia_mensual_files/jquery-3.5.1/jquery.min.map",
+      "bytes": 137986,
+      "sha256": "511d6f6d3e7acec78cd2505f04282b6e01329b4c24931f39d91739d0d1ddeef8"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "plotly.js",
+      "ruta": "outputs/figs/modis/climatologia_mensual_files/plotly-binding-4.12.0/plotly.js",
+      "bytes": 33758,
+      "sha256": "56288752cfa1613e53ced81ac2769ba23674feebf32cbd171ff5f22a747077e9"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "plotly-htmlwidgets.css",
+      "ruta": "outputs/figs/modis/climatologia_mensual_files/plotly-htmlwidgets-css-2.25.2/plotly-htmlwidgets.css",
+      "bytes": 173,
+      "sha256": "44356da5c42f304af74d60ee75225f216d5241f353f07fdef30c99536e103d9b"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "es.js",
+      "ruta": "outputs/figs/modis/climatologia_mensual_files/plotly-locale-es-2.25.2/es.js",
+      "bytes": 3241,
+      "sha256": "477f71e431a561d250efa64c2b5eed2b6a1b031e6aeb32eb370ad73be9b4b5f8"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "plotly-latest.min.js",
+      "ruta": "outputs/figs/modis/climatologia_mensual_files/plotly-main-2.25.2/plotly-latest.min.js",
+      "bytes": 3575010,
+      "sha256": "419deebe105f4c993feb7e6d1fe94fb1c2f7f98716db5d9b8fe3e37773838898"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "typedarray.min.js",
+      "ruta": "outputs/figs/modis/climatologia_mensual_files/typedarray-0.1/typedarray.min.js",
+      "bytes": 22444,
+      "sha256": "d95dda2a9a0ac6d74f2a473074b9d613b5a43a83b1dbc8590c247d9da1e22b3b"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "climatologia_mensual.html",
+      "ruta": "outputs/figs/modis/climatologia_mensual.html",
+      "bytes": 3783033,
+      "sha256": "3a8d5d26f3eb85cc9ed210ab401c36b5fc891475d5d5dcd8469c3e59c7c477e0"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "climatologia_mensual.png",
+      "ruta": "outputs/figs/modis/climatologia_mensual.png",
+      "bytes": 62323,
+      "sha256": "f26da9e24a77ca1fd7efe08332747b8c86223b4a3dc42779bca086eaad8b1ae1"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "cobertura_area_quemada.png",
+      "ruta": "outputs/figs/modis/cobertura_area_quemada.png",
+      "bytes": 88228,
+      "sha256": "49821f873eb54f35021c9c3d6d2c272cf2a33d3d288a42494b7752e57b6562d5"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "cobertura_detecciones.png",
+      "ruta": "outputs/figs/modis/cobertura_detecciones.png",
+      "bytes": 85775,
+      "sha256": "03472a3d5177d5ed8c508666a95c1ac9069741ff3b53403f90222f69fec96ad7"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "concentracion_anual.png",
+      "ruta": "outputs/figs/modis/concentracion_anual.png",
+      "bytes": 138484,
+      "sha256": "00bffcc3dda169161d54f10ff5216553149b1044bef2fceaa9e193f5090ee594"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "detecciones_por_ac.png",
+      "ruta": "outputs/figs/modis/detecciones_por_ac.png",
+      "bytes": 62420,
+      "sha256": "f03174cbade4c4fb3368c562d712c5ba2641369a2bb9b372a38ac74725d75455"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "detecciones_vs_area_quemada.png",
+      "ruta": "outputs/figs/modis/detecciones_vs_area_quemada.png",
+      "bytes": 75796,
+      "sha256": "c6cdbf9854625af334e6eb597b2cdc33e823d231283718fbc7148db20176b37c"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "enso.png",
+      "ruta": "outputs/figs/modis/enso.png",
+      "bytes": 230007,
+      "sha256": "0a6b09bab031626f6a26ee08637d7b7fa75b5d4dc4bf8adbcb9cf80982b9e7fc"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "evento_catalina_2026.png",
+      "ruta": "outputs/figs/modis/evento_catalina_2026.png",
+      "bytes": 198775,
+      "sha256": "39d16515214d160b43bdc2b5e2c13270cace9523854ac48b12e3de051a206ff5"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "extremos_anual.png",
+      "ruta": "outputs/figs/modis/extremos_anual.png",
+      "bytes": 134055,
+      "sha256": "8e62e07f00a127007b723e67a4d72b5fd959bf14a410615476821d04069e263f"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "fuentes_estaticas.png",
+      "ruta": "outputs/figs/modis/fuentes_estaticas.png",
+      "bytes": 208697,
+      "sha256": "c469552bb7b1fbce21667e4c229a08435afa3ff2214a7521bd92d87da4d94171"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "intensidad_anual.png",
+      "ruta": "outputs/figs/modis/intensidad_anual.png",
+      "bytes": 160195,
+      "sha256": "ffaca9b77f3e137e1550fdc2c8ee19e4f4e3ecda818f7e885fb55541e93cd7b8"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "crosstalk.min.css",
+      "ruta": "outputs/figs/modis/serie_mensual_files/crosstalk-1.2.2/css/crosstalk.min.css",
+      "bytes": 1306,
+      "sha256": "47bfd8c2b16c29c0c5d03656963e26730f7c566f8f7ea9dd4448bbaaca09ca0d"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "crosstalk.js",
+      "ruta": "outputs/figs/modis/serie_mensual_files/crosstalk-1.2.2/js/crosstalk.js",
+      "bytes": 49030,
+      "sha256": "6640e1c8218f1f8479ac6fab11b07362e48e82c739ef1f167bb9a504756e169a"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "crosstalk.js.map",
+      "ruta": "outputs/figs/modis/serie_mensual_files/crosstalk-1.2.2/js/crosstalk.js.map",
+      "bytes": 54853,
+      "sha256": "e042433b718cb57864be57b6e912cfdfff37e75f0be9d6d27ea91460c964b7cc"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "crosstalk.min.js",
+      "ruta": "outputs/figs/modis/serie_mensual_files/crosstalk-1.2.2/js/crosstalk.min.js",
+      "bytes": 18925,
+      "sha256": "abd7f07e2e8acbe5ba7aa3dc76712efaece662fb65560fbbcb3e8fb1df66b2e9"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "crosstalk.min.js.map",
+      "ruta": "outputs/figs/modis/serie_mensual_files/crosstalk-1.2.2/js/crosstalk.min.js.map",
+      "bytes": 50338,
+      "sha256": "5ffcb3703b9f002b255ef30d30a0521c08e5c5894c53b8726da6502654a1063a"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "crosstalk.scss",
+      "ruta": "outputs/figs/modis/serie_mensual_files/crosstalk-1.2.2/scss/crosstalk.scss",
+      "bytes": 1816,
+      "sha256": "a2a4d7222509d20ef1ee56291714feceb25fee06e666f37af8e61dc35986d9cd"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "fill.css",
+      "ruta": "outputs/figs/modis/serie_mensual_files/htmltools-fill-0.5.9/fill.css",
+      "bytes": 585,
+      "sha256": "0f41825dd6d8bb9923f39a10cd5de929daf009243c64e3e30fc008e45b8c3325"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "htmlwidgets.js",
+      "ruta": "outputs/figs/modis/serie_mensual_files/htmlwidgets-1.6.4/htmlwidgets.js",
+      "bytes": 33190,
+      "sha256": "4578d2a0732228ac3381eb2b3dfd81d30dc1d8000beb96a1b20e4f2088b2b9a4"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "jquery-AUTHORS.txt",
+      "ruta": "outputs/figs/modis/serie_mensual_files/jquery-3.5.1/jquery-AUTHORS.txt",
+      "bytes": 13369,
+      "sha256": "2e30eead6100c8d506d8606bf67d11713807a179bdca57a9e49974df5eaadbf4"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "jquery.js",
+      "ruta": "outputs/figs/modis/serie_mensual_files/jquery-3.5.1/jquery.js",
+      "bytes": 287630,
+      "sha256": "416a3b2c3bf16d64f6b5b6d0f7b079df2267614dd6847fc2f3271b4409233c37"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "jquery.min.js",
+      "ruta": "outputs/figs/modis/serie_mensual_files/jquery-3.5.1/jquery.min.js",
+      "bytes": 89476,
+      "sha256": "f7f6a5894f1d19ddad6fa392b2ece2c5e578cbf7da4ea805b6885eb6985b6e3d"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "jquery.min.map",
+      "ruta": "outputs/figs/modis/serie_mensual_files/jquery-3.5.1/jquery.min.map",
+      "bytes": 137986,
+      "sha256": "511d6f6d3e7acec78cd2505f04282b6e01329b4c24931f39d91739d0d1ddeef8"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "plotly.js",
+      "ruta": "outputs/figs/modis/serie_mensual_files/plotly-binding-4.12.0/plotly.js",
+      "bytes": 33758,
+      "sha256": "56288752cfa1613e53ced81ac2769ba23674feebf32cbd171ff5f22a747077e9"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "plotly-htmlwidgets.css",
+      "ruta": "outputs/figs/modis/serie_mensual_files/plotly-htmlwidgets-css-2.25.2/plotly-htmlwidgets.css",
+      "bytes": 173,
+      "sha256": "44356da5c42f304af74d60ee75225f216d5241f353f07fdef30c99536e103d9b"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "es.js",
+      "ruta": "outputs/figs/modis/serie_mensual_files/plotly-locale-es-2.25.2/es.js",
+      "bytes": 3241,
+      "sha256": "477f71e431a561d250efa64c2b5eed2b6a1b031e6aeb32eb370ad73be9b4b5f8"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "plotly-latest.min.js",
+      "ruta": "outputs/figs/modis/serie_mensual_files/plotly-main-2.25.2/plotly-latest.min.js",
+      "bytes": 3575010,
+      "sha256": "419deebe105f4c993feb7e6d1fe94fb1c2f7f98716db5d9b8fe3e37773838898"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "typedarray.min.js",
+      "ruta": "outputs/figs/modis/serie_mensual_files/typedarray-0.1/typedarray.min.js",
+      "bytes": 22444,
+      "sha256": "d95dda2a9a0ac6d74f2a473074b9d613b5a43a83b1dbc8590c247d9da1e22b3b"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "serie_mensual.html",
+      "ruta": "outputs/figs/modis/serie_mensual.html",
+      "bytes": 3797413,
+      "sha256": "defda1c727df10a79ea42396dc03829e167a84047d81ad63a59d9d601a2d1cae"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "serie_mensual.png",
+      "ruta": "outputs/figs/modis/serie_mensual.png",
+      "bytes": 60345,
+      "sha256": "5dc5dfc9e7c118a253b1ff4de1f91b0b5f0f0eac3f608ceee1ddfba04ded89d1"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "temporada_ac_anomalia.png",
+      "ruta": "outputs/figs/modis/temporada_ac_anomalia.png",
+      "bytes": 300905,
+      "sha256": "6ff53b4f0e375f6d90b933456530a97f87bfd16864b61f3bba06c61cbbd48539"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "temporada_ac_lon.png",
+      "ruta": "outputs/figs/modis/temporada_ac_lon.png",
+      "bytes": 175810,
+      "sha256": "7690fc17ab8a2544bd505bdaa367446904a7e555fd11638ad2c8c8b793a71019"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "temporada_ac_mapa_dens.png",
+      "ruta": "outputs/figs/modis/temporada_ac_mapa_dens.png",
+      "bytes": 272627,
+      "sha256": "f7289f66cc2f7f5f6e39d9a2c413c2a2020b3626cb68bb026b649649659860d2"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "temporada_ac_mapa_ini.png",
+      "ruta": "outputs/figs/modis/temporada_ac_mapa_ini.png",
+      "bytes": 277984,
+      "sha256": "e688a0106cc2d4048776a3d9a049542b76575bffd5024aebdedcf3b5f8ee6468"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "temporada_ac_mapa_lon.png",
+      "ruta": "outputs/figs/modis/temporada_ac_mapa_lon.png",
+      "bytes": 271406,
+      "sha256": "7be6548bcfd8b3840934950154aa41a820682911fb96586f399690a0a9fadb0f"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "temporada_anual.png",
+      "ruta": "outputs/figs/modis/temporada_anual.png",
+      "bytes": 181296,
+      "sha256": "df597fa1f2289fcbc8af0ff8898225d28f0782b92e265dbaee159ee7917f6568"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "temporada_celdas_aq.png",
+      "ruta": "outputs/figs/modis/temporada_celdas_aq.png",
+      "bytes": 227334,
+      "sha256": "8c5da76ae226ef5383142240cc319c0391f1963399c37c92442de75c96806567"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "temporada_celdas_dens.png",
+      "ruta": "outputs/figs/modis/temporada_celdas_dens.png",
+      "bytes": 231412,
+      "sha256": "a2076eed415702448de7f21c69b111762e0edf9ef25c1b5e786d7064f81b74ce"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "temporada_celdas_fin.png",
+      "ruta": "outputs/figs/modis/temporada_celdas_fin.png",
+      "bytes": 219964,
+      "sha256": "5aee330fb78104c96d10a3f68f0d83eb4ef3ce3870746c12927e9960a38a76c5"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "temporada_celdas_frec.png",
+      "ruta": "outputs/figs/modis/temporada_celdas_frec.png",
+      "bytes": 233428,
+      "sha256": "f4f0340c78b85733326e53ebc2b7901344dda67eecdf367e60068b9d89c308ed"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "temporada_celdas_frpi.png",
+      "ruta": "outputs/figs/modis/temporada_celdas_frpi.png",
+      "bytes": 223283,
+      "sha256": "d7d771e9612721a317f5157534ba11ac3ff0614be057febf5ca572d2e131fb0a"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "temporada_celdas_ini.png",
+      "ruta": "outputs/figs/modis/temporada_celdas_ini.png",
+      "bytes": 223387,
+      "sha256": "ee6940057bae6c50d7bf26499e9facf8afdbc3296a6857a3707c6f1817a48161"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "temporada_celdas_lon.png",
+      "ruta": "outputs/figs/modis/temporada_celdas_lon.png",
+      "bytes": 220456,
+      "sha256": "13d7afbba035f1969bb4b9a0dde3611f654f50d9275f29702c6c27cc5f7f2e63"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "temporada_celdas_n50f.png",
+      "ruta": "outputs/figs/modis/temporada_celdas_n50f.png",
+      "bytes": 221177,
+      "sha256": "0221086490d4328c61cd81e401e110f07538eaa7c141ea0b2b484b6d9da7ff37"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "video_anomalias_termicas.mp4",
+      "ruta": "outputs/figs/modis/video_anomalias_termicas.mp4",
+      "bytes": 3899563,
+      "sha256": "a0efcfa38b887076f67a723ffbe11c684c221c82f757d9b8a8977ef473aa8ed2"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "animacion_mensual.gif",
+      "ruta": "outputs/figs/noaa20/animacion_mensual.gif",
+      "bytes": 1406328,
+      "sha256": "1fdfa6ec49f88a7d4354f5627c549e5fc67fb27224b2339429dc38d0cd3849e5"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "animacion_mensual.mp4",
+      "ruta": "outputs/figs/noaa20/animacion_mensual.mp4",
+      "bytes": 746839,
+      "sha256": "97e6b86dc0af022f1c7fc11a8e92909f375f78f91d57e52a6a26881f718e6cf7"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "area_quemada_mensual.png",
+      "ruta": "outputs/figs/noaa20/area_quemada_mensual.png",
+      "bytes": 61504,
+      "sha256": "5ff37175eff5670df7168b7e0718e11b7983afe94bcc46533c52ccbd1b3a3ed3"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "cartel_resumen.png",
+      "ruta": "outputs/figs/noaa20/cartel_resumen.png",
+      "bytes": 59310,
+      "sha256": "ada1aa056a02823db7202eb9491bb244cc4f2f07a16c4f7267a1267585dc6f08"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "climatologia_comparada.png",
+      "ruta": "outputs/figs/noaa20/climatologia_comparada.png",
+      "bytes": 85301,
+      "sha256": "1e68a92e6c80871c8bf2d3ae97d8774086849904ae5e7e7b28afad7ad953968b"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "crosstalk.min.css",
+      "ruta": "outputs/figs/noaa20/climatologia_mensual_files/crosstalk-1.2.2/css/crosstalk.min.css",
+      "bytes": 1306,
+      "sha256": "47bfd8c2b16c29c0c5d03656963e26730f7c566f8f7ea9dd4448bbaaca09ca0d"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "crosstalk.js",
+      "ruta": "outputs/figs/noaa20/climatologia_mensual_files/crosstalk-1.2.2/js/crosstalk.js",
+      "bytes": 49030,
+      "sha256": "6640e1c8218f1f8479ac6fab11b07362e48e82c739ef1f167bb9a504756e169a"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "crosstalk.js.map",
+      "ruta": "outputs/figs/noaa20/climatologia_mensual_files/crosstalk-1.2.2/js/crosstalk.js.map",
+      "bytes": 54853,
+      "sha256": "e042433b718cb57864be57b6e912cfdfff37e75f0be9d6d27ea91460c964b7cc"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "crosstalk.min.js",
+      "ruta": "outputs/figs/noaa20/climatologia_mensual_files/crosstalk-1.2.2/js/crosstalk.min.js",
+      "bytes": 18925,
+      "sha256": "abd7f07e2e8acbe5ba7aa3dc76712efaece662fb65560fbbcb3e8fb1df66b2e9"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "crosstalk.min.js.map",
+      "ruta": "outputs/figs/noaa20/climatologia_mensual_files/crosstalk-1.2.2/js/crosstalk.min.js.map",
+      "bytes": 50338,
+      "sha256": "5ffcb3703b9f002b255ef30d30a0521c08e5c5894c53b8726da6502654a1063a"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "crosstalk.scss",
+      "ruta": "outputs/figs/noaa20/climatologia_mensual_files/crosstalk-1.2.2/scss/crosstalk.scss",
+      "bytes": 1816,
+      "sha256": "a2a4d7222509d20ef1ee56291714feceb25fee06e666f37af8e61dc35986d9cd"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "fill.css",
+      "ruta": "outputs/figs/noaa20/climatologia_mensual_files/htmltools-fill-0.5.9/fill.css",
+      "bytes": 585,
+      "sha256": "0f41825dd6d8bb9923f39a10cd5de929daf009243c64e3e30fc008e45b8c3325"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "htmlwidgets.js",
+      "ruta": "outputs/figs/noaa20/climatologia_mensual_files/htmlwidgets-1.6.4/htmlwidgets.js",
+      "bytes": 33190,
+      "sha256": "4578d2a0732228ac3381eb2b3dfd81d30dc1d8000beb96a1b20e4f2088b2b9a4"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "jquery-AUTHORS.txt",
+      "ruta": "outputs/figs/noaa20/climatologia_mensual_files/jquery-3.5.1/jquery-AUTHORS.txt",
+      "bytes": 13369,
+      "sha256": "2e30eead6100c8d506d8606bf67d11713807a179bdca57a9e49974df5eaadbf4"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "jquery.js",
+      "ruta": "outputs/figs/noaa20/climatologia_mensual_files/jquery-3.5.1/jquery.js",
+      "bytes": 287630,
+      "sha256": "416a3b2c3bf16d64f6b5b6d0f7b079df2267614dd6847fc2f3271b4409233c37"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "jquery.min.js",
+      "ruta": "outputs/figs/noaa20/climatologia_mensual_files/jquery-3.5.1/jquery.min.js",
+      "bytes": 89476,
+      "sha256": "f7f6a5894f1d19ddad6fa392b2ece2c5e578cbf7da4ea805b6885eb6985b6e3d"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "jquery.min.map",
+      "ruta": "outputs/figs/noaa20/climatologia_mensual_files/jquery-3.5.1/jquery.min.map",
+      "bytes": 137986,
+      "sha256": "511d6f6d3e7acec78cd2505f04282b6e01329b4c24931f39d91739d0d1ddeef8"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "plotly.js",
+      "ruta": "outputs/figs/noaa20/climatologia_mensual_files/plotly-binding-4.12.0/plotly.js",
+      "bytes": 33758,
+      "sha256": "56288752cfa1613e53ced81ac2769ba23674feebf32cbd171ff5f22a747077e9"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "plotly-htmlwidgets.css",
+      "ruta": "outputs/figs/noaa20/climatologia_mensual_files/plotly-htmlwidgets-css-2.25.2/plotly-htmlwidgets.css",
+      "bytes": 173,
+      "sha256": "44356da5c42f304af74d60ee75225f216d5241f353f07fdef30c99536e103d9b"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "es.js",
+      "ruta": "outputs/figs/noaa20/climatologia_mensual_files/plotly-locale-es-2.25.2/es.js",
+      "bytes": 3241,
+      "sha256": "477f71e431a561d250efa64c2b5eed2b6a1b031e6aeb32eb370ad73be9b4b5f8"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "plotly-latest.min.js",
+      "ruta": "outputs/figs/noaa20/climatologia_mensual_files/plotly-main-2.25.2/plotly-latest.min.js",
+      "bytes": 3575010,
+      "sha256": "419deebe105f4c993feb7e6d1fe94fb1c2f7f98716db5d9b8fe3e37773838898"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "typedarray.min.js",
+      "ruta": "outputs/figs/noaa20/climatologia_mensual_files/typedarray-0.1/typedarray.min.js",
+      "bytes": 22444,
+      "sha256": "d95dda2a9a0ac6d74f2a473074b9d613b5a43a83b1dbc8590c247d9da1e22b3b"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "climatologia_mensual.html",
+      "ruta": "outputs/figs/noaa20/climatologia_mensual.html",
+      "bytes": 3783045,
+      "sha256": "d14224fc2a3397dcc77cc6b59f2d7431663dd4e935d77d212a946fde8d248deb"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "climatologia_mensual.png",
+      "ruta": "outputs/figs/noaa20/climatologia_mensual.png",
+      "bytes": 65979,
+      "sha256": "092870da624cf440bc18001411648079920079bb2bac52253952015e52d78794"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "cobertura_area_quemada.png",
+      "ruta": "outputs/figs/noaa20/cobertura_area_quemada.png",
+      "bytes": 85474,
+      "sha256": "aa53122bfe877e791192cbf0c78baeba30678ac9923073bf7cb1e3e8a2902bd8"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "cobertura_detecciones.png",
+      "ruta": "outputs/figs/noaa20/cobertura_detecciones.png",
+      "bytes": 87106,
+      "sha256": "909acea45f72df3790ac3e47c081f291925129c8964ee242921d82af070dc805"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "concentracion_anual.png",
+      "ruta": "outputs/figs/noaa20/concentracion_anual.png",
+      "bytes": 111371,
+      "sha256": "b736c2352ed727d60158e79c13f00f31eb60f8e652b62d9c90c3e8883f6e0979"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "detecciones_por_ac.png",
+      "ruta": "outputs/figs/noaa20/detecciones_por_ac.png",
+      "bytes": 62824,
+      "sha256": "57113cf91ff4775abb5e668370d8c30f6666a3ff35fee00fc6643900c84ac803"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "detecciones_vs_area_quemada.png",
+      "ruta": "outputs/figs/noaa20/detecciones_vs_area_quemada.png",
+      "bytes": 73796,
+      "sha256": "cefd719d9e0b67216d23b2f0dd4295be7fc044c4321446ae5c6725970d2b257a"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "enso.png",
+      "ruta": "outputs/figs/noaa20/enso.png",
+      "bytes": 159818,
+      "sha256": "42a9cdc6e263aad7e3d191ba46acb54517b0b5c4c6842eed850109b2d22cbdbc"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "evento_catalina_2026.png",
+      "ruta": "outputs/figs/noaa20/evento_catalina_2026.png",
+      "bytes": 247722,
+      "sha256": "5ca4e79b6ea8e76b201e6463240fa1e3fd9107dc0972e6c0306cd260a58477d0"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "extremos_anual.png",
+      "ruta": "outputs/figs/noaa20/extremos_anual.png",
+      "bytes": 114630,
+      "sha256": "63972aa91d492b57fecdd55642602b0eb859c2b734950b5b1a26c7b8d7be0038"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "fuentes_estaticas.png",
+      "ruta": "outputs/figs/noaa20/fuentes_estaticas.png",
+      "bytes": 195428,
+      "sha256": "4807a7be815ed702d08b46457caa8d096625c4d766016a03ea42d2baad4c4a09"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "intensidad_anual.png",
+      "ruta": "outputs/figs/noaa20/intensidad_anual.png",
+      "bytes": 113921,
+      "sha256": "d61f6e9b5fdfe4151784ccee5f6e89544f2eafcf79a9eaf4f0c4498e699e2f6f"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "crosstalk.min.css",
+      "ruta": "outputs/figs/noaa20/serie_mensual_files/crosstalk-1.2.2/css/crosstalk.min.css",
+      "bytes": 1306,
+      "sha256": "47bfd8c2b16c29c0c5d03656963e26730f7c566f8f7ea9dd4448bbaaca09ca0d"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "crosstalk.js",
+      "ruta": "outputs/figs/noaa20/serie_mensual_files/crosstalk-1.2.2/js/crosstalk.js",
+      "bytes": 49030,
+      "sha256": "6640e1c8218f1f8479ac6fab11b07362e48e82c739ef1f167bb9a504756e169a"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "crosstalk.js.map",
+      "ruta": "outputs/figs/noaa20/serie_mensual_files/crosstalk-1.2.2/js/crosstalk.js.map",
+      "bytes": 54853,
+      "sha256": "e042433b718cb57864be57b6e912cfdfff37e75f0be9d6d27ea91460c964b7cc"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "crosstalk.min.js",
+      "ruta": "outputs/figs/noaa20/serie_mensual_files/crosstalk-1.2.2/js/crosstalk.min.js",
+      "bytes": 18925,
+      "sha256": "abd7f07e2e8acbe5ba7aa3dc76712efaece662fb65560fbbcb3e8fb1df66b2e9"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "crosstalk.min.js.map",
+      "ruta": "outputs/figs/noaa20/serie_mensual_files/crosstalk-1.2.2/js/crosstalk.min.js.map",
+      "bytes": 50338,
+      "sha256": "5ffcb3703b9f002b255ef30d30a0521c08e5c5894c53b8726da6502654a1063a"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "crosstalk.scss",
+      "ruta": "outputs/figs/noaa20/serie_mensual_files/crosstalk-1.2.2/scss/crosstalk.scss",
+      "bytes": 1816,
+      "sha256": "a2a4d7222509d20ef1ee56291714feceb25fee06e666f37af8e61dc35986d9cd"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "fill.css",
+      "ruta": "outputs/figs/noaa20/serie_mensual_files/htmltools-fill-0.5.9/fill.css",
+      "bytes": 585,
+      "sha256": "0f41825dd6d8bb9923f39a10cd5de929daf009243c64e3e30fc008e45b8c3325"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "htmlwidgets.js",
+      "ruta": "outputs/figs/noaa20/serie_mensual_files/htmlwidgets-1.6.4/htmlwidgets.js",
+      "bytes": 33190,
+      "sha256": "4578d2a0732228ac3381eb2b3dfd81d30dc1d8000beb96a1b20e4f2088b2b9a4"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "jquery-AUTHORS.txt",
+      "ruta": "outputs/figs/noaa20/serie_mensual_files/jquery-3.5.1/jquery-AUTHORS.txt",
+      "bytes": 13369,
+      "sha256": "2e30eead6100c8d506d8606bf67d11713807a179bdca57a9e49974df5eaadbf4"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "jquery.js",
+      "ruta": "outputs/figs/noaa20/serie_mensual_files/jquery-3.5.1/jquery.js",
+      "bytes": 287630,
+      "sha256": "416a3b2c3bf16d64f6b5b6d0f7b079df2267614dd6847fc2f3271b4409233c37"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "jquery.min.js",
+      "ruta": "outputs/figs/noaa20/serie_mensual_files/jquery-3.5.1/jquery.min.js",
+      "bytes": 89476,
+      "sha256": "f7f6a5894f1d19ddad6fa392b2ece2c5e578cbf7da4ea805b6885eb6985b6e3d"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "jquery.min.map",
+      "ruta": "outputs/figs/noaa20/serie_mensual_files/jquery-3.5.1/jquery.min.map",
+      "bytes": 137986,
+      "sha256": "511d6f6d3e7acec78cd2505f04282b6e01329b4c24931f39d91739d0d1ddeef8"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "plotly.js",
+      "ruta": "outputs/figs/noaa20/serie_mensual_files/plotly-binding-4.12.0/plotly.js",
+      "bytes": 33758,
+      "sha256": "56288752cfa1613e53ced81ac2769ba23674feebf32cbd171ff5f22a747077e9"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "plotly-htmlwidgets.css",
+      "ruta": "outputs/figs/noaa20/serie_mensual_files/plotly-htmlwidgets-css-2.25.2/plotly-htmlwidgets.css",
+      "bytes": 173,
+      "sha256": "44356da5c42f304af74d60ee75225f216d5241f353f07fdef30c99536e103d9b"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "es.js",
+      "ruta": "outputs/figs/noaa20/serie_mensual_files/plotly-locale-es-2.25.2/es.js",
+      "bytes": 3241,
+      "sha256": "477f71e431a561d250efa64c2b5eed2b6a1b031e6aeb32eb370ad73be9b4b5f8"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "plotly-latest.min.js",
+      "ruta": "outputs/figs/noaa20/serie_mensual_files/plotly-main-2.25.2/plotly-latest.min.js",
+      "bytes": 3575010,
+      "sha256": "419deebe105f4c993feb7e6d1fe94fb1c2f7f98716db5d9b8fe3e37773838898"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "typedarray.min.js",
+      "ruta": "outputs/figs/noaa20/serie_mensual_files/typedarray-0.1/typedarray.min.js",
+      "bytes": 22444,
+      "sha256": "d95dda2a9a0ac6d74f2a473074b9d613b5a43a83b1dbc8590c247d9da1e22b3b"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "serie_mensual.html",
+      "ruta": "outputs/figs/noaa20/serie_mensual.html",
+      "bytes": 3787173,
+      "sha256": "1e9bfa605938de2c21d64bb0230befd1690c0286a0106b4601d6c26b8a980afa"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "serie_mensual.png",
+      "ruta": "outputs/figs/noaa20/serie_mensual.png",
+      "bytes": 57753,
+      "sha256": "e298c91e41d3869220fae9200b8381534485d44841396c48e0da1de75b34e78c"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "temporada_ac_anomalia.png",
+      "ruta": "outputs/figs/noaa20/temporada_ac_anomalia.png",
+      "bytes": 183868,
+      "sha256": "641f68dcd311c6c8b6d33b7a032ec39f30fd59ad7ad91e717110714d0f4d2d24"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "temporada_ac_lon.png",
+      "ruta": "outputs/figs/noaa20/temporada_ac_lon.png",
+      "bytes": 143861,
+      "sha256": "e61f77f0deb1448769bcb4ee95b79da058035fc2401320a589c05ca04e071bb1"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "temporada_ac_mapa_dens.png",
+      "ruta": "outputs/figs/noaa20/temporada_ac_mapa_dens.png",
+      "bytes": 276010,
+      "sha256": "1d39157f77f361b62a7386628134bca69d4f112fd5e5a63c058a99c0ad628bdb"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "temporada_ac_mapa_ini.png",
+      "ruta": "outputs/figs/noaa20/temporada_ac_mapa_ini.png",
+      "bytes": 279035,
+      "sha256": "6c8110929736cacf9a53aeffa638fa6d21787e42d6e1277463bfbdd1705bc532"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "temporada_ac_mapa_lon.png",
+      "ruta": "outputs/figs/noaa20/temporada_ac_mapa_lon.png",
+      "bytes": 277069,
+      "sha256": "18205f21bf5b8b0b9b7a5c4c50371eeca34e8a3a8335017a415499705fbd48bf"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "temporada_anual.png",
+      "ruta": "outputs/figs/noaa20/temporada_anual.png",
+      "bytes": 126434,
+      "sha256": "5350a9cf6d3e77e32dfe1060fefd3b25d9436598f273fc01883256a64a45229f"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "temporada_celdas_dens.png",
+      "ruta": "outputs/figs/noaa20/temporada_celdas_dens.png",
+      "bytes": 241633,
+      "sha256": "03560c85409a77b1413227ff4f767368ca27ad3f245d909e6fe57c2033a2b17b"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "temporada_celdas_fin.png",
+      "ruta": "outputs/figs/noaa20/temporada_celdas_fin.png",
+      "bytes": 235393,
+      "sha256": "53049740e1b4757ae4e676b3d2bcd7327d832efb91a0511e5c730c6b9c890ec4"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "temporada_celdas_frec.png",
+      "ruta": "outputs/figs/noaa20/temporada_celdas_frec.png",
+      "bytes": 244473,
+      "sha256": "a7fd88ef7b4f68b66850847bcce46622eeff1c2f996643a1a0a79e4372496061"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "temporada_celdas_frpi.png",
+      "ruta": "outputs/figs/noaa20/temporada_celdas_frpi.png",
+      "bytes": 232698,
+      "sha256": "51ffb0399a3f16871c0cd64b77bbfab79479f05ea8dfedadedadf07297b3dd5f"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "temporada_celdas_ini.png",
+      "ruta": "outputs/figs/noaa20/temporada_celdas_ini.png",
+      "bytes": 231984,
+      "sha256": "8783608839e1fa97ed5f10b15beb510037f80dbfdf56331c0291306fdb5caa37"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "temporada_celdas_lon.png",
+      "ruta": "outputs/figs/noaa20/temporada_celdas_lon.png",
+      "bytes": 232025,
+      "sha256": "37a8a6bf746ca5ceefc6ae6ee4632c4daf38bdcd57513476e6a6608da182fa21"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "temporada_celdas_n50f.png",
+      "ruta": "outputs/figs/noaa20/temporada_celdas_n50f.png",
+      "bytes": 239048,
+      "sha256": "c7ffd179b3b307fac831b692ba64d7ed21129527670f3e7a29466b17b38b4410"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "video_anomalias_termicas.mp4",
+      "ruta": "outputs/figs/noaa20/video_anomalias_termicas.mp4",
+      "bytes": 2340228,
+      "sha256": "3867bb3ac6782ca87ba6d0d0b46a756e30b0453a77280a5a71e7bd7bd0ea770a"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "animacion_mensual.gif",
+      "ruta": "outputs/figs/noaa21/animacion_mensual.gif",
+      "bytes": 558529,
+      "sha256": "779b2bab68626573533613eef5932c102152ac1c9ecb9ef77cad77cf3c797793"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "animacion_mensual.mp4",
+      "ruta": "outputs/figs/noaa21/animacion_mensual.mp4",
+      "bytes": 365227,
+      "sha256": "0ac97e46b3b8788b7934ce1e3f45a4c6380e1d40bdccecac1584cec200e3b8be"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "area_quemada_mensual.png",
+      "ruta": "outputs/figs/noaa21/area_quemada_mensual.png",
+      "bytes": 58889,
+      "sha256": "c563b54c8fbebba2ac9a85a5d8250554a75410556c423ea58003932f23d3235d"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "cartel_resumen.png",
+      "ruta": "outputs/figs/noaa21/cartel_resumen.png",
+      "bytes": 56422,
+      "sha256": "b676777cecc9832d689f8d319512eea75baee4ceee3fa63eca020e593d8fd33b"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "climatologia_comparada.png",
+      "ruta": "outputs/figs/noaa21/climatologia_comparada.png",
+      "bytes": 83332,
+      "sha256": "35f90fa77187d00e6a9de94423a25a5f9bce89fe57f3c445f672b218cbb41771"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "crosstalk.min.css",
+      "ruta": "outputs/figs/noaa21/climatologia_mensual_files/crosstalk-1.2.2/css/crosstalk.min.css",
+      "bytes": 1306,
+      "sha256": "47bfd8c2b16c29c0c5d03656963e26730f7c566f8f7ea9dd4448bbaaca09ca0d"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "crosstalk.js",
+      "ruta": "outputs/figs/noaa21/climatologia_mensual_files/crosstalk-1.2.2/js/crosstalk.js",
+      "bytes": 49030,
+      "sha256": "6640e1c8218f1f8479ac6fab11b07362e48e82c739ef1f167bb9a504756e169a"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "crosstalk.js.map",
+      "ruta": "outputs/figs/noaa21/climatologia_mensual_files/crosstalk-1.2.2/js/crosstalk.js.map",
+      "bytes": 54853,
+      "sha256": "e042433b718cb57864be57b6e912cfdfff37e75f0be9d6d27ea91460c964b7cc"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "crosstalk.min.js",
+      "ruta": "outputs/figs/noaa21/climatologia_mensual_files/crosstalk-1.2.2/js/crosstalk.min.js",
+      "bytes": 18925,
+      "sha256": "abd7f07e2e8acbe5ba7aa3dc76712efaece662fb65560fbbcb3e8fb1df66b2e9"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "crosstalk.min.js.map",
+      "ruta": "outputs/figs/noaa21/climatologia_mensual_files/crosstalk-1.2.2/js/crosstalk.min.js.map",
+      "bytes": 50338,
+      "sha256": "5ffcb3703b9f002b255ef30d30a0521c08e5c5894c53b8726da6502654a1063a"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "crosstalk.scss",
+      "ruta": "outputs/figs/noaa21/climatologia_mensual_files/crosstalk-1.2.2/scss/crosstalk.scss",
+      "bytes": 1816,
+      "sha256": "a2a4d7222509d20ef1ee56291714feceb25fee06e666f37af8e61dc35986d9cd"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "fill.css",
+      "ruta": "outputs/figs/noaa21/climatologia_mensual_files/htmltools-fill-0.5.9/fill.css",
+      "bytes": 585,
+      "sha256": "0f41825dd6d8bb9923f39a10cd5de929daf009243c64e3e30fc008e45b8c3325"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "htmlwidgets.js",
+      "ruta": "outputs/figs/noaa21/climatologia_mensual_files/htmlwidgets-1.6.4/htmlwidgets.js",
+      "bytes": 33190,
+      "sha256": "4578d2a0732228ac3381eb2b3dfd81d30dc1d8000beb96a1b20e4f2088b2b9a4"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "jquery-AUTHORS.txt",
+      "ruta": "outputs/figs/noaa21/climatologia_mensual_files/jquery-3.5.1/jquery-AUTHORS.txt",
+      "bytes": 13369,
+      "sha256": "2e30eead6100c8d506d8606bf67d11713807a179bdca57a9e49974df5eaadbf4"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "jquery.js",
+      "ruta": "outputs/figs/noaa21/climatologia_mensual_files/jquery-3.5.1/jquery.js",
+      "bytes": 287630,
+      "sha256": "416a3b2c3bf16d64f6b5b6d0f7b079df2267614dd6847fc2f3271b4409233c37"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "jquery.min.js",
+      "ruta": "outputs/figs/noaa21/climatologia_mensual_files/jquery-3.5.1/jquery.min.js",
+      "bytes": 89476,
+      "sha256": "f7f6a5894f1d19ddad6fa392b2ece2c5e578cbf7da4ea805b6885eb6985b6e3d"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "jquery.min.map",
+      "ruta": "outputs/figs/noaa21/climatologia_mensual_files/jquery-3.5.1/jquery.min.map",
+      "bytes": 137986,
+      "sha256": "511d6f6d3e7acec78cd2505f04282b6e01329b4c24931f39d91739d0d1ddeef8"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "plotly.js",
+      "ruta": "outputs/figs/noaa21/climatologia_mensual_files/plotly-binding-4.12.0/plotly.js",
+      "bytes": 33758,
+      "sha256": "56288752cfa1613e53ced81ac2769ba23674feebf32cbd171ff5f22a747077e9"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "plotly-htmlwidgets.css",
+      "ruta": "outputs/figs/noaa21/climatologia_mensual_files/plotly-htmlwidgets-css-2.25.2/plotly-htmlwidgets.css",
+      "bytes": 173,
+      "sha256": "44356da5c42f304af74d60ee75225f216d5241f353f07fdef30c99536e103d9b"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "es.js",
+      "ruta": "outputs/figs/noaa21/climatologia_mensual_files/plotly-locale-es-2.25.2/es.js",
+      "bytes": 3241,
+      "sha256": "477f71e431a561d250efa64c2b5eed2b6a1b031e6aeb32eb370ad73be9b4b5f8"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "plotly-latest.min.js",
+      "ruta": "outputs/figs/noaa21/climatologia_mensual_files/plotly-main-2.25.2/plotly-latest.min.js",
+      "bytes": 3575010,
+      "sha256": "419deebe105f4c993feb7e6d1fe94fb1c2f7f98716db5d9b8fe3e37773838898"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "typedarray.min.js",
+      "ruta": "outputs/figs/noaa21/climatologia_mensual_files/typedarray-0.1/typedarray.min.js",
+      "bytes": 22444,
+      "sha256": "d95dda2a9a0ac6d74f2a473074b9d613b5a43a83b1dbc8590c247d9da1e22b3b"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "climatologia_mensual.html",
+      "ruta": "outputs/figs/noaa21/climatologia_mensual.html",
+      "bytes": 3783027,
+      "sha256": "bb1c86ef4dfaa3884dba156b455d050977530e501f57257ef7b060846b9c0e13"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "climatologia_mensual.png",
+      "ruta": "outputs/figs/noaa21/climatologia_mensual.png",
+      "bytes": 65170,
+      "sha256": "c10963aab6abd7d4b07a3c465111bcfb8ee99ee423b717e4b6279363f92748db"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "cobertura_area_quemada.png",
+      "ruta": "outputs/figs/noaa21/cobertura_area_quemada.png",
+      "bytes": 76900,
+      "sha256": "68a56af16049ec11d173e9f9f17dac830ddbcb21c4fc476782856b323eada76a"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "cobertura_detecciones.png",
+      "ruta": "outputs/figs/noaa21/cobertura_detecciones.png",
+      "bytes": 86107,
+      "sha256": "b736276310739d4b8b0ebc49e4ee0bd459a4d11c288415b159ddf009064dd8ad"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "detecciones_por_ac.png",
+      "ruta": "outputs/figs/noaa21/detecciones_por_ac.png",
+      "bytes": 64433,
+      "sha256": "635bbb2a5c790060d3cf17c9fdf2b22f0c669abe0c34ed169aaa3d830408a74c"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "detecciones_vs_area_quemada.png",
+      "ruta": "outputs/figs/noaa21/detecciones_vs_area_quemada.png",
+      "bytes": 73203,
+      "sha256": "e579b31e3b379edc8a27bac39754b94fc9126bd4792ff169f94721c481e944f6"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "evento_catalina_2026.png",
+      "ruta": "outputs/figs/noaa21/evento_catalina_2026.png",
+      "bytes": 233806,
+      "sha256": "cda2e83d002c0678b32837f5ff7ee63140f2e84d7cdd0936638479eea2212127"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "crosstalk.min.css",
+      "ruta": "outputs/figs/noaa21/serie_mensual_files/crosstalk-1.2.2/css/crosstalk.min.css",
+      "bytes": 1306,
+      "sha256": "47bfd8c2b16c29c0c5d03656963e26730f7c566f8f7ea9dd4448bbaaca09ca0d"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "crosstalk.js",
+      "ruta": "outputs/figs/noaa21/serie_mensual_files/crosstalk-1.2.2/js/crosstalk.js",
+      "bytes": 49030,
+      "sha256": "6640e1c8218f1f8479ac6fab11b07362e48e82c739ef1f167bb9a504756e169a"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "crosstalk.js.map",
+      "ruta": "outputs/figs/noaa21/serie_mensual_files/crosstalk-1.2.2/js/crosstalk.js.map",
+      "bytes": 54853,
+      "sha256": "e042433b718cb57864be57b6e912cfdfff37e75f0be9d6d27ea91460c964b7cc"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "crosstalk.min.js",
+      "ruta": "outputs/figs/noaa21/serie_mensual_files/crosstalk-1.2.2/js/crosstalk.min.js",
+      "bytes": 18925,
+      "sha256": "abd7f07e2e8acbe5ba7aa3dc76712efaece662fb65560fbbcb3e8fb1df66b2e9"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "crosstalk.min.js.map",
+      "ruta": "outputs/figs/noaa21/serie_mensual_files/crosstalk-1.2.2/js/crosstalk.min.js.map",
+      "bytes": 50338,
+      "sha256": "5ffcb3703b9f002b255ef30d30a0521c08e5c5894c53b8726da6502654a1063a"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "crosstalk.scss",
+      "ruta": "outputs/figs/noaa21/serie_mensual_files/crosstalk-1.2.2/scss/crosstalk.scss",
+      "bytes": 1816,
+      "sha256": "a2a4d7222509d20ef1ee56291714feceb25fee06e666f37af8e61dc35986d9cd"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "fill.css",
+      "ruta": "outputs/figs/noaa21/serie_mensual_files/htmltools-fill-0.5.9/fill.css",
+      "bytes": 585,
+      "sha256": "0f41825dd6d8bb9923f39a10cd5de929daf009243c64e3e30fc008e45b8c3325"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "htmlwidgets.js",
+      "ruta": "outputs/figs/noaa21/serie_mensual_files/htmlwidgets-1.6.4/htmlwidgets.js",
+      "bytes": 33190,
+      "sha256": "4578d2a0732228ac3381eb2b3dfd81d30dc1d8000beb96a1b20e4f2088b2b9a4"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "jquery-AUTHORS.txt",
+      "ruta": "outputs/figs/noaa21/serie_mensual_files/jquery-3.5.1/jquery-AUTHORS.txt",
+      "bytes": 13369,
+      "sha256": "2e30eead6100c8d506d8606bf67d11713807a179bdca57a9e49974df5eaadbf4"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "jquery.js",
+      "ruta": "outputs/figs/noaa21/serie_mensual_files/jquery-3.5.1/jquery.js",
+      "bytes": 287630,
+      "sha256": "416a3b2c3bf16d64f6b5b6d0f7b079df2267614dd6847fc2f3271b4409233c37"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "jquery.min.js",
+      "ruta": "outputs/figs/noaa21/serie_mensual_files/jquery-3.5.1/jquery.min.js",
+      "bytes": 89476,
+      "sha256": "f7f6a5894f1d19ddad6fa392b2ece2c5e578cbf7da4ea805b6885eb6985b6e3d"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "jquery.min.map",
+      "ruta": "outputs/figs/noaa21/serie_mensual_files/jquery-3.5.1/jquery.min.map",
+      "bytes": 137986,
+      "sha256": "511d6f6d3e7acec78cd2505f04282b6e01329b4c24931f39d91739d0d1ddeef8"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "plotly.js",
+      "ruta": "outputs/figs/noaa21/serie_mensual_files/plotly-binding-4.12.0/plotly.js",
+      "bytes": 33758,
+      "sha256": "56288752cfa1613e53ced81ac2769ba23674feebf32cbd171ff5f22a747077e9"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "plotly-htmlwidgets.css",
+      "ruta": "outputs/figs/noaa21/serie_mensual_files/plotly-htmlwidgets-css-2.25.2/plotly-htmlwidgets.css",
+      "bytes": 173,
+      "sha256": "44356da5c42f304af74d60ee75225f216d5241f353f07fdef30c99536e103d9b"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "es.js",
+      "ruta": "outputs/figs/noaa21/serie_mensual_files/plotly-locale-es-2.25.2/es.js",
+      "bytes": 3241,
+      "sha256": "477f71e431a561d250efa64c2b5eed2b6a1b031e6aeb32eb370ad73be9b4b5f8"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "plotly-latest.min.js",
+      "ruta": "outputs/figs/noaa21/serie_mensual_files/plotly-main-2.25.2/plotly-latest.min.js",
+      "bytes": 3575010,
+      "sha256": "419deebe105f4c993feb7e6d1fe94fb1c2f7f98716db5d9b8fe3e37773838898"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "typedarray.min.js",
+      "ruta": "outputs/figs/noaa21/serie_mensual_files/typedarray-0.1/typedarray.min.js",
+      "bytes": 22444,
+      "sha256": "d95dda2a9a0ac6d74f2a473074b9d613b5a43a83b1dbc8590c247d9da1e22b3b"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "serie_mensual.html",
+      "ruta": "outputs/figs/noaa21/serie_mensual.html",
+      "bytes": 3783702,
+      "sha256": "69aa68770f16ff821d2b8ed3e793a6b85eaec61cc92e864db7db73428805f38a"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "serie_mensual.png",
+      "ruta": "outputs/figs/noaa21/serie_mensual.png",
+      "bytes": 55144,
+      "sha256": "3a23067e29643789c05107a27eb517b9ad7e82dfca22df82a3034e8db17fcd24"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "video_anomalias_termicas.mp4",
+      "ruta": "outputs/figs/noaa21/video_anomalias_termicas.mp4",
+      "bytes": 910762,
+      "sha256": "b1d0e86efb96ce1b34db2348e77a3f558e349a32929c09efa2e8271517220a35"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": null,
+      "par": null,
+      "nombre": "series_plataformas.png",
+      "ruta": "outputs/figs/series_plataformas.png",
+      "bytes": 104995,
+      "sha256": "c33c355608948ae9f5abce3b5ba033cd451ad4b0562bfc309350bd6b1b49e779"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "animacion_mensual.gif",
+      "ruta": "outputs/figs/snpp/animacion_mensual.gif",
+      "bytes": 2496896,
+      "sha256": "d1ed17fc37c80707ebc5cdcc68725f42bff08ac3ba3df9b4dc32c747b05a072f"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "animacion_mensual.mp4",
+      "ruta": "outputs/figs/snpp/animacion_mensual.mp4",
+      "bytes": 1243319,
+      "sha256": "2e3ad2a7e899320f97cda0ed739351365e637d8e091cf16513eacadb53566e2b"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "area_quemada_mensual.png",
+      "ruta": "outputs/figs/snpp/area_quemada_mensual.png",
+      "bytes": 63677,
+      "sha256": "2612a42c478f2ef64d2c58075c256b567eab3323f21502a7b945696402fa79b8"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "cartel_resumen.png",
+      "ruta": "outputs/figs/snpp/cartel_resumen.png",
+      "bytes": 62625,
+      "sha256": "5a6074fe06c51dc311a3badb8b954c38676eb8faf52e9dee842a56ee8695bbf5"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "climatologia_comparada.png",
+      "ruta": "outputs/figs/snpp/climatologia_comparada.png",
+      "bytes": 78909,
+      "sha256": "518fc0d91472851c3d3b816505c101add06f56b971a337038475ac164fd917e4"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "crosstalk.min.css",
+      "ruta": "outputs/figs/snpp/climatologia_mensual_files/crosstalk-1.2.2/css/crosstalk.min.css",
+      "bytes": 1306,
+      "sha256": "47bfd8c2b16c29c0c5d03656963e26730f7c566f8f7ea9dd4448bbaaca09ca0d"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "crosstalk.js",
+      "ruta": "outputs/figs/snpp/climatologia_mensual_files/crosstalk-1.2.2/js/crosstalk.js",
+      "bytes": 49030,
+      "sha256": "6640e1c8218f1f8479ac6fab11b07362e48e82c739ef1f167bb9a504756e169a"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "crosstalk.js.map",
+      "ruta": "outputs/figs/snpp/climatologia_mensual_files/crosstalk-1.2.2/js/crosstalk.js.map",
+      "bytes": 54853,
+      "sha256": "e042433b718cb57864be57b6e912cfdfff37e75f0be9d6d27ea91460c964b7cc"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "crosstalk.min.js",
+      "ruta": "outputs/figs/snpp/climatologia_mensual_files/crosstalk-1.2.2/js/crosstalk.min.js",
+      "bytes": 18925,
+      "sha256": "abd7f07e2e8acbe5ba7aa3dc76712efaece662fb65560fbbcb3e8fb1df66b2e9"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "crosstalk.min.js.map",
+      "ruta": "outputs/figs/snpp/climatologia_mensual_files/crosstalk-1.2.2/js/crosstalk.min.js.map",
+      "bytes": 50338,
+      "sha256": "5ffcb3703b9f002b255ef30d30a0521c08e5c5894c53b8726da6502654a1063a"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "crosstalk.scss",
+      "ruta": "outputs/figs/snpp/climatologia_mensual_files/crosstalk-1.2.2/scss/crosstalk.scss",
+      "bytes": 1816,
+      "sha256": "a2a4d7222509d20ef1ee56291714feceb25fee06e666f37af8e61dc35986d9cd"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "fill.css",
+      "ruta": "outputs/figs/snpp/climatologia_mensual_files/htmltools-fill-0.5.9/fill.css",
+      "bytes": 585,
+      "sha256": "0f41825dd6d8bb9923f39a10cd5de929daf009243c64e3e30fc008e45b8c3325"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "htmlwidgets.js",
+      "ruta": "outputs/figs/snpp/climatologia_mensual_files/htmlwidgets-1.6.4/htmlwidgets.js",
+      "bytes": 33190,
+      "sha256": "4578d2a0732228ac3381eb2b3dfd81d30dc1d8000beb96a1b20e4f2088b2b9a4"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "jquery-AUTHORS.txt",
+      "ruta": "outputs/figs/snpp/climatologia_mensual_files/jquery-3.5.1/jquery-AUTHORS.txt",
+      "bytes": 13369,
+      "sha256": "2e30eead6100c8d506d8606bf67d11713807a179bdca57a9e49974df5eaadbf4"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "jquery.js",
+      "ruta": "outputs/figs/snpp/climatologia_mensual_files/jquery-3.5.1/jquery.js",
+      "bytes": 287630,
+      "sha256": "416a3b2c3bf16d64f6b5b6d0f7b079df2267614dd6847fc2f3271b4409233c37"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "jquery.min.js",
+      "ruta": "outputs/figs/snpp/climatologia_mensual_files/jquery-3.5.1/jquery.min.js",
+      "bytes": 89476,
+      "sha256": "f7f6a5894f1d19ddad6fa392b2ece2c5e578cbf7da4ea805b6885eb6985b6e3d"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "jquery.min.map",
+      "ruta": "outputs/figs/snpp/climatologia_mensual_files/jquery-3.5.1/jquery.min.map",
+      "bytes": 137986,
+      "sha256": "511d6f6d3e7acec78cd2505f04282b6e01329b4c24931f39d91739d0d1ddeef8"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "plotly.js",
+      "ruta": "outputs/figs/snpp/climatologia_mensual_files/plotly-binding-4.12.0/plotly.js",
+      "bytes": 33758,
+      "sha256": "56288752cfa1613e53ced81ac2769ba23674feebf32cbd171ff5f22a747077e9"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "plotly-htmlwidgets.css",
+      "ruta": "outputs/figs/snpp/climatologia_mensual_files/plotly-htmlwidgets-css-2.25.2/plotly-htmlwidgets.css",
+      "bytes": 173,
+      "sha256": "44356da5c42f304af74d60ee75225f216d5241f353f07fdef30c99536e103d9b"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "es.js",
+      "ruta": "outputs/figs/snpp/climatologia_mensual_files/plotly-locale-es-2.25.2/es.js",
+      "bytes": 3241,
+      "sha256": "477f71e431a561d250efa64c2b5eed2b6a1b031e6aeb32eb370ad73be9b4b5f8"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "plotly-latest.min.js",
+      "ruta": "outputs/figs/snpp/climatologia_mensual_files/plotly-main-2.25.2/plotly-latest.min.js",
+      "bytes": 3575010,
+      "sha256": "419deebe105f4c993feb7e6d1fe94fb1c2f7f98716db5d9b8fe3e37773838898"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "typedarray.min.js",
+      "ruta": "outputs/figs/snpp/climatologia_mensual_files/typedarray-0.1/typedarray.min.js",
+      "bytes": 22444,
+      "sha256": "d95dda2a9a0ac6d74f2a473074b9d613b5a43a83b1dbc8590c247d9da1e22b3b"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "climatologia_mensual.html",
+      "ruta": "outputs/figs/snpp/climatologia_mensual.html",
+      "bytes": 3783127,
+      "sha256": "0e3b92d18831b7dfe5626a8a6ce5b60fc94e1c9470216a5ece1a481e40db51d3"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "climatologia_mensual.png",
+      "ruta": "outputs/figs/snpp/climatologia_mensual.png",
+      "bytes": 62241,
+      "sha256": "113839dbeee4875dae16b105f472978ce3ea2ac489ed52dd4ae16105937eab3b"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "cobertura_area_quemada.png",
+      "ruta": "outputs/figs/snpp/cobertura_area_quemada.png",
+      "bytes": 87342,
+      "sha256": "b8fd462f84ea7f5669b8c0dfc15e6a5674b76af1a8a9de64b2df22880fc66229"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "cobertura_detecciones.png",
+      "ruta": "outputs/figs/snpp/cobertura_detecciones.png",
+      "bytes": 87607,
+      "sha256": "cf5d72476e590dcc0a3f7a39b76f149ce561061c8d2a588cc3032f92e9cddafe"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "concentracion_anual.png",
+      "ruta": "outputs/figs/snpp/concentracion_anual.png",
+      "bytes": 123337,
+      "sha256": "7e08f030bb64f6053c701ba2c6f84f3d02ba56a93e68fc1271fd8dc2897f1cd9"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "detecciones_por_ac.png",
+      "ruta": "outputs/figs/snpp/detecciones_por_ac.png",
+      "bytes": 60792,
+      "sha256": "e613f1478e4f9f06fda2a8f545ede3d06ea134797d52d3bc8e15e7e141ee29f2"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "detecciones_vs_area_quemada.png",
+      "ruta": "outputs/figs/snpp/detecciones_vs_area_quemada.png",
+      "bytes": 75341,
+      "sha256": "1320a9712f8c4e09da81b16be396b5f23b8e6a1c8daceedc83ab9b94e7b3156b"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "enso.png",
+      "ruta": "outputs/figs/snpp/enso.png",
+      "bytes": 183602,
+      "sha256": "572ccb466c65ac5134bad86d89f6a5ac78f57660ac18c3db3829bf4237ace2bb"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "evento_catalina_2026.png",
+      "ruta": "outputs/figs/snpp/evento_catalina_2026.png",
+      "bytes": 207462,
+      "sha256": "71b5ce0941f98feaccca754ef60885aafdb678f0691c2f19bbc9a6ae68d644ef"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "extremos_anual.png",
+      "ruta": "outputs/figs/snpp/extremos_anual.png",
+      "bytes": 123618,
+      "sha256": "eb09a9235ff792ce4829d9f2e48ae1e90049c8247e249fce01c2f469bebb98e5"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "fuentes_estaticas.png",
+      "ruta": "outputs/figs/snpp/fuentes_estaticas.png",
+      "bytes": 193805,
+      "sha256": "574353ab60c5e2f999755febfb4ab9782a6076df715ab2fd1a803ebb6783c27f"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "intensidad_anual.png",
+      "ruta": "outputs/figs/snpp/intensidad_anual.png",
+      "bytes": 124186,
+      "sha256": "f4cd93012eaa030752a708327935bd424706ade79b7130a66fdf84dfc14d6d09"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "crosstalk.min.css",
+      "ruta": "outputs/figs/snpp/serie_mensual_files/crosstalk-1.2.2/css/crosstalk.min.css",
+      "bytes": 1306,
+      "sha256": "47bfd8c2b16c29c0c5d03656963e26730f7c566f8f7ea9dd4448bbaaca09ca0d"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "crosstalk.js",
+      "ruta": "outputs/figs/snpp/serie_mensual_files/crosstalk-1.2.2/js/crosstalk.js",
+      "bytes": 49030,
+      "sha256": "6640e1c8218f1f8479ac6fab11b07362e48e82c739ef1f167bb9a504756e169a"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "crosstalk.js.map",
+      "ruta": "outputs/figs/snpp/serie_mensual_files/crosstalk-1.2.2/js/crosstalk.js.map",
+      "bytes": 54853,
+      "sha256": "e042433b718cb57864be57b6e912cfdfff37e75f0be9d6d27ea91460c964b7cc"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "crosstalk.min.js",
+      "ruta": "outputs/figs/snpp/serie_mensual_files/crosstalk-1.2.2/js/crosstalk.min.js",
+      "bytes": 18925,
+      "sha256": "abd7f07e2e8acbe5ba7aa3dc76712efaece662fb65560fbbcb3e8fb1df66b2e9"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "crosstalk.min.js.map",
+      "ruta": "outputs/figs/snpp/serie_mensual_files/crosstalk-1.2.2/js/crosstalk.min.js.map",
+      "bytes": 50338,
+      "sha256": "5ffcb3703b9f002b255ef30d30a0521c08e5c5894c53b8726da6502654a1063a"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "crosstalk.scss",
+      "ruta": "outputs/figs/snpp/serie_mensual_files/crosstalk-1.2.2/scss/crosstalk.scss",
+      "bytes": 1816,
+      "sha256": "a2a4d7222509d20ef1ee56291714feceb25fee06e666f37af8e61dc35986d9cd"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "fill.css",
+      "ruta": "outputs/figs/snpp/serie_mensual_files/htmltools-fill-0.5.9/fill.css",
+      "bytes": 585,
+      "sha256": "0f41825dd6d8bb9923f39a10cd5de929daf009243c64e3e30fc008e45b8c3325"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "htmlwidgets.js",
+      "ruta": "outputs/figs/snpp/serie_mensual_files/htmlwidgets-1.6.4/htmlwidgets.js",
+      "bytes": 33190,
+      "sha256": "4578d2a0732228ac3381eb2b3dfd81d30dc1d8000beb96a1b20e4f2088b2b9a4"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "jquery-AUTHORS.txt",
+      "ruta": "outputs/figs/snpp/serie_mensual_files/jquery-3.5.1/jquery-AUTHORS.txt",
+      "bytes": 13369,
+      "sha256": "2e30eead6100c8d506d8606bf67d11713807a179bdca57a9e49974df5eaadbf4"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "jquery.js",
+      "ruta": "outputs/figs/snpp/serie_mensual_files/jquery-3.5.1/jquery.js",
+      "bytes": 287630,
+      "sha256": "416a3b2c3bf16d64f6b5b6d0f7b079df2267614dd6847fc2f3271b4409233c37"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "jquery.min.js",
+      "ruta": "outputs/figs/snpp/serie_mensual_files/jquery-3.5.1/jquery.min.js",
+      "bytes": 89476,
+      "sha256": "f7f6a5894f1d19ddad6fa392b2ece2c5e578cbf7da4ea805b6885eb6985b6e3d"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "jquery.min.map",
+      "ruta": "outputs/figs/snpp/serie_mensual_files/jquery-3.5.1/jquery.min.map",
+      "bytes": 137986,
+      "sha256": "511d6f6d3e7acec78cd2505f04282b6e01329b4c24931f39d91739d0d1ddeef8"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "plotly.js",
+      "ruta": "outputs/figs/snpp/serie_mensual_files/plotly-binding-4.12.0/plotly.js",
+      "bytes": 33758,
+      "sha256": "56288752cfa1613e53ced81ac2769ba23674feebf32cbd171ff5f22a747077e9"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "plotly-htmlwidgets.css",
+      "ruta": "outputs/figs/snpp/serie_mensual_files/plotly-htmlwidgets-css-2.25.2/plotly-htmlwidgets.css",
+      "bytes": 173,
+      "sha256": "44356da5c42f304af74d60ee75225f216d5241f353f07fdef30c99536e103d9b"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "es.js",
+      "ruta": "outputs/figs/snpp/serie_mensual_files/plotly-locale-es-2.25.2/es.js",
+      "bytes": 3241,
+      "sha256": "477f71e431a561d250efa64c2b5eed2b6a1b031e6aeb32eb370ad73be9b4b5f8"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "plotly-latest.min.js",
+      "ruta": "outputs/figs/snpp/serie_mensual_files/plotly-main-2.25.2/plotly-latest.min.js",
+      "bytes": 3575010,
+      "sha256": "419deebe105f4c993feb7e6d1fe94fb1c2f7f98716db5d9b8fe3e37773838898"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "typedarray.min.js",
+      "ruta": "outputs/figs/snpp/serie_mensual_files/typedarray-0.1/typedarray.min.js",
+      "bytes": 22444,
+      "sha256": "d95dda2a9a0ac6d74f2a473074b9d613b5a43a83b1dbc8590c247d9da1e22b3b"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "serie_mensual.html",
+      "ruta": "outputs/figs/snpp/serie_mensual.html",
+      "bytes": 3791039,
+      "sha256": "29d8562ef28571cd5825d3ef200fbf3f2706af3393f80f0c8d905eb441c4bab1"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "serie_mensual.png",
+      "ruta": "outputs/figs/snpp/serie_mensual.png",
+      "bytes": 58075,
+      "sha256": "237486b7cf9a3c6ae390d08e4a0ca1eb640f205d66392b1ccd6062f87ce88dd8"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "temporada_ac_anomalia.png",
+      "ruta": "outputs/figs/snpp/temporada_ac_anomalia.png",
+      "bytes": 234257,
+      "sha256": "e0af708a92c1cf5f5feeaa4559cc331da8a65e6627621331e9704d16bdd600a0"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "temporada_ac_lon.png",
+      "ruta": "outputs/figs/snpp/temporada_ac_lon.png",
+      "bytes": 181058,
+      "sha256": "7416e031b3bdf4644958a93959025a419b1167b0ab96f18a5bba6d1cac14c976"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "temporada_ac_mapa_dens.png",
+      "ruta": "outputs/figs/snpp/temporada_ac_mapa_dens.png",
+      "bytes": 272577,
+      "sha256": "717afa71317f7ccb5ed8aa64d890b09073ed49758c60254c4df165b375260358"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "temporada_ac_mapa_ini.png",
+      "ruta": "outputs/figs/snpp/temporada_ac_mapa_ini.png",
+      "bytes": 274987,
+      "sha256": "d4c4acd2959087060b781254d935d953a9ac176bfb35abe6ce2c5dc694ffe1c9"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "temporada_ac_mapa_lon.png",
+      "ruta": "outputs/figs/snpp/temporada_ac_mapa_lon.png",
+      "bytes": 273381,
+      "sha256": "7073ce00240ed964fcd1edf6c4e01a1d41f185d1abce8a7650ae12b1d7f1d5ab"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "temporada_anual.png",
+      "ruta": "outputs/figs/snpp/temporada_anual.png",
+      "bytes": 145436,
+      "sha256": "f8d4f72124e338b712993999be68ae2a1dd7004308bb82832617c046e49a1ee4"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "temporada_celdas_dens.png",
+      "ruta": "outputs/figs/snpp/temporada_celdas_dens.png",
+      "bytes": 242544,
+      "sha256": "76fc6f66f277e1cf2fc66d1ecfdacf4f8a6931f7ba4e926e3b923e5c7f0322ea"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "temporada_celdas_fin.png",
+      "ruta": "outputs/figs/snpp/temporada_celdas_fin.png",
+      "bytes": 238717,
+      "sha256": "9c8ac7dfbd81629192c9af09397cdc28a2a2cd23040a1449dbe253714a43ed4a"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "temporada_celdas_frec.png",
+      "ruta": "outputs/figs/snpp/temporada_celdas_frec.png",
+      "bytes": 245598,
+      "sha256": "83c79fcf10d91d363c50b42577f038be5fda7629a5cfe0b06b3fbe9f6a60c69e"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "temporada_celdas_frpi.png",
+      "ruta": "outputs/figs/snpp/temporada_celdas_frpi.png",
+      "bytes": 239536,
+      "sha256": "beb3af67aaba54e5b089260489d4e7a2b18a31b1d3e2169bc0c8f7b669885bfd"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "temporada_celdas_ini.png",
+      "ruta": "outputs/figs/snpp/temporada_celdas_ini.png",
+      "bytes": 240706,
+      "sha256": "bb6ee0338e53e0cb42aa5ae4c8dbaf3e1170c1471f3a121ad649253d7fb01c01"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "temporada_celdas_lon.png",
+      "ruta": "outputs/figs/snpp/temporada_celdas_lon.png",
+      "bytes": 238396,
+      "sha256": "ee77793a1d747359553f3ad986efad107f9456851bdb403de82a476f15c2366b"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "temporada_celdas_n50f.png",
+      "ruta": "outputs/figs/snpp/temporada_celdas_n50f.png",
+      "bytes": 241628,
+      "sha256": "3d54025771f242523a977a3088c21be427007ba4ca9bc6c80aca74f35d1cd564"
+    },
+    {
+      "tipo": "figs",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "video_anomalias_termicas.mp4",
+      "ruta": "outputs/figs/snpp/video_anomalias_termicas.mp4",
+      "bytes": 4098661,
+      "sha256": "e0aeedc294799f932e9baad2cede5a0c463509f3dd625cd4277af87b3038d102"
+    },
+    {
+      "tipo": "geometrias",
+      "plataforma": null,
+      "par": null,
+      "nombre": "areas_conservacion.geojson",
+      "ruta": "outputs/geometrias/areas_conservacion.geojson",
+      "bytes": 195565,
+      "sha256": "0200b9ad9aaf71a602adb523ba2e1d4087aeefc22677839c4af8bf8b7cd14921"
+    },
+    {
+      "tipo": "geometrias",
+      "plataforma": null,
+      "par": null,
+      "nombre": "grilla_analisis.geojson",
+      "ruta": "outputs/geometrias/grilla_analisis.geojson",
+      "bytes": 143643,
+      "sha256": "c10a7337634593c4e128b134a29cb484f3538633963a506d6f6b453e7b04e220"
+    },
+    {
+      "tipo": "geometrias",
+      "plataforma": null,
+      "par": null,
+      "nombre": "pais.geojson",
+      "ruta": "outputs/geometrias/pais.geojson",
+      "bytes": 85113,
+      "sha256": "6f0f88776298782aa69af6b7b6af4b20e143e6c6319ecde314290892e8c4e28f"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "fill.css",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/htmltools-fill-0.5.9/fill.css",
+      "bytes": 585,
+      "sha256": "0f41825dd6d8bb9923f39a10cd5de929daf009243c64e3e30fc008e45b8c3325"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "htmlwidgets.js",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/htmlwidgets-1.6.4/htmlwidgets.js",
+      "bytes": 33190,
+      "sha256": "4578d2a0732228ac3381eb2b3dfd81d30dc1d8000beb96a1b20e4f2088b2b9a4"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "jquery-3.6.0.js",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/jquery-3.6.0/jquery-3.6.0.js",
+      "bytes": 288580,
+      "sha256": "1fe2bb5390a75e5d61e72c107cab528fc3c29a837d69aab7d200e1dbb5dcd239"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "jquery-3.6.0.min.js",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/jquery-3.6.0/jquery-3.6.0.min.js",
+      "bytes": 89501,
+      "sha256": "ff1523fb7389539c84c65aba19260648793bb4f5e29329d2ee8804bc37a3fe6e"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "jquery-3.6.0.min.map",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/jquery-3.6.0/jquery-3.6.0.min.map",
+      "bytes": 137972,
+      "sha256": "399548fb0e7b146c12f5ba18099a47d594a970fee96212eee0ab4852f3e56782"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "layers-2x.png",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/leaflet-1.3.1/images/layers-2x.png",
+      "bytes": 1259,
+      "sha256": "066daca850d8ffbef007af00b06eac0015728dee279c51f3cb6c716df7c42edf"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "layers.png",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/leaflet-1.3.1/images/layers.png",
+      "bytes": 696,
+      "sha256": "1dbbe9d028e292f36fcba8f8b3a28d5e8932754fc2215b9ac69e4cdecf5107c6"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "marker-icon-2x.png",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/leaflet-1.3.1/images/marker-icon-2x.png",
+      "bytes": 2464,
+      "sha256": "00179c4c1ee830d3a108412ae0d294f55776cfeb085c60129a39aa6fc4ae2528"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "marker-icon.png",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/leaflet-1.3.1/images/marker-icon.png",
+      "bytes": 1466,
+      "sha256": "574c3a5cca85f4114085b6841596d62f00d7c892c7b03f28cbfa301deb1dc437"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "marker-shadow.png",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/leaflet-1.3.1/images/marker-shadow.png",
+      "bytes": 618,
+      "sha256": "264f5c640339f042dd729062cfc04c17f8ea0f29882b538e3848ed8f10edb4da"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "leaflet.css",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/leaflet-1.3.1/leaflet.css",
+      "bytes": 14198,
+      "sha256": "8985209ab6a97c31af06b78f24facc59064370e6dd01c4ad281a633f7033fb7b"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "leaflet.js",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/leaflet-1.3.1/leaflet.js",
+      "bytes": 139645,
+      "sha256": "7d64e8a8b6beb191bd8f7e3b7832f6d4283a8f5a3d5367ed78db2dd25606f16b"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "leaflet.js",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/leaflet-binding-2.2.3/leaflet.js",
+      "bytes": 95313,
+      "sha256": "2e4be0616c4bfb65d5babda4cda9b04c9bb2067ef10cc46bf5875e6f8b652152"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "easy-button.css",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/leaflet-easybutton-1.3.1/easy-button.css",
+      "bytes": 995,
+      "sha256": "71e7a8ca508bd2577837039a5dfe2f1b467ca449275d7bb3279655d08afa7ede"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "easy-button.js",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/leaflet-easybutton-1.3.1/easy-button.js",
+      "bytes": 9927,
+      "sha256": "384bde0389264fca91eb05b137dff94c5c5be47a2a8dde82d40f9c11e675e861"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "EasyButton-binding.js",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/leaflet-easybutton-1.3.1/EasyButton-binding.js",
+      "bytes": 904,
+      "sha256": "40d7267fb9d0c941c842e150438f14208380133326e05cc8d6cfd5937205692d"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "LICENSE",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/leaflet-easybutton-1.3.1/LICENSE",
+      "bytes": 1059,
+      "sha256": "493347d470dcdc53e57e31c4f325351b59f1092af77970720f247186801642bc"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "leaflet-providers.js",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/leaflet-providers-3.0.0/leaflet-providers.js",
+      "bytes": 34804,
+      "sha256": "49933030e230a574468d6812153d258c3eb3927c1d608863d2f9e6449829bda0"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "leaflet-providers-plugin.js",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/leaflet-providers-plugin-2.2.3/leaflet-providers-plugin.js",
+      "bytes": 185,
+      "sha256": "518916bc55b711306f5e8b9f68eb168c0fe7113892bdb55c914fbf92ce0880a2"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "addGlifyPoints.js",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPoints.js",
+      "bytes": 2118,
+      "sha256": "6b5817175d9c41063403eca27afec88c36df7d0812187821fb3d83790a571656"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "addGlifyPointsFl.js",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPointsFl.js",
+      "bytes": 1914,
+      "sha256": "b834c26d5cbdd30dd589678140865a55f7329d92d443d37854e247706bce7a71"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "addGlifyPointsMinimal.js",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPointsMinimal.js",
+      "bytes": 1337,
+      "sha256": "8b7ed015d48d5f0110464be20aa1f06a7bcb33d3767fd50d1419d3eb66bae6a6"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "addGlifyPointsSrc.js",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPointsSrc.js",
+      "bytes": 4459,
+      "sha256": "b924eb1214e3d2ba3ced8b54a4980e4028d02f8f9218675a7e447792b0c5dc14"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "addGlifyPolygons.js",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPolygons.js",
+      "bytes": 1639,
+      "sha256": "9fafa1808380044109b0b954de6291b1e0fcaa0335902f6608d6da06c6fdea41"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "addGlifyPolygonsFl.js",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPolygonsFl.js",
+      "bytes": 1905,
+      "sha256": "4da079b4e7c639995fa01f1cfcb7bc5dfaaff2f65439d258de2e924189ed85b8"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "addGlifyPolygonsSrc.js",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPolygonsSrc.js",
+      "bytes": 1836,
+      "sha256": "fb73dff6d0bf41602f876782da8705f00e160a490ce2b57f9f39841db80075aa"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "addGlifyPolylines.js",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPolylines.js",
+      "bytes": 2274,
+      "sha256": "47db5e39b3be62c7a797f1174e50c821c6637324ed15e747b33574b913f8729e"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "addGlifyPolylinesSrc.js",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPolylinesSrc.js",
+      "bytes": 2027,
+      "sha256": "64dc0c570b9e4e89e313e2cf0eeb8be7c06ea670b8058155b308caa7d5af3b11"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "glify-browser.js",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/Leaflet.glify-3.3.1/glify-browser.js",
+      "bytes": 121527,
+      "sha256": "143486877e082d3950cbf7c07b2b30944fee75ede81120d0fb44214a11172ea2"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "GlifyUtils.js",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/Leaflet.glify-3.3.1/GlifyUtils.js",
+      "bytes": 8525,
+      "sha256": "0c8062acb76c257c95e945fc3c68ba2c8da3eeadd8770e5ba2fabc9d11c06abf"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "LICENSE",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/Leaflet.glify-3.3.1/LICENSE",
+      "bytes": 1082,
+      "sha256": "7457dc3566ed197fc1124f2c4a501615cbfa87e1c428468b02a4f969d96ae62f"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "leafletfix.css",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/leafletfix-1.0.0/leafletfix.css",
+      "bytes": 687,
+      "sha256": "c23d762eed70316c3728705673e1559d33f88dae4ede0fa381b9a842d9e51e45"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "jquery-ui.css",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/lfx-timeslider-1.0.0/jquery-ui.css",
+      "bytes": 36451,
+      "sha256": "2ed691b033dddfe7ecf415160d9a724734d7032e0a2197f19dc7c0951c048765"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "jquery-ui.min.js",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/lfx-timeslider-1.0.0/jquery-ui.min.js",
+      "bytes": 253397,
+      "sha256": "e79a2c1e429495d3c084b8e6fa8b7b1651c123b9cc4ef5c51acc5eefcc534f38"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "leaflet.SliderControl-bindings.js",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/lfx-timeslider-1.0.0/leaflet.SliderControl-bindings.js",
+      "bytes": 3006,
+      "sha256": "ddf50d09b07e497f0b6913d1d7c9fcdeaf66732a91bdd5716b96cf67fb87a9dc"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "leaflet.SliderControl.min.js",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/lfx-timeslider-1.0.0/leaflet.SliderControl.min.js",
+      "bytes": 9835,
+      "sha256": "8524fb0df05ff30e5fb839d8976b5d60fd54fed3057ca607d112a40aa5f802d2"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "proj4.min.js",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/proj4-2.6.2/proj4.min.js",
+      "bytes": 76816,
+      "sha256": "79bb7580ab08cba5db97f13003558f607804782ac8969cebf8bf4380c8804196"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "proj4leaflet.js",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/Proj4Leaflet-1.0.1/proj4leaflet.js",
+      "bytes": 7738,
+      "sha256": "fdb7fe47dcd594e7c830d0ee3694ef88b4032537268dc2f3b58f49a1d7161c12"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "1px.png",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/rstudio_leaflet-1.3.1/images/1px.png",
+      "bytes": 68,
+      "sha256": "93ae7d494fad0fb30cbf3ae746a39c4bc7a0f8bbf87fbb587a3f3c01f3c5ce20"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "rstudio_leaflet.css",
+      "ruta": "outputs/maps/modis/mapa_temporal_files/rstudio_leaflet-1.3.1/rstudio_leaflet.css",
+      "bytes": 1092,
+      "sha256": "75f904423dca262f855ef86c20a07420744d03830e6678fdc5d32d2542fe460d"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "mapa_temporal.html",
+      "ruta": "outputs/maps/modis/mapa_temporal.html",
+      "bytes": 4885538,
+      "sha256": "cb1d1e3dbca3b882650afbfef7495b17d8ceab3a798cc41124f46f1933f1312d"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "fill.css",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/htmltools-fill-0.5.9/fill.css",
+      "bytes": 585,
+      "sha256": "0f41825dd6d8bb9923f39a10cd5de929daf009243c64e3e30fc008e45b8c3325"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "htmlwidgets.js",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/htmlwidgets-1.6.4/htmlwidgets.js",
+      "bytes": 33190,
+      "sha256": "4578d2a0732228ac3381eb2b3dfd81d30dc1d8000beb96a1b20e4f2088b2b9a4"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "jquery-3.6.0.js",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/jquery-3.6.0/jquery-3.6.0.js",
+      "bytes": 288580,
+      "sha256": "1fe2bb5390a75e5d61e72c107cab528fc3c29a837d69aab7d200e1dbb5dcd239"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "jquery-3.6.0.min.js",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/jquery-3.6.0/jquery-3.6.0.min.js",
+      "bytes": 89501,
+      "sha256": "ff1523fb7389539c84c65aba19260648793bb4f5e29329d2ee8804bc37a3fe6e"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "jquery-3.6.0.min.map",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/jquery-3.6.0/jquery-3.6.0.min.map",
+      "bytes": 137972,
+      "sha256": "399548fb0e7b146c12f5ba18099a47d594a970fee96212eee0ab4852f3e56782"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "layers-2x.png",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/leaflet-1.3.1/images/layers-2x.png",
+      "bytes": 1259,
+      "sha256": "066daca850d8ffbef007af00b06eac0015728dee279c51f3cb6c716df7c42edf"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "layers.png",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/leaflet-1.3.1/images/layers.png",
+      "bytes": 696,
+      "sha256": "1dbbe9d028e292f36fcba8f8b3a28d5e8932754fc2215b9ac69e4cdecf5107c6"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "marker-icon-2x.png",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/leaflet-1.3.1/images/marker-icon-2x.png",
+      "bytes": 2464,
+      "sha256": "00179c4c1ee830d3a108412ae0d294f55776cfeb085c60129a39aa6fc4ae2528"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "marker-icon.png",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/leaflet-1.3.1/images/marker-icon.png",
+      "bytes": 1466,
+      "sha256": "574c3a5cca85f4114085b6841596d62f00d7c892c7b03f28cbfa301deb1dc437"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "marker-shadow.png",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/leaflet-1.3.1/images/marker-shadow.png",
+      "bytes": 618,
+      "sha256": "264f5c640339f042dd729062cfc04c17f8ea0f29882b538e3848ed8f10edb4da"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "leaflet.css",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/leaflet-1.3.1/leaflet.css",
+      "bytes": 14198,
+      "sha256": "8985209ab6a97c31af06b78f24facc59064370e6dd01c4ad281a633f7033fb7b"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "leaflet.js",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/leaflet-1.3.1/leaflet.js",
+      "bytes": 139645,
+      "sha256": "7d64e8a8b6beb191bd8f7e3b7832f6d4283a8f5a3d5367ed78db2dd25606f16b"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "leaflet.js",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/leaflet-binding-2.2.3/leaflet.js",
+      "bytes": 95313,
+      "sha256": "2e4be0616c4bfb65d5babda4cda9b04c9bb2067ef10cc46bf5875e6f8b652152"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "easy-button.css",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/leaflet-easybutton-1.3.1/easy-button.css",
+      "bytes": 995,
+      "sha256": "71e7a8ca508bd2577837039a5dfe2f1b467ca449275d7bb3279655d08afa7ede"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "easy-button.js",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/leaflet-easybutton-1.3.1/easy-button.js",
+      "bytes": 9927,
+      "sha256": "384bde0389264fca91eb05b137dff94c5c5be47a2a8dde82d40f9c11e675e861"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "EasyButton-binding.js",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/leaflet-easybutton-1.3.1/EasyButton-binding.js",
+      "bytes": 904,
+      "sha256": "40d7267fb9d0c941c842e150438f14208380133326e05cc8d6cfd5937205692d"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "LICENSE",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/leaflet-easybutton-1.3.1/LICENSE",
+      "bytes": 1059,
+      "sha256": "493347d470dcdc53e57e31c4f325351b59f1092af77970720f247186801642bc"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "leaflet-providers.js",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/leaflet-providers-3.0.0/leaflet-providers.js",
+      "bytes": 34804,
+      "sha256": "49933030e230a574468d6812153d258c3eb3927c1d608863d2f9e6449829bda0"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "leaflet-providers-plugin.js",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/leaflet-providers-plugin-2.2.3/leaflet-providers-plugin.js",
+      "bytes": 185,
+      "sha256": "518916bc55b711306f5e8b9f68eb168c0fe7113892bdb55c914fbf92ce0880a2"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "addGlifyPoints.js",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPoints.js",
+      "bytes": 2118,
+      "sha256": "6b5817175d9c41063403eca27afec88c36df7d0812187821fb3d83790a571656"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "addGlifyPointsFl.js",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPointsFl.js",
+      "bytes": 1914,
+      "sha256": "b834c26d5cbdd30dd589678140865a55f7329d92d443d37854e247706bce7a71"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "addGlifyPointsMinimal.js",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPointsMinimal.js",
+      "bytes": 1337,
+      "sha256": "8b7ed015d48d5f0110464be20aa1f06a7bcb33d3767fd50d1419d3eb66bae6a6"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "addGlifyPointsSrc.js",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPointsSrc.js",
+      "bytes": 4459,
+      "sha256": "b924eb1214e3d2ba3ced8b54a4980e4028d02f8f9218675a7e447792b0c5dc14"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "addGlifyPolygons.js",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPolygons.js",
+      "bytes": 1639,
+      "sha256": "9fafa1808380044109b0b954de6291b1e0fcaa0335902f6608d6da06c6fdea41"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "addGlifyPolygonsFl.js",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPolygonsFl.js",
+      "bytes": 1905,
+      "sha256": "4da079b4e7c639995fa01f1cfcb7bc5dfaaff2f65439d258de2e924189ed85b8"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "addGlifyPolygonsSrc.js",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPolygonsSrc.js",
+      "bytes": 1836,
+      "sha256": "fb73dff6d0bf41602f876782da8705f00e160a490ce2b57f9f39841db80075aa"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "addGlifyPolylines.js",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPolylines.js",
+      "bytes": 2274,
+      "sha256": "47db5e39b3be62c7a797f1174e50c821c6637324ed15e747b33574b913f8729e"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "addGlifyPolylinesSrc.js",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPolylinesSrc.js",
+      "bytes": 2027,
+      "sha256": "64dc0c570b9e4e89e313e2cf0eeb8be7c06ea670b8058155b308caa7d5af3b11"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "glify-browser.js",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/Leaflet.glify-3.3.1/glify-browser.js",
+      "bytes": 121527,
+      "sha256": "143486877e082d3950cbf7c07b2b30944fee75ede81120d0fb44214a11172ea2"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "GlifyUtils.js",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/Leaflet.glify-3.3.1/GlifyUtils.js",
+      "bytes": 8525,
+      "sha256": "0c8062acb76c257c95e945fc3c68ba2c8da3eeadd8770e5ba2fabc9d11c06abf"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "LICENSE",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/Leaflet.glify-3.3.1/LICENSE",
+      "bytes": 1082,
+      "sha256": "7457dc3566ed197fc1124f2c4a501615cbfa87e1c428468b02a4f969d96ae62f"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "leafletfix.css",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/leafletfix-1.0.0/leafletfix.css",
+      "bytes": 687,
+      "sha256": "c23d762eed70316c3728705673e1559d33f88dae4ede0fa381b9a842d9e51e45"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "jquery-ui.css",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/lfx-timeslider-1.0.0/jquery-ui.css",
+      "bytes": 36451,
+      "sha256": "2ed691b033dddfe7ecf415160d9a724734d7032e0a2197f19dc7c0951c048765"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "jquery-ui.min.js",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/lfx-timeslider-1.0.0/jquery-ui.min.js",
+      "bytes": 253397,
+      "sha256": "e79a2c1e429495d3c084b8e6fa8b7b1651c123b9cc4ef5c51acc5eefcc534f38"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "leaflet.SliderControl-bindings.js",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/lfx-timeslider-1.0.0/leaflet.SliderControl-bindings.js",
+      "bytes": 3006,
+      "sha256": "ddf50d09b07e497f0b6913d1d7c9fcdeaf66732a91bdd5716b96cf67fb87a9dc"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "leaflet.SliderControl.min.js",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/lfx-timeslider-1.0.0/leaflet.SliderControl.min.js",
+      "bytes": 9835,
+      "sha256": "8524fb0df05ff30e5fb839d8976b5d60fd54fed3057ca607d112a40aa5f802d2"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "proj4.min.js",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/proj4-2.6.2/proj4.min.js",
+      "bytes": 76816,
+      "sha256": "79bb7580ab08cba5db97f13003558f607804782ac8969cebf8bf4380c8804196"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "proj4leaflet.js",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/Proj4Leaflet-1.0.1/proj4leaflet.js",
+      "bytes": 7738,
+      "sha256": "fdb7fe47dcd594e7c830d0ee3694ef88b4032537268dc2f3b58f49a1d7161c12"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "1px.png",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/rstudio_leaflet-1.3.1/images/1px.png",
+      "bytes": 68,
+      "sha256": "93ae7d494fad0fb30cbf3ae746a39c4bc7a0f8bbf87fbb587a3f3c01f3c5ce20"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "rstudio_leaflet.css",
+      "ruta": "outputs/maps/noaa20/mapa_temporal_files/rstudio_leaflet-1.3.1/rstudio_leaflet.css",
+      "bytes": 1092,
+      "sha256": "75f904423dca262f855ef86c20a07420744d03830e6678fdc5d32d2542fe460d"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "mapa_temporal.html",
+      "ruta": "outputs/maps/noaa20/mapa_temporal.html",
+      "bytes": 10149919,
+      "sha256": "bbaac079f487799071d81a7ffa00c44ee2a343fcdf582e96c4719a70bf6a8f0b"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "fill.css",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/htmltools-fill-0.5.9/fill.css",
+      "bytes": 585,
+      "sha256": "0f41825dd6d8bb9923f39a10cd5de929daf009243c64e3e30fc008e45b8c3325"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "htmlwidgets.js",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/htmlwidgets-1.6.4/htmlwidgets.js",
+      "bytes": 33190,
+      "sha256": "4578d2a0732228ac3381eb2b3dfd81d30dc1d8000beb96a1b20e4f2088b2b9a4"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "jquery-3.6.0.js",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/jquery-3.6.0/jquery-3.6.0.js",
+      "bytes": 288580,
+      "sha256": "1fe2bb5390a75e5d61e72c107cab528fc3c29a837d69aab7d200e1dbb5dcd239"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "jquery-3.6.0.min.js",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/jquery-3.6.0/jquery-3.6.0.min.js",
+      "bytes": 89501,
+      "sha256": "ff1523fb7389539c84c65aba19260648793bb4f5e29329d2ee8804bc37a3fe6e"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "jquery-3.6.0.min.map",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/jquery-3.6.0/jquery-3.6.0.min.map",
+      "bytes": 137972,
+      "sha256": "399548fb0e7b146c12f5ba18099a47d594a970fee96212eee0ab4852f3e56782"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "layers-2x.png",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/leaflet-1.3.1/images/layers-2x.png",
+      "bytes": 1259,
+      "sha256": "066daca850d8ffbef007af00b06eac0015728dee279c51f3cb6c716df7c42edf"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "layers.png",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/leaflet-1.3.1/images/layers.png",
+      "bytes": 696,
+      "sha256": "1dbbe9d028e292f36fcba8f8b3a28d5e8932754fc2215b9ac69e4cdecf5107c6"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "marker-icon-2x.png",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/leaflet-1.3.1/images/marker-icon-2x.png",
+      "bytes": 2464,
+      "sha256": "00179c4c1ee830d3a108412ae0d294f55776cfeb085c60129a39aa6fc4ae2528"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "marker-icon.png",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/leaflet-1.3.1/images/marker-icon.png",
+      "bytes": 1466,
+      "sha256": "574c3a5cca85f4114085b6841596d62f00d7c892c7b03f28cbfa301deb1dc437"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "marker-shadow.png",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/leaflet-1.3.1/images/marker-shadow.png",
+      "bytes": 618,
+      "sha256": "264f5c640339f042dd729062cfc04c17f8ea0f29882b538e3848ed8f10edb4da"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "leaflet.css",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/leaflet-1.3.1/leaflet.css",
+      "bytes": 14198,
+      "sha256": "8985209ab6a97c31af06b78f24facc59064370e6dd01c4ad281a633f7033fb7b"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "leaflet.js",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/leaflet-1.3.1/leaflet.js",
+      "bytes": 139645,
+      "sha256": "7d64e8a8b6beb191bd8f7e3b7832f6d4283a8f5a3d5367ed78db2dd25606f16b"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "leaflet.js",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/leaflet-binding-2.2.3/leaflet.js",
+      "bytes": 95313,
+      "sha256": "2e4be0616c4bfb65d5babda4cda9b04c9bb2067ef10cc46bf5875e6f8b652152"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "easy-button.css",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/leaflet-easybutton-1.3.1/easy-button.css",
+      "bytes": 995,
+      "sha256": "71e7a8ca508bd2577837039a5dfe2f1b467ca449275d7bb3279655d08afa7ede"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "easy-button.js",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/leaflet-easybutton-1.3.1/easy-button.js",
+      "bytes": 9927,
+      "sha256": "384bde0389264fca91eb05b137dff94c5c5be47a2a8dde82d40f9c11e675e861"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "EasyButton-binding.js",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/leaflet-easybutton-1.3.1/EasyButton-binding.js",
+      "bytes": 904,
+      "sha256": "40d7267fb9d0c941c842e150438f14208380133326e05cc8d6cfd5937205692d"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "LICENSE",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/leaflet-easybutton-1.3.1/LICENSE",
+      "bytes": 1059,
+      "sha256": "493347d470dcdc53e57e31c4f325351b59f1092af77970720f247186801642bc"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "leaflet-providers.js",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/leaflet-providers-3.0.0/leaflet-providers.js",
+      "bytes": 34804,
+      "sha256": "49933030e230a574468d6812153d258c3eb3927c1d608863d2f9e6449829bda0"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "leaflet-providers-plugin.js",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/leaflet-providers-plugin-2.2.3/leaflet-providers-plugin.js",
+      "bytes": 185,
+      "sha256": "518916bc55b711306f5e8b9f68eb168c0fe7113892bdb55c914fbf92ce0880a2"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "addGlifyPoints.js",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPoints.js",
+      "bytes": 2118,
+      "sha256": "6b5817175d9c41063403eca27afec88c36df7d0812187821fb3d83790a571656"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "addGlifyPointsFl.js",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPointsFl.js",
+      "bytes": 1914,
+      "sha256": "b834c26d5cbdd30dd589678140865a55f7329d92d443d37854e247706bce7a71"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "addGlifyPointsMinimal.js",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPointsMinimal.js",
+      "bytes": 1337,
+      "sha256": "8b7ed015d48d5f0110464be20aa1f06a7bcb33d3767fd50d1419d3eb66bae6a6"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "addGlifyPointsSrc.js",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPointsSrc.js",
+      "bytes": 4459,
+      "sha256": "b924eb1214e3d2ba3ced8b54a4980e4028d02f8f9218675a7e447792b0c5dc14"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "addGlifyPolygons.js",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPolygons.js",
+      "bytes": 1639,
+      "sha256": "9fafa1808380044109b0b954de6291b1e0fcaa0335902f6608d6da06c6fdea41"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "addGlifyPolygonsFl.js",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPolygonsFl.js",
+      "bytes": 1905,
+      "sha256": "4da079b4e7c639995fa01f1cfcb7bc5dfaaff2f65439d258de2e924189ed85b8"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "addGlifyPolygonsSrc.js",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPolygonsSrc.js",
+      "bytes": 1836,
+      "sha256": "fb73dff6d0bf41602f876782da8705f00e160a490ce2b57f9f39841db80075aa"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "addGlifyPolylines.js",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPolylines.js",
+      "bytes": 2274,
+      "sha256": "47db5e39b3be62c7a797f1174e50c821c6637324ed15e747b33574b913f8729e"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "addGlifyPolylinesSrc.js",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPolylinesSrc.js",
+      "bytes": 2027,
+      "sha256": "64dc0c570b9e4e89e313e2cf0eeb8be7c06ea670b8058155b308caa7d5af3b11"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "glify-browser.js",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/Leaflet.glify-3.3.1/glify-browser.js",
+      "bytes": 121527,
+      "sha256": "143486877e082d3950cbf7c07b2b30944fee75ede81120d0fb44214a11172ea2"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "GlifyUtils.js",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/Leaflet.glify-3.3.1/GlifyUtils.js",
+      "bytes": 8525,
+      "sha256": "0c8062acb76c257c95e945fc3c68ba2c8da3eeadd8770e5ba2fabc9d11c06abf"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "LICENSE",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/Leaflet.glify-3.3.1/LICENSE",
+      "bytes": 1082,
+      "sha256": "7457dc3566ed197fc1124f2c4a501615cbfa87e1c428468b02a4f969d96ae62f"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "leafletfix.css",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/leafletfix-1.0.0/leafletfix.css",
+      "bytes": 687,
+      "sha256": "c23d762eed70316c3728705673e1559d33f88dae4ede0fa381b9a842d9e51e45"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "jquery-ui.css",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/lfx-timeslider-1.0.0/jquery-ui.css",
+      "bytes": 36451,
+      "sha256": "2ed691b033dddfe7ecf415160d9a724734d7032e0a2197f19dc7c0951c048765"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "jquery-ui.min.js",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/lfx-timeslider-1.0.0/jquery-ui.min.js",
+      "bytes": 253397,
+      "sha256": "e79a2c1e429495d3c084b8e6fa8b7b1651c123b9cc4ef5c51acc5eefcc534f38"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "leaflet.SliderControl-bindings.js",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/lfx-timeslider-1.0.0/leaflet.SliderControl-bindings.js",
+      "bytes": 3006,
+      "sha256": "ddf50d09b07e497f0b6913d1d7c9fcdeaf66732a91bdd5716b96cf67fb87a9dc"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "leaflet.SliderControl.min.js",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/lfx-timeslider-1.0.0/leaflet.SliderControl.min.js",
+      "bytes": 9835,
+      "sha256": "8524fb0df05ff30e5fb839d8976b5d60fd54fed3057ca607d112a40aa5f802d2"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "proj4.min.js",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/proj4-2.6.2/proj4.min.js",
+      "bytes": 76816,
+      "sha256": "79bb7580ab08cba5db97f13003558f607804782ac8969cebf8bf4380c8804196"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "proj4leaflet.js",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/Proj4Leaflet-1.0.1/proj4leaflet.js",
+      "bytes": 7738,
+      "sha256": "fdb7fe47dcd594e7c830d0ee3694ef88b4032537268dc2f3b58f49a1d7161c12"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "1px.png",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/rstudio_leaflet-1.3.1/images/1px.png",
+      "bytes": 68,
+      "sha256": "93ae7d494fad0fb30cbf3ae746a39c4bc7a0f8bbf87fbb587a3f3c01f3c5ce20"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "rstudio_leaflet.css",
+      "ruta": "outputs/maps/noaa21/mapa_temporal_files/rstudio_leaflet-1.3.1/rstudio_leaflet.css",
+      "bytes": 1092,
+      "sha256": "75f904423dca262f855ef86c20a07420744d03830e6678fdc5d32d2542fe460d"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "mapa_temporal.html",
+      "ruta": "outputs/maps/noaa21/mapa_temporal.html",
+      "bytes": 8958035,
+      "sha256": "a6fd05d5329ee52f1bfaa1cfdb3b8124a3a200a6aa17af413696678102372f65"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "fill.css",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/htmltools-fill-0.5.9/fill.css",
+      "bytes": 585,
+      "sha256": "0f41825dd6d8bb9923f39a10cd5de929daf009243c64e3e30fc008e45b8c3325"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "htmlwidgets.js",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/htmlwidgets-1.6.4/htmlwidgets.js",
+      "bytes": 33190,
+      "sha256": "4578d2a0732228ac3381eb2b3dfd81d30dc1d8000beb96a1b20e4f2088b2b9a4"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "jquery-3.6.0.js",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/jquery-3.6.0/jquery-3.6.0.js",
+      "bytes": 288580,
+      "sha256": "1fe2bb5390a75e5d61e72c107cab528fc3c29a837d69aab7d200e1dbb5dcd239"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "jquery-3.6.0.min.js",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/jquery-3.6.0/jquery-3.6.0.min.js",
+      "bytes": 89501,
+      "sha256": "ff1523fb7389539c84c65aba19260648793bb4f5e29329d2ee8804bc37a3fe6e"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "jquery-3.6.0.min.map",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/jquery-3.6.0/jquery-3.6.0.min.map",
+      "bytes": 137972,
+      "sha256": "399548fb0e7b146c12f5ba18099a47d594a970fee96212eee0ab4852f3e56782"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "layers-2x.png",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/leaflet-1.3.1/images/layers-2x.png",
+      "bytes": 1259,
+      "sha256": "066daca850d8ffbef007af00b06eac0015728dee279c51f3cb6c716df7c42edf"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "layers.png",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/leaflet-1.3.1/images/layers.png",
+      "bytes": 696,
+      "sha256": "1dbbe9d028e292f36fcba8f8b3a28d5e8932754fc2215b9ac69e4cdecf5107c6"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "marker-icon-2x.png",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/leaflet-1.3.1/images/marker-icon-2x.png",
+      "bytes": 2464,
+      "sha256": "00179c4c1ee830d3a108412ae0d294f55776cfeb085c60129a39aa6fc4ae2528"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "marker-icon.png",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/leaflet-1.3.1/images/marker-icon.png",
+      "bytes": 1466,
+      "sha256": "574c3a5cca85f4114085b6841596d62f00d7c892c7b03f28cbfa301deb1dc437"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "marker-shadow.png",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/leaflet-1.3.1/images/marker-shadow.png",
+      "bytes": 618,
+      "sha256": "264f5c640339f042dd729062cfc04c17f8ea0f29882b538e3848ed8f10edb4da"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "leaflet.css",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/leaflet-1.3.1/leaflet.css",
+      "bytes": 14198,
+      "sha256": "8985209ab6a97c31af06b78f24facc59064370e6dd01c4ad281a633f7033fb7b"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "leaflet.js",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/leaflet-1.3.1/leaflet.js",
+      "bytes": 139645,
+      "sha256": "7d64e8a8b6beb191bd8f7e3b7832f6d4283a8f5a3d5367ed78db2dd25606f16b"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "leaflet.js",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/leaflet-binding-2.2.3/leaflet.js",
+      "bytes": 95313,
+      "sha256": "2e4be0616c4bfb65d5babda4cda9b04c9bb2067ef10cc46bf5875e6f8b652152"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "easy-button.css",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/leaflet-easybutton-1.3.1/easy-button.css",
+      "bytes": 995,
+      "sha256": "71e7a8ca508bd2577837039a5dfe2f1b467ca449275d7bb3279655d08afa7ede"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "easy-button.js",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/leaflet-easybutton-1.3.1/easy-button.js",
+      "bytes": 9927,
+      "sha256": "384bde0389264fca91eb05b137dff94c5c5be47a2a8dde82d40f9c11e675e861"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "EasyButton-binding.js",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/leaflet-easybutton-1.3.1/EasyButton-binding.js",
+      "bytes": 904,
+      "sha256": "40d7267fb9d0c941c842e150438f14208380133326e05cc8d6cfd5937205692d"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "LICENSE",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/leaflet-easybutton-1.3.1/LICENSE",
+      "bytes": 1059,
+      "sha256": "493347d470dcdc53e57e31c4f325351b59f1092af77970720f247186801642bc"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "leaflet-providers.js",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/leaflet-providers-3.0.0/leaflet-providers.js",
+      "bytes": 34804,
+      "sha256": "49933030e230a574468d6812153d258c3eb3927c1d608863d2f9e6449829bda0"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "leaflet-providers-plugin.js",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/leaflet-providers-plugin-2.2.3/leaflet-providers-plugin.js",
+      "bytes": 185,
+      "sha256": "518916bc55b711306f5e8b9f68eb168c0fe7113892bdb55c914fbf92ce0880a2"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "addGlifyPoints.js",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPoints.js",
+      "bytes": 2118,
+      "sha256": "6b5817175d9c41063403eca27afec88c36df7d0812187821fb3d83790a571656"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "addGlifyPointsFl.js",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPointsFl.js",
+      "bytes": 1914,
+      "sha256": "b834c26d5cbdd30dd589678140865a55f7329d92d443d37854e247706bce7a71"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "addGlifyPointsMinimal.js",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPointsMinimal.js",
+      "bytes": 1337,
+      "sha256": "8b7ed015d48d5f0110464be20aa1f06a7bcb33d3767fd50d1419d3eb66bae6a6"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "addGlifyPointsSrc.js",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPointsSrc.js",
+      "bytes": 4459,
+      "sha256": "b924eb1214e3d2ba3ced8b54a4980e4028d02f8f9218675a7e447792b0c5dc14"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "addGlifyPolygons.js",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPolygons.js",
+      "bytes": 1639,
+      "sha256": "9fafa1808380044109b0b954de6291b1e0fcaa0335902f6608d6da06c6fdea41"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "addGlifyPolygonsFl.js",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPolygonsFl.js",
+      "bytes": 1905,
+      "sha256": "4da079b4e7c639995fa01f1cfcb7bc5dfaaff2f65439d258de2e924189ed85b8"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "addGlifyPolygonsSrc.js",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPolygonsSrc.js",
+      "bytes": 1836,
+      "sha256": "fb73dff6d0bf41602f876782da8705f00e160a490ce2b57f9f39841db80075aa"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "addGlifyPolylines.js",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPolylines.js",
+      "bytes": 2274,
+      "sha256": "47db5e39b3be62c7a797f1174e50c821c6637324ed15e747b33574b913f8729e"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "addGlifyPolylinesSrc.js",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/Leaflet.glify-3.3.1/addGlifyPolylinesSrc.js",
+      "bytes": 2027,
+      "sha256": "64dc0c570b9e4e89e313e2cf0eeb8be7c06ea670b8058155b308caa7d5af3b11"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "glify-browser.js",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/Leaflet.glify-3.3.1/glify-browser.js",
+      "bytes": 121527,
+      "sha256": "143486877e082d3950cbf7c07b2b30944fee75ede81120d0fb44214a11172ea2"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "GlifyUtils.js",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/Leaflet.glify-3.3.1/GlifyUtils.js",
+      "bytes": 8525,
+      "sha256": "0c8062acb76c257c95e945fc3c68ba2c8da3eeadd8770e5ba2fabc9d11c06abf"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "LICENSE",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/Leaflet.glify-3.3.1/LICENSE",
+      "bytes": 1082,
+      "sha256": "7457dc3566ed197fc1124f2c4a501615cbfa87e1c428468b02a4f969d96ae62f"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "leafletfix.css",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/leafletfix-1.0.0/leafletfix.css",
+      "bytes": 687,
+      "sha256": "c23d762eed70316c3728705673e1559d33f88dae4ede0fa381b9a842d9e51e45"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "jquery-ui.css",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/lfx-timeslider-1.0.0/jquery-ui.css",
+      "bytes": 36451,
+      "sha256": "2ed691b033dddfe7ecf415160d9a724734d7032e0a2197f19dc7c0951c048765"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "jquery-ui.min.js",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/lfx-timeslider-1.0.0/jquery-ui.min.js",
+      "bytes": 253397,
+      "sha256": "e79a2c1e429495d3c084b8e6fa8b7b1651c123b9cc4ef5c51acc5eefcc534f38"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "leaflet.SliderControl-bindings.js",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/lfx-timeslider-1.0.0/leaflet.SliderControl-bindings.js",
+      "bytes": 3006,
+      "sha256": "ddf50d09b07e497f0b6913d1d7c9fcdeaf66732a91bdd5716b96cf67fb87a9dc"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "leaflet.SliderControl.min.js",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/lfx-timeslider-1.0.0/leaflet.SliderControl.min.js",
+      "bytes": 9835,
+      "sha256": "8524fb0df05ff30e5fb839d8976b5d60fd54fed3057ca607d112a40aa5f802d2"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "proj4.min.js",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/proj4-2.6.2/proj4.min.js",
+      "bytes": 76816,
+      "sha256": "79bb7580ab08cba5db97f13003558f607804782ac8969cebf8bf4380c8804196"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "proj4leaflet.js",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/Proj4Leaflet-1.0.1/proj4leaflet.js",
+      "bytes": 7738,
+      "sha256": "fdb7fe47dcd594e7c830d0ee3694ef88b4032537268dc2f3b58f49a1d7161c12"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "1px.png",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/rstudio_leaflet-1.3.1/images/1px.png",
+      "bytes": 68,
+      "sha256": "93ae7d494fad0fb30cbf3ae746a39c4bc7a0f8bbf87fbb587a3f3c01f3c5ce20"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "rstudio_leaflet.css",
+      "ruta": "outputs/maps/snpp/mapa_temporal_files/rstudio_leaflet-1.3.1/rstudio_leaflet.css",
+      "bytes": 1092,
+      "sha256": "75f904423dca262f855ef86c20a07420744d03830e6678fdc5d32d2542fe460d"
+    },
+    {
+      "tipo": "maps",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "mapa_temporal.html",
+      "ruta": "outputs/maps/snpp/mapa_temporal.html",
+      "bytes": 10957022,
+      "sha256": "68ed9ce8a615da3c4110275c450407104f9da670ea39c2303f036f6107d13f07"
+    },
+    {
+      "tipo": "rasters",
+      "plataforma": null,
+      "par": "modis_noaa20",
+      "nombre": "modis_noaa20.tif",
+      "ruta": "outputs/rasters/comparacion/modis_noaa20.tif",
+      "bytes": 4552,
+      "sha256": "5f5a3811d98c9572ae899e7c9ca96ad6be939cbb78d1c79c79fc6ef4d5acfa80"
+    },
+    {
+      "tipo": "rasters",
+      "plataforma": null,
+      "par": "modis_snpp",
+      "nombre": "modis_snpp.tif",
+      "ruta": "outputs/rasters/comparacion/modis_snpp.tif",
+      "bytes": 4702,
+      "sha256": "c1f74d7cee8ac71ed31c6e2fb96568fe569617671139422783c087f338bca726"
+    },
+    {
+      "tipo": "rasters",
+      "plataforma": null,
+      "par": "snpp_noaa20",
+      "nombre": "snpp_noaa20.tif",
+      "ruta": "outputs/rasters/comparacion/snpp_noaa20.tif",
+      "bytes": 4890,
+      "sha256": "d13d63f34845352ae1009ffd995448a26f5b29540bdb2dbeeddfdcc07b94eebb"
+    },
+    {
+      "tipo": "rasters",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "temporada_celdas.qml",
+      "ruta": "outputs/rasters/modis/temporada_celdas.qml",
+      "bytes": 2200,
+      "sha256": "16fed5b8a281b021c6cdd6d97832e6c044fd7c2c54c17a61e6909d0fb6ed4734"
+    },
+    {
+      "tipo": "rasters",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "temporada_celdas.tif",
+      "ruta": "outputs/rasters/modis/temporada_celdas.tif",
+      "bytes": 15558,
+      "sha256": "b81a30d8c4dc28e0a6244f76c163d757076963426d2587b0ce67222e212310f8"
+    },
+    {
+      "tipo": "rasters",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "temporada_celdas.qml",
+      "ruta": "outputs/rasters/noaa20/temporada_celdas.qml",
+      "bytes": 2200,
+      "sha256": "16fed5b8a281b021c6cdd6d97832e6c044fd7c2c54c17a61e6909d0fb6ed4734"
+    },
+    {
+      "tipo": "rasters",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "temporada_celdas.tif",
+      "ruta": "outputs/rasters/noaa20/temporada_celdas.tif",
+      "bytes": 15358,
+      "sha256": "8f49423ae25604dc082878b55e8947a9932c982bc14157a56a6562c9baa82d57"
+    },
+    {
+      "tipo": "rasters",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "temporada_celdas.qml",
+      "ruta": "outputs/rasters/snpp/temporada_celdas.qml",
+      "bytes": 2200,
+      "sha256": "16fed5b8a281b021c6cdd6d97832e6c044fd7c2c54c17a61e6909d0fb6ed4734"
+    },
+    {
+      "tipo": "rasters",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "temporada_celdas.tif",
+      "ruta": "outputs/rasters/snpp/temporada_celdas.tif",
+      "bytes": 16768,
+      "sha256": "02bdf8a0590178238d2d5832bbb348d0e6f4c77d27d5b2883b55698b58c82e98"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": null,
+      "par": "modis_noaa20",
+      "nombre": "modis_noaa20_anual.csv",
+      "ruta": "outputs/tables/comparacion/modis_noaa20_anual.csv",
+      "bytes": 1118,
+      "sha256": "05d5d4bee0ffc41b515dcbf679210dd099fa4e04aa06d24c30f0044ea24caf93"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": null,
+      "par": "modis_noaa20",
+      "nombre": "modis_noaa20_celdas.csv",
+      "ruta": "outputs/tables/comparacion/modis_noaa20_celdas.csv",
+      "bytes": 47951,
+      "sha256": "3ea64b75c196832beee29561e03c3b02e42b7d93ec0247f473fc3cf95f2c9f21"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": null,
+      "par": "modis_snpp",
+      "nombre": "modis_snpp_anual.csv",
+      "ruta": "outputs/tables/comparacion/modis_snpp_anual.csv",
+      "bytes": 1867,
+      "sha256": "2310cb3fd3bb93d2a9633413ec68df0ff04218ff988863a65abb4baf1c678db3"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": null,
+      "par": "modis_snpp",
+      "nombre": "modis_snpp_celdas.csv",
+      "ruta": "outputs/tables/comparacion/modis_snpp_celdas.csv",
+      "bytes": 50355,
+      "sha256": "54879092131365dc6e1c0deb18e50ff01521c96c982c587b76cba3055b2f1338"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": null,
+      "par": "snpp_noaa20",
+      "nombre": "snpp_noaa20_anual.csv",
+      "ruta": "outputs/tables/comparacion/snpp_noaa20_anual.csv",
+      "bytes": 1128,
+      "sha256": "a3acdf07abc9938dcaa84d26da4e6e84d1f84bac71326b740d4ad4ee3e006135"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": null,
+      "par": "snpp_noaa20",
+      "nombre": "snpp_noaa20_celdas.csv",
+      "ruta": "outputs/tables/comparacion/snpp_noaa20_celdas.csv",
+      "bytes": 49882,
+      "sha256": "f7ea8e3fa62ad99f7e69e0e726de9f7a01b531ed1d0b560af5db1a8b5a0a292e"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "area_quemada_anual.csv",
+      "ruta": "outputs/tables/modis/area_quemada_anual.csv",
+      "bytes": 414,
+      "sha256": "74b317023280b4e90a0c12161e7f56f525ef900598f28f3736d9b00e508369e7"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "cobertura_detecciones.csv",
+      "ruta": "outputs/tables/modis/cobertura_detecciones.csv",
+      "bytes": 262,
+      "sha256": "002579cdb0756435fbed94063ee258f6f306dbccf6506b86da71c558a000ea8c"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "contraste_humedales.csv",
+      "ruta": "outputs/tables/modis/contraste_humedales.csv",
+      "bytes": 465,
+      "sha256": "c4dd6f01aa083f8b544155a46d1022ccb43385c29c7edfd20074050ba1922820"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "detecciones_por_ac.csv",
+      "ruta": "outputs/tables/modis/detecciones_por_ac.csv",
+      "bytes": 8711,
+      "sha256": "4aacb5b7c2987d137f43816fb3a29ac66065188e67c397acc9cb2a7117e60f8e"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "detecciones_por_tipo.csv",
+      "ruta": "outputs/tables/modis/detecciones_por_tipo.csv",
+      "bytes": 644,
+      "sha256": "33b00e37777cd0656b1eec7e7d5303b21ff9e947c5331d3ee07ee44b02d9f1d7"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "enso_anual.csv",
+      "ruta": "outputs/tables/modis/enso_anual.csv",
+      "bytes": 1928,
+      "sha256": "59c228992c71ab694b7264926f45df9b5e72820cde06ad0a920a7002d4daf561"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "enso_resumen.csv",
+      "ruta": "outputs/tables/modis/enso_resumen.csv",
+      "bytes": 497,
+      "sha256": "2478385b42d838ad1ef182526a28b7a50590bb00461491ec886ff9ffe95ad202"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "fuentes_estaticas.csv",
+      "ruta": "outputs/tables/modis/fuentes_estaticas.csv",
+      "bytes": 4462,
+      "sha256": "7828650fb549d47df4fb27f0287fa719c0852a64e6e7d5d9485b9ae3c1babb5f"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "crosstalk.min.css",
+      "ruta": "outputs/tables/modis/resumen_anual_files/crosstalk-1.2.2/css/crosstalk.min.css",
+      "bytes": 1306,
+      "sha256": "47bfd8c2b16c29c0c5d03656963e26730f7c566f8f7ea9dd4448bbaaca09ca0d"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "crosstalk.js",
+      "ruta": "outputs/tables/modis/resumen_anual_files/crosstalk-1.2.2/js/crosstalk.js",
+      "bytes": 49030,
+      "sha256": "6640e1c8218f1f8479ac6fab11b07362e48e82c739ef1f167bb9a504756e169a"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "crosstalk.js.map",
+      "ruta": "outputs/tables/modis/resumen_anual_files/crosstalk-1.2.2/js/crosstalk.js.map",
+      "bytes": 54853,
+      "sha256": "e042433b718cb57864be57b6e912cfdfff37e75f0be9d6d27ea91460c964b7cc"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "crosstalk.min.js",
+      "ruta": "outputs/tables/modis/resumen_anual_files/crosstalk-1.2.2/js/crosstalk.min.js",
+      "bytes": 18925,
+      "sha256": "abd7f07e2e8acbe5ba7aa3dc76712efaece662fb65560fbbcb3e8fb1df66b2e9"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "crosstalk.min.js.map",
+      "ruta": "outputs/tables/modis/resumen_anual_files/crosstalk-1.2.2/js/crosstalk.min.js.map",
+      "bytes": 50338,
+      "sha256": "5ffcb3703b9f002b255ef30d30a0521c08e5c5894c53b8726da6502654a1063a"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "crosstalk.scss",
+      "ruta": "outputs/tables/modis/resumen_anual_files/crosstalk-1.2.2/scss/crosstalk.scss",
+      "bytes": 1816,
+      "sha256": "a2a4d7222509d20ef1ee56291714feceb25fee06e666f37af8e61dc35986d9cd"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "datatables.js",
+      "ruta": "outputs/tables/modis/resumen_anual_files/datatables-binding-0.34.0/datatables.js",
+      "bytes": 61924,
+      "sha256": "be05866c167d992b4bb125b4fe6e4f59bd15684e3895a7b71b10bf3b5525f039"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "datatables-crosstalk.css",
+      "ruta": "outputs/tables/modis/resumen_anual_files/datatables-css-0.0.0/datatables-crosstalk.css",
+      "bytes": 1501,
+      "sha256": "307bdda9489717def72ee62ace5d657c53aba18d04e572306b0899b58d5ef0d2"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "jquery.dataTables.extra.css",
+      "ruta": "outputs/tables/modis/resumen_anual_files/dt-core-1.13.6/css/jquery.dataTables.extra.css",
+      "bytes": 1012,
+      "sha256": "d09c0bac7716c2864745996c76abb5342e50f6a87f395b6cf98ccf79aea41714"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "jquery.dataTables.min.css",
+      "ruta": "outputs/tables/modis/resumen_anual_files/dt-core-1.13.6/css/jquery.dataTables.min.css",
+      "bytes": 22700,
+      "sha256": "5e9bf0ca99854ef5cde954de1b15f0410c38d658d8a8f9048003911aa6b36b26"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "jquery.dataTables.min.js",
+      "ruta": "outputs/tables/modis/resumen_anual_files/dt-core-1.13.6/js/jquery.dataTables.min.js",
+      "bytes": 87103,
+      "sha256": "24362c145a81e1e2fd95185c4300d2595afb2cadd9f1580c2ddce95bc19b2084"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "fill.css",
+      "ruta": "outputs/tables/modis/resumen_anual_files/htmltools-fill-0.5.9/fill.css",
+      "bytes": 585,
+      "sha256": "0f41825dd6d8bb9923f39a10cd5de929daf009243c64e3e30fc008e45b8c3325"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "htmlwidgets.js",
+      "ruta": "outputs/tables/modis/resumen_anual_files/htmlwidgets-1.6.4/htmlwidgets.js",
+      "bytes": 33190,
+      "sha256": "4578d2a0732228ac3381eb2b3dfd81d30dc1d8000beb96a1b20e4f2088b2b9a4"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "jquery-3.6.0.js",
+      "ruta": "outputs/tables/modis/resumen_anual_files/jquery-3.6.0/jquery-3.6.0.js",
+      "bytes": 288580,
+      "sha256": "1fe2bb5390a75e5d61e72c107cab528fc3c29a837d69aab7d200e1dbb5dcd239"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "jquery-3.6.0.min.js",
+      "ruta": "outputs/tables/modis/resumen_anual_files/jquery-3.6.0/jquery-3.6.0.min.js",
+      "bytes": 89501,
+      "sha256": "ff1523fb7389539c84c65aba19260648793bb4f5e29329d2ee8804bc37a3fe6e"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "jquery-3.6.0.min.map",
+      "ruta": "outputs/tables/modis/resumen_anual_files/jquery-3.6.0/jquery-3.6.0.min.map",
+      "bytes": 137972,
+      "sha256": "399548fb0e7b146c12f5ba18099a47d594a970fee96212eee0ab4852f3e56782"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "resumen_anual.csv",
+      "ruta": "outputs/tables/modis/resumen_anual.csv",
+      "bytes": 730,
+      "sha256": "b548f3857e8fc812527af0e8c7745add2bf27d90e067716d1ec23b9759b75cae"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "resumen_anual.html",
+      "ruta": "outputs/tables/modis/resumen_anual.html",
+      "bytes": 318080,
+      "sha256": "3bfc7c537dac643588b3c1ea76382faadfc1db21b2be6739e02f6acab9432400"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "temporada_ac_anual.csv",
+      "ruta": "outputs/tables/modis/temporada_ac_anual.csv",
+      "bytes": 32172,
+      "sha256": "e4644171de4c94dca38982e662799e0c684ca19e5e58fa66854904a068dc9b4f"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "temporada_ac_consolidado.csv",
+      "ruta": "outputs/tables/modis/temporada_ac_consolidado.csv",
+      "bytes": 1350,
+      "sha256": "fd9c5b5bd53db93c7bc17e29310ec75338066fdd8b5e12dd85076d109a513aef"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "temporada_anual.csv",
+      "ruta": "outputs/tables/modis/temporada_anual.csv",
+      "bytes": 3168,
+      "sha256": "b998a13ebc23003508f234634da7d7b4fce6ec4c6d5ae5b0fca7c7ed68dc093f"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "modis",
+      "par": null,
+      "nombre": "temporada_celdas.csv",
+      "ruta": "outputs/tables/modis/temporada_celdas.csv",
+      "bytes": 55874,
+      "sha256": "adb3ad3dc094d61d994c0433ac8b68509f104edae35f7df26d05e7a0ef215481"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "area_quemada_anual.csv",
+      "ruta": "outputs/tables/noaa20/area_quemada_anual.csv",
+      "bytes": 159,
+      "sha256": "4d02d9389df51d272b8ed943e381216e48723a2af1e7378de8b819b6511b1138"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "cobertura_detecciones.csv",
+      "ruta": "outputs/tables/noaa20/cobertura_detecciones.csv",
+      "bytes": 281,
+      "sha256": "5cc21e7173d668daaaec9df81f61fdf32f0cae880b765fecb90a676e909606f0"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "contraste_humedales.csv",
+      "ruta": "outputs/tables/noaa20/contraste_humedales.csv",
+      "bytes": 455,
+      "sha256": "68e27b8323e928701faa96fac6d9a4df32de5d826ea2a072809fe38ee8042f44"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "detecciones_por_ac.csv",
+      "ruta": "outputs/tables/noaa20/detecciones_por_ac.csv",
+      "bytes": 3134,
+      "sha256": "02fcf71b4828c17ae2d3eb7c9b594078bbb77decfe203acabf05c0a65cd6023c"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "detecciones_por_tipo.csv",
+      "ruta": "outputs/tables/noaa20/detecciones_por_tipo.csv",
+      "bytes": 298,
+      "sha256": "2a388b49589bcb14512aaecc873aedfb9bc2fc0d152418982c469782403b80fd"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "enso_anual.csv",
+      "ruta": "outputs/tables/noaa20/enso_anual.csv",
+      "bytes": 639,
+      "sha256": "cba7ddef01b1d089d2368c1f1e410df2120d573d35f876ce9b1dd42cd337bd71"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "enso_resumen.csv",
+      "ruta": "outputs/tables/noaa20/enso_resumen.csv",
+      "bytes": 485,
+      "sha256": "1b74b6e278c9aeba65bb24cf5e19ff58d88de1e6890346be849e524dcb2cd9da"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "fuentes_estaticas.csv",
+      "ruta": "outputs/tables/noaa20/fuentes_estaticas.csv",
+      "bytes": 926,
+      "sha256": "4a73028303d4fb8020da795e525f908d4c000aa09caa2efeed013a2a7f640f64"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "crosstalk.min.css",
+      "ruta": "outputs/tables/noaa20/resumen_anual_files/crosstalk-1.2.2/css/crosstalk.min.css",
+      "bytes": 1306,
+      "sha256": "47bfd8c2b16c29c0c5d03656963e26730f7c566f8f7ea9dd4448bbaaca09ca0d"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "crosstalk.js",
+      "ruta": "outputs/tables/noaa20/resumen_anual_files/crosstalk-1.2.2/js/crosstalk.js",
+      "bytes": 49030,
+      "sha256": "6640e1c8218f1f8479ac6fab11b07362e48e82c739ef1f167bb9a504756e169a"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "crosstalk.js.map",
+      "ruta": "outputs/tables/noaa20/resumen_anual_files/crosstalk-1.2.2/js/crosstalk.js.map",
+      "bytes": 54853,
+      "sha256": "e042433b718cb57864be57b6e912cfdfff37e75f0be9d6d27ea91460c964b7cc"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "crosstalk.min.js",
+      "ruta": "outputs/tables/noaa20/resumen_anual_files/crosstalk-1.2.2/js/crosstalk.min.js",
+      "bytes": 18925,
+      "sha256": "abd7f07e2e8acbe5ba7aa3dc76712efaece662fb65560fbbcb3e8fb1df66b2e9"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "crosstalk.min.js.map",
+      "ruta": "outputs/tables/noaa20/resumen_anual_files/crosstalk-1.2.2/js/crosstalk.min.js.map",
+      "bytes": 50338,
+      "sha256": "5ffcb3703b9f002b255ef30d30a0521c08e5c5894c53b8726da6502654a1063a"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "crosstalk.scss",
+      "ruta": "outputs/tables/noaa20/resumen_anual_files/crosstalk-1.2.2/scss/crosstalk.scss",
+      "bytes": 1816,
+      "sha256": "a2a4d7222509d20ef1ee56291714feceb25fee06e666f37af8e61dc35986d9cd"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "datatables.js",
+      "ruta": "outputs/tables/noaa20/resumen_anual_files/datatables-binding-0.34.0/datatables.js",
+      "bytes": 61924,
+      "sha256": "be05866c167d992b4bb125b4fe6e4f59bd15684e3895a7b71b10bf3b5525f039"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "datatables-crosstalk.css",
+      "ruta": "outputs/tables/noaa20/resumen_anual_files/datatables-css-0.0.0/datatables-crosstalk.css",
+      "bytes": 1501,
+      "sha256": "307bdda9489717def72ee62ace5d657c53aba18d04e572306b0899b58d5ef0d2"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "jquery.dataTables.extra.css",
+      "ruta": "outputs/tables/noaa20/resumen_anual_files/dt-core-1.13.6/css/jquery.dataTables.extra.css",
+      "bytes": 1012,
+      "sha256": "d09c0bac7716c2864745996c76abb5342e50f6a87f395b6cf98ccf79aea41714"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "jquery.dataTables.min.css",
+      "ruta": "outputs/tables/noaa20/resumen_anual_files/dt-core-1.13.6/css/jquery.dataTables.min.css",
+      "bytes": 22700,
+      "sha256": "5e9bf0ca99854ef5cde954de1b15f0410c38d658d8a8f9048003911aa6b36b26"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "jquery.dataTables.min.js",
+      "ruta": "outputs/tables/noaa20/resumen_anual_files/dt-core-1.13.6/js/jquery.dataTables.min.js",
+      "bytes": 87103,
+      "sha256": "24362c145a81e1e2fd95185c4300d2595afb2cadd9f1580c2ddce95bc19b2084"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "fill.css",
+      "ruta": "outputs/tables/noaa20/resumen_anual_files/htmltools-fill-0.5.9/fill.css",
+      "bytes": 585,
+      "sha256": "0f41825dd6d8bb9923f39a10cd5de929daf009243c64e3e30fc008e45b8c3325"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "htmlwidgets.js",
+      "ruta": "outputs/tables/noaa20/resumen_anual_files/htmlwidgets-1.6.4/htmlwidgets.js",
+      "bytes": 33190,
+      "sha256": "4578d2a0732228ac3381eb2b3dfd81d30dc1d8000beb96a1b20e4f2088b2b9a4"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "jquery-3.6.0.js",
+      "ruta": "outputs/tables/noaa20/resumen_anual_files/jquery-3.6.0/jquery-3.6.0.js",
+      "bytes": 288580,
+      "sha256": "1fe2bb5390a75e5d61e72c107cab528fc3c29a837d69aab7d200e1dbb5dcd239"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "jquery-3.6.0.min.js",
+      "ruta": "outputs/tables/noaa20/resumen_anual_files/jquery-3.6.0/jquery-3.6.0.min.js",
+      "bytes": 89501,
+      "sha256": "ff1523fb7389539c84c65aba19260648793bb4f5e29329d2ee8804bc37a3fe6e"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "jquery-3.6.0.min.map",
+      "ruta": "outputs/tables/noaa20/resumen_anual_files/jquery-3.6.0/jquery-3.6.0.min.map",
+      "bytes": 137972,
+      "sha256": "399548fb0e7b146c12f5ba18099a47d594a970fee96212eee0ab4852f3e56782"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "resumen_anual.csv",
+      "ruta": "outputs/tables/noaa20/resumen_anual.csv",
+      "bytes": 288,
+      "sha256": "398cc7e5509f85527deb2be454815ba7ed871c67eff3a3746319cc34d8756e20"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "resumen_anual.html",
+      "ruta": "outputs/tables/noaa20/resumen_anual.html",
+      "bytes": 317653,
+      "sha256": "478efa1aaa5f760bfa8355fdc7bbde9f5e28a6e38211d6d1dad674a465063bd5"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "temporada_ac_anual.csv",
+      "ruta": "outputs/tables/noaa20/temporada_ac_anual.csv",
+      "bytes": 12608,
+      "sha256": "a43ad497d523e64a3142ad6360b2b5d70cf2cb00bfa0c758ee4312e0a2a9e99b"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "temporada_ac_consolidado.csv",
+      "ruta": "outputs/tables/noaa20/temporada_ac_consolidado.csv",
+      "bytes": 1315,
+      "sha256": "fa7f375113d33a0c698f9d31ce81ff488483817904d9be419de17174880ad52b"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "temporada_anual.csv",
+      "ruta": "outputs/tables/noaa20/temporada_anual.csv",
+      "bytes": 1246,
+      "sha256": "0eecc3e4be0ff4937e21a4c63e1df2b94e0ad746b98b16c80e84a6b7e644f2ec"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa20",
+      "par": null,
+      "nombre": "temporada_celdas.csv",
+      "ruta": "outputs/tables/noaa20/temporada_celdas.csv",
+      "bytes": 55878,
+      "sha256": "c56d0d5ae613526a76706694ef8fd5b4a7967608f8dc356a8df049c71e0e2f35"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "area_quemada_anual.csv",
+      "ruta": "outputs/tables/noaa21/area_quemada_anual.csv",
+      "bytes": 69,
+      "sha256": "07956458e9c5dc7306363704ec33484b265b4ac7fb8096bb88e1ba1eb3d9461f"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "cobertura_detecciones.csv",
+      "ruta": "outputs/tables/noaa21/cobertura_detecciones.csv",
+      "bytes": 276,
+      "sha256": "9e9183ff17d6c6e80012f7e307ab28af29876cbaffa9ca193a94eabe084c9f11"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "contraste_humedales.csv",
+      "ruta": "outputs/tables/noaa21/contraste_humedales.csv",
+      "bytes": 454,
+      "sha256": "46ccb1dd3127464ef987d49354bd0925ab5c6fb67c0fea8f514ed42a356ebab2"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "detecciones_por_ac.csv",
+      "ruta": "outputs/tables/noaa21/detecciones_por_ac.csv",
+      "bytes": 1075,
+      "sha256": "fa5cde48424237515e14c21ff3683825baa4ef8b8b8d529066ba0d0348898438"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "crosstalk.min.css",
+      "ruta": "outputs/tables/noaa21/resumen_anual_files/crosstalk-1.2.2/css/crosstalk.min.css",
+      "bytes": 1306,
+      "sha256": "47bfd8c2b16c29c0c5d03656963e26730f7c566f8f7ea9dd4448bbaaca09ca0d"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "crosstalk.js",
+      "ruta": "outputs/tables/noaa21/resumen_anual_files/crosstalk-1.2.2/js/crosstalk.js",
+      "bytes": 49030,
+      "sha256": "6640e1c8218f1f8479ac6fab11b07362e48e82c739ef1f167bb9a504756e169a"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "crosstalk.js.map",
+      "ruta": "outputs/tables/noaa21/resumen_anual_files/crosstalk-1.2.2/js/crosstalk.js.map",
+      "bytes": 54853,
+      "sha256": "e042433b718cb57864be57b6e912cfdfff37e75f0be9d6d27ea91460c964b7cc"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "crosstalk.min.js",
+      "ruta": "outputs/tables/noaa21/resumen_anual_files/crosstalk-1.2.2/js/crosstalk.min.js",
+      "bytes": 18925,
+      "sha256": "abd7f07e2e8acbe5ba7aa3dc76712efaece662fb65560fbbcb3e8fb1df66b2e9"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "crosstalk.min.js.map",
+      "ruta": "outputs/tables/noaa21/resumen_anual_files/crosstalk-1.2.2/js/crosstalk.min.js.map",
+      "bytes": 50338,
+      "sha256": "5ffcb3703b9f002b255ef30d30a0521c08e5c5894c53b8726da6502654a1063a"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "crosstalk.scss",
+      "ruta": "outputs/tables/noaa21/resumen_anual_files/crosstalk-1.2.2/scss/crosstalk.scss",
+      "bytes": 1816,
+      "sha256": "a2a4d7222509d20ef1ee56291714feceb25fee06e666f37af8e61dc35986d9cd"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "datatables.js",
+      "ruta": "outputs/tables/noaa21/resumen_anual_files/datatables-binding-0.34.0/datatables.js",
+      "bytes": 61924,
+      "sha256": "be05866c167d992b4bb125b4fe6e4f59bd15684e3895a7b71b10bf3b5525f039"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "datatables-crosstalk.css",
+      "ruta": "outputs/tables/noaa21/resumen_anual_files/datatables-css-0.0.0/datatables-crosstalk.css",
+      "bytes": 1501,
+      "sha256": "307bdda9489717def72ee62ace5d657c53aba18d04e572306b0899b58d5ef0d2"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "jquery.dataTables.extra.css",
+      "ruta": "outputs/tables/noaa21/resumen_anual_files/dt-core-1.13.6/css/jquery.dataTables.extra.css",
+      "bytes": 1012,
+      "sha256": "d09c0bac7716c2864745996c76abb5342e50f6a87f395b6cf98ccf79aea41714"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "jquery.dataTables.min.css",
+      "ruta": "outputs/tables/noaa21/resumen_anual_files/dt-core-1.13.6/css/jquery.dataTables.min.css",
+      "bytes": 22700,
+      "sha256": "5e9bf0ca99854ef5cde954de1b15f0410c38d658d8a8f9048003911aa6b36b26"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "jquery.dataTables.min.js",
+      "ruta": "outputs/tables/noaa21/resumen_anual_files/dt-core-1.13.6/js/jquery.dataTables.min.js",
+      "bytes": 87103,
+      "sha256": "24362c145a81e1e2fd95185c4300d2595afb2cadd9f1580c2ddce95bc19b2084"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "fill.css",
+      "ruta": "outputs/tables/noaa21/resumen_anual_files/htmltools-fill-0.5.9/fill.css",
+      "bytes": 585,
+      "sha256": "0f41825dd6d8bb9923f39a10cd5de929daf009243c64e3e30fc008e45b8c3325"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "htmlwidgets.js",
+      "ruta": "outputs/tables/noaa21/resumen_anual_files/htmlwidgets-1.6.4/htmlwidgets.js",
+      "bytes": 33190,
+      "sha256": "4578d2a0732228ac3381eb2b3dfd81d30dc1d8000beb96a1b20e4f2088b2b9a4"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "jquery-3.6.0.js",
+      "ruta": "outputs/tables/noaa21/resumen_anual_files/jquery-3.6.0/jquery-3.6.0.js",
+      "bytes": 288580,
+      "sha256": "1fe2bb5390a75e5d61e72c107cab528fc3c29a837d69aab7d200e1dbb5dcd239"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "jquery-3.6.0.min.js",
+      "ruta": "outputs/tables/noaa21/resumen_anual_files/jquery-3.6.0/jquery-3.6.0.min.js",
+      "bytes": 89501,
+      "sha256": "ff1523fb7389539c84c65aba19260648793bb4f5e29329d2ee8804bc37a3fe6e"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "jquery-3.6.0.min.map",
+      "ruta": "outputs/tables/noaa21/resumen_anual_files/jquery-3.6.0/jquery-3.6.0.min.map",
+      "bytes": 137972,
+      "sha256": "399548fb0e7b146c12f5ba18099a47d594a970fee96212eee0ab4852f3e56782"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "resumen_anual.csv",
+      "ruta": "outputs/tables/noaa21/resumen_anual.csv",
+      "bytes": 130,
+      "sha256": "91ddd13ed250f8254d42fa1cf37dc208a561e7c63cc5ab1a8ad52a7a42d041c2"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "noaa21",
+      "par": null,
+      "nombre": "resumen_anual.html",
+      "ruta": "outputs/tables/noaa21/resumen_anual.html",
+      "bytes": 317495,
+      "sha256": "968b9e57d541650e423573568a411b84d08540c03417f1715dc8550cd48faa89"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "area_quemada_anual.csv",
+      "ruta": "outputs/tables/snpp/area_quemada_anual.csv",
+      "bytes": 249,
+      "sha256": "ff4cabd0e36ca194c76fb76e75778398650a5b04bdbb51d2f12f41f63aec4447"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "cobertura_detecciones.csv",
+      "ruta": "outputs/tables/snpp/cobertura_detecciones.csv",
+      "bytes": 285,
+      "sha256": "1f8460e1498a5d625d24c54c7dd4b9c60c55d844c8ba182246afbd1a0f9a6156"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "contraste_humedales.csv",
+      "ruta": "outputs/tables/snpp/contraste_humedales.csv",
+      "bytes": 471,
+      "sha256": "9660a4c32ebbcbe63a6524adc76ff750545b87b2d5ce5b1601cc3be99b2a662e"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "detecciones_por_ac.csv",
+      "ruta": "outputs/tables/snpp/detecciones_por_ac.csv",
+      "bytes": 5244,
+      "sha256": "56fa914f33d35d300343d38c192e92b7bc7ef923eb5b003e9b5b15cc36dbf72a"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "detecciones_por_tipo.csv",
+      "ruta": "outputs/tables/snpp/detecciones_por_tipo.csv",
+      "bytes": 433,
+      "sha256": "dc9fbe3ded71a86ea48691efff4146a26878b9f5d68e8b4e5aa257b65dd5b92e"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "enso_anual.csv",
+      "ruta": "outputs/tables/snpp/enso_anual.csv",
+      "bytes": 1097,
+      "sha256": "10dd5eae9cfa52137887ee081a423617aaf36f404539bed04d874f1a44bffe5a"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "enso_resumen.csv",
+      "ruta": "outputs/tables/snpp/enso_resumen.csv",
+      "bytes": 556,
+      "sha256": "cbb4cd2dccbd03b3d8372042849e92679f146e40de745d5635f4cc1dae864372"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "fuentes_estaticas.csv",
+      "ruta": "outputs/tables/snpp/fuentes_estaticas.csv",
+      "bytes": 932,
+      "sha256": "87932d4668766e36f22846c8158f6e1e65e34b5c0d8f06da3dc0a86f3d7d0d3f"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "crosstalk.min.css",
+      "ruta": "outputs/tables/snpp/resumen_anual_files/crosstalk-1.2.2/css/crosstalk.min.css",
+      "bytes": 1306,
+      "sha256": "47bfd8c2b16c29c0c5d03656963e26730f7c566f8f7ea9dd4448bbaaca09ca0d"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "crosstalk.js",
+      "ruta": "outputs/tables/snpp/resumen_anual_files/crosstalk-1.2.2/js/crosstalk.js",
+      "bytes": 49030,
+      "sha256": "6640e1c8218f1f8479ac6fab11b07362e48e82c739ef1f167bb9a504756e169a"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "crosstalk.js.map",
+      "ruta": "outputs/tables/snpp/resumen_anual_files/crosstalk-1.2.2/js/crosstalk.js.map",
+      "bytes": 54853,
+      "sha256": "e042433b718cb57864be57b6e912cfdfff37e75f0be9d6d27ea91460c964b7cc"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "crosstalk.min.js",
+      "ruta": "outputs/tables/snpp/resumen_anual_files/crosstalk-1.2.2/js/crosstalk.min.js",
+      "bytes": 18925,
+      "sha256": "abd7f07e2e8acbe5ba7aa3dc76712efaece662fb65560fbbcb3e8fb1df66b2e9"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "crosstalk.min.js.map",
+      "ruta": "outputs/tables/snpp/resumen_anual_files/crosstalk-1.2.2/js/crosstalk.min.js.map",
+      "bytes": 50338,
+      "sha256": "5ffcb3703b9f002b255ef30d30a0521c08e5c5894c53b8726da6502654a1063a"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "crosstalk.scss",
+      "ruta": "outputs/tables/snpp/resumen_anual_files/crosstalk-1.2.2/scss/crosstalk.scss",
+      "bytes": 1816,
+      "sha256": "a2a4d7222509d20ef1ee56291714feceb25fee06e666f37af8e61dc35986d9cd"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "datatables.js",
+      "ruta": "outputs/tables/snpp/resumen_anual_files/datatables-binding-0.34.0/datatables.js",
+      "bytes": 61924,
+      "sha256": "be05866c167d992b4bb125b4fe6e4f59bd15684e3895a7b71b10bf3b5525f039"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "datatables-crosstalk.css",
+      "ruta": "outputs/tables/snpp/resumen_anual_files/datatables-css-0.0.0/datatables-crosstalk.css",
+      "bytes": 1501,
+      "sha256": "307bdda9489717def72ee62ace5d657c53aba18d04e572306b0899b58d5ef0d2"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "jquery.dataTables.extra.css",
+      "ruta": "outputs/tables/snpp/resumen_anual_files/dt-core-1.13.6/css/jquery.dataTables.extra.css",
+      "bytes": 1012,
+      "sha256": "d09c0bac7716c2864745996c76abb5342e50f6a87f395b6cf98ccf79aea41714"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "jquery.dataTables.min.css",
+      "ruta": "outputs/tables/snpp/resumen_anual_files/dt-core-1.13.6/css/jquery.dataTables.min.css",
+      "bytes": 22700,
+      "sha256": "5e9bf0ca99854ef5cde954de1b15f0410c38d658d8a8f9048003911aa6b36b26"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "jquery.dataTables.min.js",
+      "ruta": "outputs/tables/snpp/resumen_anual_files/dt-core-1.13.6/js/jquery.dataTables.min.js",
+      "bytes": 87103,
+      "sha256": "24362c145a81e1e2fd95185c4300d2595afb2cadd9f1580c2ddce95bc19b2084"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "fill.css",
+      "ruta": "outputs/tables/snpp/resumen_anual_files/htmltools-fill-0.5.9/fill.css",
+      "bytes": 585,
+      "sha256": "0f41825dd6d8bb9923f39a10cd5de929daf009243c64e3e30fc008e45b8c3325"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "htmlwidgets.js",
+      "ruta": "outputs/tables/snpp/resumen_anual_files/htmlwidgets-1.6.4/htmlwidgets.js",
+      "bytes": 33190,
+      "sha256": "4578d2a0732228ac3381eb2b3dfd81d30dc1d8000beb96a1b20e4f2088b2b9a4"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "jquery-3.6.0.js",
+      "ruta": "outputs/tables/snpp/resumen_anual_files/jquery-3.6.0/jquery-3.6.0.js",
+      "bytes": 288580,
+      "sha256": "1fe2bb5390a75e5d61e72c107cab528fc3c29a837d69aab7d200e1dbb5dcd239"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "jquery-3.6.0.min.js",
+      "ruta": "outputs/tables/snpp/resumen_anual_files/jquery-3.6.0/jquery-3.6.0.min.js",
+      "bytes": 89501,
+      "sha256": "ff1523fb7389539c84c65aba19260648793bb4f5e29329d2ee8804bc37a3fe6e"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "jquery-3.6.0.min.map",
+      "ruta": "outputs/tables/snpp/resumen_anual_files/jquery-3.6.0/jquery-3.6.0.min.map",
+      "bytes": 137972,
+      "sha256": "399548fb0e7b146c12f5ba18099a47d594a970fee96212eee0ab4852f3e56782"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "resumen_anual.csv",
+      "ruta": "outputs/tables/snpp/resumen_anual.csv",
+      "bytes": 455,
+      "sha256": "8b8a219dc35b16603c54f008c8425faebc524698720a924a78ced6ab2c9b6e3d"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "resumen_anual.html",
+      "ruta": "outputs/tables/snpp/resumen_anual.html",
+      "bytes": 317811,
+      "sha256": "bcedccc762e705420d0b1e413daac7df4a095c91d9074a0e2711458066e7c70f"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "temporada_ac_anual.csv",
+      "ruta": "outputs/tables/snpp/temporada_ac_anual.csv",
+      "bytes": 20660,
+      "sha256": "fb1c2665e0a50efd39ef1efc3979987afb778a9751d9858d2491c124519bdb51"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "temporada_ac_consolidado.csv",
+      "ruta": "outputs/tables/snpp/temporada_ac_consolidado.csv",
+      "bytes": 1328,
+      "sha256": "43cb8a0d065b720812c199a5fa1a6a6f84a271ee3c1b2a242fedb817f9a35ab7"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "temporada_anual.csv",
+      "ruta": "outputs/tables/snpp/temporada_anual.csv",
+      "bytes": 1965,
+      "sha256": "4f84c873be4f46564340f7af47fe0481e63fe8e380597e3a8766b143ea33b532"
+    },
+    {
+      "tipo": "tables",
+      "plataforma": "snpp",
+      "par": null,
+      "nombre": "temporada_celdas.csv",
+      "ruta": "outputs/tables/snpp/temporada_celdas.csv",
+      "bytes": 56917,
+      "sha256": "d545c098ebc7fb261e126d054e373cfe05f4038372ee43f40595e43146efc9e2"
+    }
+  ]
+}
