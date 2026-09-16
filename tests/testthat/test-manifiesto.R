@@ -34,6 +34,9 @@ test_that("escribir_manifiesto lista lo que hay en outputs/ y las plataformas", 
   antes <- setwd(raiz); on.exit(setwd(antes), add = TRUE)
   dir.create("outputs/tables/modis", recursive = TRUE)
   writeLines("a,b\n1,2", "outputs/tables/modis/temporada_anual.csv")
+  # Las carpetas *_files de los widgets no se publican (.gitignore): fuera.
+  dir.create("outputs/tables/modis/resumen_anual_files/lib", recursive = TRUE)
+  writeLines("x", "outputs/tables/modis/resumen_anual_files/lib/a.css")
   rangos <- purrr::map(stats::setNames(PLATAFORMAS$clave, PLATAFORMAS$clave), function(k) {
     data.frame(nivel = c("SP", "NRT"), inicio = as.Date(c("2012-01-20", "2026-05-01")),
                fin = as.Date(c("2026-04-30", "2026-09-13")))

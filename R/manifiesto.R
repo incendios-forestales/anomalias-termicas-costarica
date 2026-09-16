@@ -63,7 +63,9 @@ sha256_hex <- function(ruta) {
 # listado sale del disco. `rangos` es una lista con nombre por plataforma.
 escribir_manifiesto <- function(dest, rangos, pares, traslapes, dependencias = NULL) {
   archivos <- list.files("outputs", recursive = TRUE, full.names = TRUE)
-  archivos <- archivos[!grepl("manifest\\.json$", archivos)]
+  # Sin el manifiesto mismo ni las carpetas *_files de los widgets HTML, que
+  # .gitignore excluye y por tanto no se publican.
+  archivos <- archivos[!grepl("manifest\\.json$|_files/", archivos)]
   lista <- purrr::map(archivos, function(a) {
     c(clasificar_salida(a),
       list(ruta = a, bytes = file.size(a),
