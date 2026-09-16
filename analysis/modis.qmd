@@ -628,6 +628,44 @@ crear_tabla_tipos(tipos, etq$fuente_fig)
 Disponible también como
 [CSV](`r file.path("..", tar_read(tabla_tipos_modis, store = almacen))`).
 
+```{r}
+#| label: fuentes-estaticas
+fuentes <- tar_read(fuentes_estaticas_modis, store = almacen)
+fe <- ayudantes_fuentes(fuentes)
+```
+
+**Dónde están.** Las `r num_es(fe$n_est_total, 0)` detecciones de tipo 1
+y 2 del registro se reparten en `r fe$n_celdas` celdas de 0,1°, pero
+`r fe$n_fuentes` celdas con al menos `r FUENTES_MIN_DETECCIONES` reúnen el
+`r fe$pct_en_fuentes` %. A cada celda fuente se le asigna una **firma** por
+reglas sobre sus propias detecciones (definidas en el
+[README](https://github.com/incendios-forestales/anomalias-termicas-costarica#mapa-de-fuentes-estáticas)):
+cráter volcánico si domina el tipo 1; fuente térmica nocturna persistente
+si al menos la mitad son nocturnas en tres o más años, porque lo que emite
+de noche está caliente por sí mismo; y reflejo urbano diurno, probable, si
+casi todas son diurnas y casi todas del paso matutino de Terra, la firma del caso de Turrialba, puntos fijos
+sobre los techos del casco urbano que la máscara de la NASA catalogó como
+fuente estática. La localidad es la geocodificación inversa del centroide y
+dice dónde buscar la fuente, no cuál es.
+
+![](`r file.path("..", tar_read(fig_fuentes_estaticas_modis, store = almacen))`)
+
+La mayor es `r fe$mayor` (`r fe$mayor_n` detecciones, `r fe$mayor_firma`).
+`r if (fe$n_reflejo > 0) paste0("Las ", fe$n_reflejo, " celdas con firma de reflejo urbano (", fe$reflejos, ") son cascos urbanos y cabeceras de cantón: mediana del ", fe$reflejo_diurna, " % diurnas y del ", fe$reflejo_manana, " % de Terra, FRP mediana de ", fe$reflejo_frp, " MW y sin detecciones nocturnas, es decir, nada que esté caliente por sí mismo. Es el argumento de que el filtro por tipo hace lo que debe.") else ""`
+`r if (fe$n_nocturna > 0) paste0(" Con firma nocturna persistente: ", fe$nocturnas, ".") else ""`
+`r if (fe$n_sin > 0) paste0(" Quedan sin clasificar ", fe$sin_clasificar, ": son diurnas también, pero con Aqua casi a la par de Terra o con una fracción nocturna que la regla del reflejo matutino no admite; la tabla trae sus cifras para juzgarlas.") else ""`
+El reporte de [Suomi-NPP](../snpp/#detecciones-excluidas-por-tipo-de-fuente)
+muestra un mapa casi disjunto de este: VIIRS no registra estos cascos
+urbanos y sí unos pocos puntos calientes nocturnos.
+
+```{r}
+#| label: tabla-fuentes
+crear_tabla_fuentes(fuentes, etq$fuente_fig)
+```
+
+Todas las celdas con detecciones estáticas, con sus métricas, están en
+[CSV](`r file.path("..", tar_read(tabla_fuentes_estaticas_modis, store = almacen))`).
+
 ## Detecciones por área de conservación
 
 A escala nacional interesa no solo cuándo ocurre el fuego sino dónde. La

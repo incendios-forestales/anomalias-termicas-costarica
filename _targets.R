@@ -560,6 +560,22 @@ list(
     tar_target(fig_enso,
                grafico_enso(enso, file.path("outputs/figs", clave, "enso.png"),
                             etiquetas$fuente_fig, etiquetas$pie_firms),
+               format = "file"),
+    # Mapa de fuentes estáticas (README, «Mapa de fuentes estáticas»;
+    # R/fuentes_estaticas.R): sobre el registro completo de la plataforma.
+    tar_target(fuentes_estaticas,
+               metricas_fuentes_estaticas(firms_pais, grilla_analisis,
+                                          satelite_control)),
+    tar_target(tabla_fuentes_estaticas,
+               tabla_temporada_csv(fuentes_estaticas,
+                                   file.path("outputs/tables", clave,
+                                             "fuentes_estaticas.csv")),
+               format = "file"),
+    tar_target(fig_fuentes_estaticas,
+               mapa_fuentes_estaticas(fuentes_estaticas, grilla_analisis, pais_mapa,
+                                      file.path("outputs/figs", clave,
+                                                "fuentes_estaticas.png"),
+                                      etiquetas$fuente_fig, etiquetas$pie_firms),
                format = "file")
   ),
 

@@ -473,6 +473,44 @@ crear_tabla_tipos(tipos, etq$fuente_fig)
 Disponible también como
 [CSV](`r file.path("..", tar_read(tabla_tipos_noaa20, store = almacen))`).
 
+```{r}
+#| label: fuentes-estaticas
+fuentes <- tar_read(fuentes_estaticas_noaa20, store = almacen)
+fe <- ayudantes_fuentes(fuentes)
+```
+
+**Dónde están.** Las `r num_es(fe$n_est_total, 0)` detecciones de tipo 1
+y 2 del registro se reparten en `r fe$n_celdas` celdas de 0,1°, pero
+`r fe$n_fuentes` celdas con al menos `r FUENTES_MIN_DETECCIONES` reúnen el
+`r fe$pct_en_fuentes` %. A cada celda fuente se le asigna una **firma** por
+reglas sobre sus propias detecciones (definidas en el
+[README](https://github.com/incendios-forestales/anomalias-termicas-costarica#mapa-de-fuentes-estáticas)):
+cráter volcánico si domina el tipo 1; fuente térmica nocturna persistente
+si al menos la mitad son nocturnas en tres o más años, porque lo que emite
+de noche está caliente por sí mismo; y reflejo urbano diurno, probable, si
+casi todas son diurnas, la firma del caso de Turrialba, puntos fijos
+sobre los techos del casco urbano que la máscara de la NASA catalogó como
+fuente estática. La localidad es la geocodificación inversa del centroide y
+dice dónde buscar la fuente, no cuál es.
+
+![](`r file.path("..", tar_read(fig_fuentes_estaticas_noaa20, store = almacen))`)
+
+La mayor es `r fe$mayor` (`r fe$mayor_n` detecciones, `r fe$mayor_firma`).
+Como en Suomi-NPP, el mapa es el de un sensor que ve de noche lo que está
+caliente y no los reflejos diurnos que dominan en MODIS.
+`r if (fe$n_volcan > 0) paste0("Cráteres: ", fe$volcanes, ".") else ""`
+`r if (fe$n_nocturna > 0) paste0(" Fuentes térmicas nocturnas persistentes: ", fe$nocturnas, ".") else ""`
+`r if (fe$n_reflejo > 0) paste0(" Reflejo urbano probable: ", fe$reflejos, ".") else ""`
+`r if (fe$n_sin > 0) paste0(" Sin clasificar: ", fe$sin_clasificar, ".") else ""`
+
+```{r}
+#| label: tabla-fuentes
+crear_tabla_fuentes(fuentes, etq$fuente_fig)
+```
+
+Todas las celdas con detecciones estáticas, con sus métricas, están en
+[CSV](`r file.path("..", tar_read(tabla_fuentes_estaticas_noaa20, store = almacen))`).
+
 ## Detecciones por área de conservación
 
 Cada detección se asigna al **área de conservación** del

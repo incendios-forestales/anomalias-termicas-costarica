@@ -126,6 +126,15 @@ Invariantes propios de la suite (cambiarlos invalida índices publicados):
   ventanas ni índices (MEI, SOI) sin definirlos antes en el README; es
   descriptivo (medianas por fase, ρ de Spearman con p), sin modelos.
   Target `enso_resumen` ≠ función `resumen_enso`.
+- Fuentes estáticas (R/fuentes_estaticas.R, README «Mapa de fuentes
+  estáticas»): métricas por celda sobre TODO el registro (tipos 1 y 2),
+  firma por reglas (cráter / nocturna persistente / reflejo urbano diurno
+  probable / sin clasificar) y catálogo `CATALOGO_FUENTES_ESTATICAS` con
+  localidades de Nominatim (2026-09-15) para celdas con ≥ 20. Al aparecer
+  una celda nueva con ≥ 20, geocodificar y añadirla al catálogo. MODIS y
+  VIIRS ven fuentes casi disjuntas: es un resultado, no un error.
+- Las pruebas comparten `area_prueba` desde tests/testthat/helper-grilla.R
+  (testthat carga los helpers antes que los archivos test-*.R).
 - `terra::metags()` descarta TODAS las etiquetas si un valor contiene «=»;
   los joins de dplyr sobre sf fallan en los qmd (sf no está cargado): unir
   sin geometría y volver a pegar con `st_sf()`.

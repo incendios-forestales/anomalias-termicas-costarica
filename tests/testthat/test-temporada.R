@@ -125,12 +125,6 @@ test_that("la grilla base y la de análisis anidan como dice el README", {
   expect_equal(c(sw$lat_sw, sw$lon_sw), c(9.90, -85.25))
 })
 
-area_prueba <- sf::st_as_sf(
-  sf::st_sfc(sf::st_polygon(list(rbind(c(-85.3, 9.8), c(-85.0, 9.8),
-                                       c(-85.0, 10.1), c(-85.3, 10.1),
-                                       c(-85.3, 9.8)))), crs = 4326)
-)
-
 test_that("construir_grilla cubre el área y asigna la celda madre", {
   base <- construir_grilla(area_prueba, GRILLA_RES_BASE, centrada_en_nodos = FALSE)
   analisis <- construir_grilla(area_prueba, GRILLA_RES_ANALISIS,

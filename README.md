@@ -966,6 +966,20 @@ del centroide, hecha una vez y guardada como tabla en el código, con la
 fecha), para que la tabla se lea sin abrir un mapa. La localidad no es la
 fuente: dice dónde buscarla.
 
+**Lectura (2026-09).** MODIS tiene 1 371 detecciones estáticas en 37
+celdas, 20 de ellas fuente: el Arenal (415, cráter volcánico hasta 2010),
+12 cascos urbanos con firma de reflejo diurno (Barranca, Turrialba,
+Siquirres, Limón, Guápiles, San Ramón, Paraíso, San Isidro de El General,
+Santa Cruz, Nicoya y dos más; 100 % diurnas, 82 % de Terra, FRP mediana
+9 MW) y 6 sin clasificar, entre ellas Liberia y Cañas, diurnas pero con
+Aqua casi a la par de Terra. VIIRS S-NPP tiene 810 en solo 5 celdas: los
+cráteres del Turrialba (482) y el Poás (109) como tipo 1, y tres fuentes
+térmicas nocturnas persistentes (Aguacaliente de Cartago, La Ribera y La
+Uruca, y Colorado de Abangares desde 2024); NOAA-20 ve las mismas cinco.
+Ningún casco urbano de MODIS aparece en VIIRS y ninguna fuente nocturna de
+VIIRS aparece en MODIS: los dos sensores catalogan cosas distintas, y el
+filtro por tipo las excluye a ambas.
+
 **Lectura.** El producto responde qué se está excluyendo de los índices y
 sirve de control: una celda con firma de reflejo urbano en MODIS y ninguna
 detección estática en VIIRS confirma que el filtro por tipo hace lo que
