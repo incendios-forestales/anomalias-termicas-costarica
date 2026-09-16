@@ -198,8 +198,10 @@ anterior está publicado; esta sección documenta los cinco primeros, la
 solo lo necesario para calcularlos, sigue con las reglas de su
 **extensión a las plataformas VIIRS**, la **comparación entre
 plataformas en el traslape**, el único lugar del proyecto donde dos
-plataformas se miran juntas, y la **desagregación por área de
-conservación**, la dimensión interanual espacial de la suite. Nada de esta sección
+plataformas se miran juntas, la **desagregación por área de
+conservación**, la dimensión interanual espacial de la suite, y la
+**fase ENSO**, el primer factor externo con que se confrontan los índices
+anuales. Nada de esta sección
 altera las series mensuales, los videos ni los mapas ya publicados.
 
 ### Año de fuego
@@ -837,6 +839,63 @@ misma plataforma; entre plataformas, solo mediante los productos de
 comparación. No hay ráster: el AC es un polígono, y los mapas son
 coropletas de los consolidados.
 
+### Fase ENSO y los índices anuales
+
+Es el primer factor externo con que se confrontan los índices anuales, y
+el más documentado para el país: El Niño reduce la lluvia de la vertiente
+del Pacífico de Centroamérica (Ropelewski y Halpert 1987) y en Costa Rica
+la variabilidad interanual de la precipitación mensual está ligada al
+ENSO, con déficit en años Niño en el Pacífico y el Valle Central (Waylen,
+Caviedes y Quesada 1996). Para el fuego, la temperatura superficial del
+mar del Pacífico ecuatorial anticipa la severidad de la temporada en
+Sudamérica con meses de antelación (Chen et al. 2011). La pregunta aquí es
+más modesta: si los años Niño tienen temporadas más largas, más
+tempranas, más intensas o con más días extremos que los Niña y los
+neutros en el registro satelital de Costa Rica.
+
+**Fuente.** El **Índice Oceánico El Niño** (ONI) del Centro de Predicción
+Climática (CPC) de la NOAA: la anomalía de la temperatura superficial del
+mar en la región Niño 3.4 (ERSSTv5, Huang et al. 2017), promediada en
+trimestres móviles y referida a normales de 30 años que se actualizan cada
+cinco. Se descarga del CPC como texto (`oni.ascii.txt`, una fila por
+trimestre desde DJF de 1950) y se guarda en `data/raw/oni/` con la fecha
+de descarga; es la única serie del proyecto que no es satelital.
+
+**Definiciones.** Por año de fuego:
+
+| Código | Definición | Unidad |
+|---|---|---|
+| `ONI_DJF` | ONI del trimestre diciembre–febrero que empieza en el año anterior al que nombra el año de fuego (DJF 2024 = dic 2023 a feb 2024, dentro del año de fuego 2024) | °C |
+| `FASE` | Fase del CPC en ese trimestre: **El Niño** si el trimestre pertenece a una racha de al menos cinco trimestres consecutivos con ONI ≥ +0,5; **La Niña**, con ONI ≤ −0,5; **neutra** en los demás casos | categoría |
+
+Se fija **una sola ventana, a priori**: DJF es el pico canónico del ENSO y
+cae dentro del año de fuego, justo antes de la temporada de enero a mayo,
+así que es la ventana que la física sugiere y no la que mejor correlacione
+después. La fase sigue la regla oficial del CPC (cinco trimestres
+consecutivos), calculada sobre la serie descargada, para que coincida con
+sus episodios publicados.
+
+**Productos.** Por plataforma con periodo base, sobre sus años de fuego
+completos y no provisionales:
+
+- Tabla por año de fuego con `ONI_DJF`, `FASE` y los índices anuales
+  (`DTOT`, `INI`, `FIN`, `LON`, `N50`, `C10`, `FRPI`, `ND95`, `D95pTOT`).
+- Resumen por fase: número de años y mediana de cada índice en años Niño,
+  neutros y Niña, y la correlación de Spearman entre `ONI_DJF` y cada
+  índice con su valor p (test de rangos; con 23 años en MODIS y 13 en
+  S-NPP es descriptivo, no confirmatorio). Los índices de conteo entran
+  como anomalías estandarizadas sobre el periodo base de la plataforma,
+  para que el resultado no dependa del nivel de detectabilidad.
+- Figura de dispersión `ONI_DJF` contra `LON`, `INI` y la anomalía de
+  `DTOT`, con cada año rotulado y coloreado por fase.
+
+**Lo que no se hace.** No se ajusta ningún modelo ni se predice: con dos
+decenas de años y un puñado de episodios Niño, el producto describe la
+asociación y la deja a la vista. No se usan otros índices (MEI, SOI,
+Niño 1+2) ni otras ventanas: si algún día se agregan, será con la misma
+regla de fijarlos antes de mirar los datos. La fase ENSO tampoco entra en
+ningún índice de la suite.
+
 ### Salidas
 
 Todas las salidas existen por plataforma (MODIS, VIIRS S-NPP y VIIRS
@@ -886,6 +945,11 @@ cada una.
   figuras de `LON` y de `Z_DTOT` por AC y año (mosaicos), y mapas
   coropléticos de `LON`, `INI` y `DENS` consolidados por AC; sección
   «Temporada por área de conservación» en el reporte de cada plataforma.
+- Fase ENSO, por plataforma en `outputs/<tipo>/<plataforma>/`: tabla por
+  año de fuego con `ONI_DJF`, `FASE` e índices (CSV), tabla resumen por
+  fase y correlaciones (CSV), figura de dispersión; sección «Fase ENSO» en
+  el reporte de cada plataforma. La serie ONI descargada se conserva en
+  `data/raw/oni/`.
 
 ### Referencias
 
@@ -902,6 +966,11 @@ cada una.
   analysis of global interannual fire variability. *Journal of Geophysical
   Research: Biogeosciences*, 113, G03020.
   <https://doi.org/10.1029/2008JG000686>
+- Chen, Y., Randerson, J. T., Morton, D. C., DeFries, R. S., Collatz, G.
+  J., Kasibhatla, P. S., Giglio, L., Jin, Y. y Marlier, M. E. (2011).
+  Forecasting fire season severity in South America using sea surface
+  temperature anomalies. *Science*, 334(6057), 787–791.
+  <https://doi.org/10.1126/science.1209472>
 - Chuvieco, E., Giglio, L. y Justice, C. (2008). Global characterization of
   fire activity: toward defining fire regimes from Earth observation data.
   *Global Change Biology*, 14(7), 1488–1502.
@@ -932,6 +1001,11 @@ cada una.
   seasonality of active fires as observed with the Terra and Aqua MODIS
   sensors. *Journal of Geophysical Research: Biogeosciences*, 111, G02016.
   <https://doi.org/10.1029/2005JG000142>
+- Huang, B., Thorne, P. W., Banzon, V. F., Boyer, T., Chepurin, G.,
+  Lawrimore, J. H., Menne, M. J., Smith, T. M., Vose, R. S. y Zhang, H.-M.
+  (2017). Extended Reconstructed Sea Surface Temperature, version 5
+  (ERSSTv5): Upgrades, validations, and intercomparisons. *Journal of
+  Climate*, 30(20), 8179–8205. <https://doi.org/10.1175/JCLI-D-16-0836.1>
 - Ichoku, C., Giglio, L., Wooster, M. J. y Remer, L. A. (2008). Global
   characterization of biomass-burning patterns using satellite measurements
   of fire radiative energy. *Remote Sensing of Environment*, 112(6),
@@ -946,6 +1020,10 @@ cada una.
 - Martín-Vide, J. (2004). Spatial distribution of a daily precipitation
   concentration index in peninsular Spain. *International Journal of
   Climatology*, 24(8), 959–971. <https://doi.org/10.1002/joc.1030>
+- Ropelewski, C. F. y Halpert, M. S. (1987). Global and regional scale
+  precipitation patterns associated with the El Niño/Southern Oscillation.
+  *Monthly Weather Review*, 115(8), 1606–1626.
+  <https://doi.org/10.1175/1520-0493(1987)115%3C1606:GARSPP%3E2.0.CO;2>
 - Schroeder, W., Oliva, P., Giglio, L. y Csiszar, I. A. (2014). The New
   VIIRS 375 m active fire detection data product: Algorithm description
   and initial assessment. *Remote Sensing of Environment*, 143, 85–96.
@@ -957,6 +1035,10 @@ cada una.
   incendios forestales en Costa Rica*. Instituto Meteorológico Nacional,
   Gestión de Desarrollo (datos hasta 2000).
   <https://www.imn.ac.cr/documents/10179/20911/El+Ni%C3%B1o+y+los+incendios+forestales>
+- Waylen, P. R., Caviedes, C. N. y Quesada, M. E. (1996). Interannual
+  variability of monthly precipitation in Costa Rica. *Journal of Climate*,
+  9(10), 2606–2613.
+  <https://doi.org/10.1175/1520-0442(1996)009%3C2606:IVOMPI%3E2.0.CO;2>
 - Wooster, M. J., Roberts, G., Perry, G. L. W. y Kaufman, Y. J. (2005).
   Retrieval of biomass combustion rates and totals from fire radiative power
   observations: FRP derivation and calibration relationships between biomass
@@ -1094,6 +1176,7 @@ fragmento, teselas) en [`R/constantes.R`](R/constantes.R).
 | Fuente | Datos | Licencia/atribución |
 |---|---|---|
 | [NASA FIRMS](https://firms.modaps.eosdis.nasa.gov/) | Anomalías térmicas MODIS Collection 6.1 (MODIS_SP), DOI: 10.5067/FIRMS/MODIS/MCD14ML, y VIIRS 375 m de Suomi-NPP, NOAA-20 y NOAA-21 | Acceso abierto; se agradece atribución a NASA FIRMS |
+| [NOAA CPC](https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/ensostuff/ONI_v5.php) | Índice Oceánico El Niño (ONI), trimestres móviles desde 1950, `oni.ascii.txt` | Dominio público (NOAA) |
 | [NASA LP DAAC](https://lpdaac.usgs.gov/) | Área quemada mensual MCD64A1 v6.1 (500 m), DOI: 10.5067/MODIS/MCD64A1.061, y VNP64A1 v002 (VIIRS/NPP, 500 m), DOI: 10.5067/VIIRS/VNP64A1.002 | Acceso abierto con Earthdata Login; se agradece atribución a NASA LP DAAC |
 | [IGN / SNIT](https://www.snitcr.go.cr/) | Límite provincial 1:5000 (`IGN_5_CO:limiteprovincial_5k`); su unión es el límite nacional del análisis | Datos públicos del Estado costarricense |
 | [SINAC](https://geos1pne.sirefor.go.cr/wfs) | Áreas de conservación (`PNE:areas_conservacion`) y Registro Nacional de Humedales, actualización 2016–2018 (`PNE:registro_nacional_humedales`) | Datos públicos del Estado costarricense |
