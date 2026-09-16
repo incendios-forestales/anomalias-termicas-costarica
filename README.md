@@ -199,9 +199,10 @@ solo lo necesario para calcularlos, sigue con las reglas de su
 **extensión a las plataformas VIIRS**, la **comparación entre
 plataformas en el traslape**, el único lugar del proyecto donde dos
 plataformas se miran juntas, la **desagregación por área de
-conservación**, la dimensión interanual espacial de la suite, y la
+conservación**, la dimensión interanual espacial de la suite, la
 **fase ENSO**, el primer factor externo con que se confrontan los índices
-anuales. Nada de esta sección
+anuales, y el **mapa de fuentes estáticas**, que documenta lo que la suite
+excluye. Nada de esta sección
 altera las series mensuales, los videos ni los mapas ya publicados.
 
 ### Año de fuego
@@ -910,6 +911,67 @@ Niño 1+2) ni otras ventanas: si algún día se agregan, será con la misma
 regla de fijarlos antes de mirar los datos. La fase ENSO tampoco entra en
 ningún índice de la suite.
 
+### Mapa de fuentes estáticas
+
+La suite excluye las detecciones de tipo 1 (volcán activo) y 2 (otra
+fuente estática en tierra) que FIRMS etiqueta en el procesamiento estándar
+con su máscara de fuentes estáticas (Giglio et al. 2016; Schroeder et al.
+2014). Excluirlas sin mirarlas dejaría dos preguntas abiertas: dónde están
+y si son lo que dice la etiqueta. Este producto las localiza por celda de
+la grilla común y les asigna una **firma** a partir de sus propias
+detecciones, por plataforma y sin mezclar sensores.
+
+**Métricas por celda**, sobre todas las detecciones de tipo 1 y 2 del
+registro de la plataforma (no solo del periodo de referencia: una fuente
+fija se caracteriza con todo lo que hay):
+
+| Código | Definición | Unidad |
+|---|---|---|
+| `N_EST` | Detecciones de tipo 1 y 2 en la celda (`N_VOLCAN`, `N_FIJA` por tipo) | n |
+| `PCT_EST` | `N_EST` sobre todas las detecciones de la celda, de cualquier tipo | % |
+| `ANIOS_EST` | Años de fuego con al menos una detección estática, y el primero y el último | años |
+| `DIURNA` | Fracción diurna de las detecciones estáticas | 0–1 |
+| `MANANA` | Fracción del satélite de la mañana (Terra) en MODIS; NA en VIIRS | 0–1 |
+| `FRP_EST`, `CONF_EST` | Mediana de la FRP y de la confianza de las detecciones estáticas (la confianza de VIIRS es categórica y no se resume) | MW, 0–100 |
+| `DISP` | Dispersión de los puntos alrededor de su centroide (raíz de la suma de varianzas) | m |
+
+**Firma.** Una regla por celda, aplicada en este orden:
+
+1. **Cráter volcánico**: mayoría de tipo 1.
+2. **Fuente térmica nocturna persistente**: tipo 2 con `DIURNA` ≤ 0,5 y
+   `ANIOS_EST` ≥ 3. Un objeto que emite en la banda de 4 µm de noche, todo
+   el año, está caliente por sí mismo: hornos, quemadores, cráteres no
+   catalogados.
+3. **Reflejo urbano diurno (probable)**: tipo 2 con `DIURNA` ≥ 0,9 y, en
+   MODIS, `MANANA` ≥ 0,7. Es la firma del caso documentado de Turrialba:
+   puntos fijos sobre techos del casco urbano, casi solo en el paso de
+   Terra a media mañana, con FRP y confianza bajas, sin contraparte
+   nocturna. La explicación más plausible es reflejo especular del sol
+   matutino en cubiertas metálicas que la máscara de la NASA terminó
+   catalogando como fuente estática; se marca como probable porque el
+   pipeline no lo verifica en la imagen.
+4. **Sin clasificar**: el resto (pocas detecciones, mezcla diurna y
+   nocturna, sin persistencia).
+
+Una celda con al menos `N_EST` ≥ 10 se considera **fuente**; por debajo
+se lista pero no se dibuja como tal. Las firmas son propiedades de la
+plataforma: MODIS y VIIRS ven fuentes estáticas casi disjuntas (MODIS,
+cascos urbanos diurnos; VIIRS, unos pocos puntos calientes nocturnos y
+los cráteres del Turrialba y el Poás), y esa diferencia es un resultado,
+no un error.
+
+**Catálogo.** Las celdas con `N_EST` ≥ 20 en alguna plataforma llevan una
+localidad de referencia (geocodificación inversa de Nominatim/OpenStreetMap
+del centroide, hecha una vez y guardada como tabla en el código, con la
+fecha), para que la tabla se lea sin abrir un mapa. La localidad no es la
+fuente: dice dónde buscarla.
+
+**Lectura.** El producto responde qué se está excluyendo de los índices y
+sirve de control: una celda con firma de reflejo urbano en MODIS y ninguna
+detección estática en VIIRS confirma que el filtro por tipo hace lo que
+debe. Lo que no hace es identificar instalaciones: eso exige mirar la
+imagen, y queda para quien use la tabla.
+
 ### Salidas
 
 Todas las salidas existen por plataforma (MODIS, VIIRS S-NPP y VIIRS
@@ -964,6 +1026,11 @@ cada una.
   fase y correlaciones (CSV), figura de dispersión; sección «Fase ENSO» en
   el reporte de cada plataforma. La serie ONI descargada se conserva en
   `data/raw/oni/`.
+- Fuentes estáticas, por plataforma en `outputs/<tipo>/<plataforma>/`:
+  tabla por celda con las métricas, la firma y la localidad del catálogo
+  (CSV) y mapa de las celdas fuente por firma; ampliación de la sección
+  «Detecciones excluidas por tipo de fuente» del reporte de cada
+  plataforma.
 
 ### Referencias
 
