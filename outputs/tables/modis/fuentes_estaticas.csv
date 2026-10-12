@@ -1,7 +1,7 @@
 celda_id,n_est,n_volcan,n_fija,n_total,pct_est,anios_est,primer_anio,ultimo_anio,diurna,manana,frp_est,conf_est,lat,lon,disp_m,es_fuente,firma,localidad
 c1045_m08475,415,415,0,415,100,10,2001,2010,0.46,0.52,9.6,55,10.4625,-84.7034,684,TRUE,Cráter volcánico,"La Fortuna, San Carlos (volcán Arenal)"
 c0995_m08475,179,0,179,291,61.5,22,2003,2026,0.98,0.78,10.2,43,9.9809,-84.7166,2515,TRUE,Reflejo urbano diurno (probable),"Los Ángeles de Barranca, Puntarenas"
-c0985_m08375,109,0,109,141,77.3,24,2003,2026,1,0.89,10,46,9.9046,-83.6804,484,TRUE,Reflejo urbano diurno (probable),Casco urbano de Turrialba
+c0985_m08375,109,0,109,142,76.8,24,2003,2026,1,0.89,10,46,9.9046,-83.6804,484,TRUE,Reflejo urbano diurno (probable),Casco urbano de Turrialba
 c1005_m08355,76,0,76,78,97.4,18,2003,2026,1,0.92,8.7,46,10.0979,-83.5059,415,TRUE,Reflejo urbano diurno (probable),Siquirres
 c1055_m08545,75,0,75,344,21.8,23,2004,2026,1,0.59,10.6,55,10.6313,-85.4341,1332,TRUE,Sin clasificar,Liberia
 c0995_m08305,67,0,67,67,100,23,2002,2026,1,0.76,12.1,20,9.9867,-83.0425,788,TRUE,Reflejo urbano diurno (probable),Limón
@@ -9,7 +9,7 @@ c1035_m08515,55,0,55,462,11.9,21,2003,2026,0.98,0.69,8.6,57,10.4272,-85.0926,439
 c1015_m08385,46,0,46,58,79.3,18,2005,2026,1,0.76,9.6,48,10.2138,-83.7875,384,TRUE,Reflejo urbano diurno (probable),"Guápiles, Pococí"
 c0995_m08425,38,0,38,51,74.5,19,2001,2025,0.74,0.5,12.1,68,9.9839,-84.1938,3910,TRUE,Sin clasificar,"La Ribera y La Uruca, entre Belén y San José"
 c0995_m08415,35,0,35,40,87.5,15,2002,2023,0.91,0.37,9.2,63,9.974,-84.1232,2816,TRUE,Sin clasificar,"Ulloa, Heredia"
-c1005_m08455,35,0,35,41,85.4,17,2003,2026,1,0.94,10.9,48,10.0897,-84.4707,712,TRUE,Reflejo urbano diurno (probable),San Ramón
+c1005_m08455,35,0,35,42,83.3,17,2003,2026,1,0.94,10.9,48,10.0897,-84.4707,712,TRUE,Reflejo urbano diurno (probable),San Ramón
 c0975_m08395,31,0,31,35,88.6,14,2006,2025,1,0.87,8.2,38,9.8349,-83.8723,1161,TRUE,Reflejo urbano diurno (probable),"Aguacaliente de Cartago y Llanos de Santa Lucía, Paraíso"
 c0935_m08375,30,0,30,37,81.1,17,2005,2026,1,0.9,8.9,40,9.3714,-83.7032,416,TRUE,Reflejo urbano diurno (probable),San Isidro de El General
 c1025_m08565,24,0,24,196,12.2,13,2003,2026,1,0.83,8,62,10.2602,-85.584,313,TRUE,Reflejo urbano diurno (probable),"Santa Cruz, Guanacaste"
