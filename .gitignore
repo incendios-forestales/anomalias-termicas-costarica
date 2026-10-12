@@ -35,3 +35,6 @@ Thumbs.db
 
 # Exploraciones fuera del pipeline de targets; aún no se publican.
 /sondeos/
+
+# Notas para el artículo; no se publican.
+/articulo/
