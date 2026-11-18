@@ -2,7 +2,7 @@ celda_id,n_est,n_volcan,n_fija,n_total,pct_est,anios_est,primer_anio,ultimo_anio
 c1045_m08475,415,415,0,415,100,10,2001,2010,0.46,0.52,9.6,55,10.4625,-84.7034,684,TRUE,Cráter volcánico,"La Fortuna, San Carlos (volcán Arenal)"
 c0995_m08475,179,0,179,291,61.5,22,2003,2026,0.98,0.78,10.2,43,9.9809,-84.7166,2515,TRUE,Reflejo urbano diurno (probable),"Los Ángeles de Barranca, Puntarenas"
 c0985_m08375,109,0,109,142,76.8,24,2003,2026,1,0.89,10,46,9.9046,-83.6804,484,TRUE,Reflejo urbano diurno (probable),Casco urbano de Turrialba
-c1005_m08355,76,0,76,78,97.4,18,2003,2026,1,0.92,8.7,46,10.0979,-83.5059,415,TRUE,Reflejo urbano diurno (probable),Siquirres
+c1005_m08355,76,0,76,79,96.2,18,2003,2026,1,0.92,8.7,46,10.0979,-83.5059,415,TRUE,Reflejo urbano diurno (probable),Siquirres
 c1055_m08545,75,0,75,344,21.8,23,2004,2026,1,0.59,10.6,55,10.6313,-85.4341,1332,TRUE,Sin clasificar,Liberia
 c0995_m08305,67,0,67,67,100,23,2002,2026,1,0.76,12.1,20,9.9867,-83.0425,788,TRUE,Reflejo urbano diurno (probable),Limón
 c1035_m08515,55,0,55,462,11.9,21,2003,2026,0.98,0.69,8.6,57,10.4272,-85.0926,439,TRUE,Sin clasificar,Cañas

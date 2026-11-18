@@ -1,8 +1,8 @@
 {
   "contrato": 1,
   "proyecto": "anomalias-termicas-costarica",
-  "generado": "2026-10-09T20:08:36-0600",
-  "corrida": "2026-10-09",
+  "generado": "2026-11-17T18:10:35-0600",
+  "corrida": "2026-11-17",
   "plataformas": [
     {
       "clave": "modis",
@@ -13,8 +13,8 @@
       "base_fin": 2022,
       "satelite_control": "Aqua",
       "registro_inicio": "2001-01-01",
-      "fin_estandar": "2026-07-31",
-      "ultimo_dia": "2026-10-10"
+      "fin_estandar": "2026-08-31",
+      "ultimo_dia": "2026-11-17"
     },
     {
       "clave": "snpp",
@@ -25,8 +25,8 @@
       "base_fin": 2025,
       "satelite_control": null,
       "registro_inicio": "2012-01-20",
-      "fin_estandar": "2026-06-30",
-      "ultimo_dia": "2026-10-09"
+      "fin_estandar": "2026-07-31",
+      "ultimo_dia": "2026-11-02"
     },
     {
       "clave": "noaa20",
@@ -37,8 +37,8 @@
       "base_fin": 2025,
       "satelite_control": null,
       "registro_inicio": "2018-04-01",
-      "fin_estandar": "2026-06-30",
-      "ultimo_dia": "2026-10-09"
+      "fin_estandar": "2026-07-31",
+      "ultimo_dia": "2026-11-17"
     },
     {
       "clave": "noaa21",
@@ -50,7 +50,7 @@
       "satelite_control": null,
       "registro_inicio": "2024-01-17",
       "fin_estandar": null,
-      "ultimo_dia": "2026-10-09"
+      "ultimo_dia": "2026-11-17"
     }
   ],
   "pares": [
@@ -221,8 +221,8 @@
       "par": null,
       "nombre": "animacion_mensual.gif",
       "ruta": "outputs/figs/modis/animacion_mensual.gif",
-      "bytes": 2265063,
-      "sha256": "4dc6a068662d57fe90d8fb5b06d3095d08c74c5fa065be682eec300e4fd06207"
+      "bytes": 2267365,
+      "sha256": "cb5a633bd9ee4397a18f457beb06a5b50128fa1abcd4d7b0b595fb5d0a0a7255"
     },
     {
       "tipo": "figs",
@@ -230,8 +230,8 @@
       "par": null,
       "nombre": "animacion_mensual.mp4",
       "ruta": "outputs/figs/modis/animacion_mensual.mp4",
-      "bytes": 1144797,
-      "sha256": "793cabaf1762f510c874226acea82c5cf4459fbcf9ecd9592863f53196bbcfac"
+      "bytes": 1145483,
+      "sha256": "0a530c5e9bc399b7093db3c0723d48d803cec43de7a639ccc7f361113697097a"
     },
     {
       "tipo": "figs",
@@ -239,8 +239,8 @@
       "par": null,
       "nombre": "area_quemada_mensual.png",
       "ruta": "outputs/figs/modis/area_quemada_mensual.png",
-      "bytes": 66457,
-      "sha256": "0767ce88e3b2a11349c24de742a4757866bcf7f228498894ca5d31f0695635c6"
+      "bytes": 66350,
+      "sha256": "512ec06a7b009b5aa2dbc6b4b0b89f84758db91e306ad8adac9c0d0d42bb8c0d"
     },
     {
       "tipo": "figs",
@@ -248,8 +248,8 @@
       "par": null,
       "nombre": "cartel_resumen.png",
       "ruta": "outputs/figs/modis/cartel_resumen.png",
-      "bytes": 62117,
-      "sha256": "f682fd145f630660189671e6bbe3a16be33f9ded564bc68c4b7e62591dc116f3"
+      "bytes": 59679,
+      "sha256": "7dcd4888faa83803355c3d9a01e85b10ba58a566da5d0303113a4982ba496f22"
     },
     {
       "tipo": "figs",
@@ -257,8 +257,8 @@
       "par": null,
       "nombre": "climatologia_comparada.png",
       "ruta": "outputs/figs/modis/climatologia_comparada.png",
-      "bytes": 80618,
-      "sha256": "207837082c7cf5c061d3739ad0946bb26550c98f4ef5c4c44a4cd6f5b91a381d"
+      "bytes": 80617,
+      "sha256": "9b261ab443643087c954adafaa1d22d98088a4521a7c3a8935c8cbc385b6a8aa"
     },
     {
       "tipo": "figs",
@@ -266,8 +266,8 @@
       "par": null,
       "nombre": "climatologia_mensual.html",
       "ruta": "outputs/figs/modis/climatologia_mensual.html",
-      "bytes": 3783035,
-      "sha256": "1b70dd05d779a79ac25a6ac07e7ee306793e80fd1840c4e5f9a030b14573ebd5"
+      "bytes": 3783036,
+      "sha256": "d242b7126fbd4de16a4fe6195cc7db49c35dac3d67d35a56191d926f7a28e204"
     },
     {
       "tipo": "figs",
@@ -293,8 +293,8 @@
       "par": null,
       "nombre": "cobertura_detecciones.png",
       "ruta": "outputs/figs/modis/cobertura_detecciones.png",
-      "bytes": 86205,
-      "sha256": "3ce67f16cb9061a5609acb2a938d015d3268c97b834b2ad6de9f5e484a49d8a4"
+      "bytes": 85780,
+      "sha256": "47fa0060fadc72f40d9b565b1475bef9b66393a6d104ef0b04fae2d3d91a86bc"
     },
     {
       "tipo": "figs",
@@ -302,8 +302,8 @@
       "par": null,
       "nombre": "concentracion_anual.png",
       "ruta": "outputs/figs/modis/concentracion_anual.png",
-      "bytes": 136934,
-      "sha256": "6f1e36eba4b26bbb4da01004bdf3fd644899ad39040ebb2719ae91c90a5ef7c8"
+      "bytes": 137261,
+      "sha256": "a2f0ab687c526044c1f5a70747f009c4b094243ca94f0138f188867b8fcc88a3"
     },
     {
       "tipo": "figs",
@@ -312,7 +312,7 @@
       "nombre": "detecciones_por_ac.png",
       "ruta": "outputs/figs/modis/detecciones_por_ac.png",
       "bytes": 62418,
-      "sha256": "0bd712eee89fd4f9c980ea84a4a46dd997b85fefb9bd205148cd722f1498d2ab"
+      "sha256": "3e44b5dffc958c8a325f6375797b15fa9af3669dd733496a72b18c1172cf6fad"
     },
     {
       "tipo": "figs",
@@ -320,8 +320,8 @@
       "par": null,
       "nombre": "detecciones_vs_area_quemada.png",
       "ruta": "outputs/figs/modis/detecciones_vs_area_quemada.png",
-      "bytes": 77592,
-      "sha256": "024f64d3446b4c7a91d9f12492362fe020343fd9dc4710954fd2165cd4e2e58c"
+      "bytes": 78368,
+      "sha256": "40bf5ff0c7a0eab2f1e3e22197ff3715b111c592583c72b543e6be4d85820e5a"
     },
     {
       "tipo": "figs",
@@ -329,8 +329,8 @@
       "par": null,
       "nombre": "enso.png",
       "ruta": "outputs/figs/modis/enso.png",
-      "bytes": 230007,
-      "sha256": "0a6b09bab031626f6a26ee08637d7b7fa75b5d4dc4bf8adbcb9cf80982b9e7fc"
+      "bytes": 235915,
+      "sha256": "6c60a5005d9962197319c1657c5d7e8b596d3abed2c9222eb891796a3b243942"
     },
     {
       "tipo": "figs",
@@ -347,8 +347,8 @@
       "par": null,
       "nombre": "extremos_anual.png",
       "ruta": "outputs/figs/modis/extremos_anual.png",
-      "bytes": 131448,
-      "sha256": "6bcbeadb83c63b704ea5fc17ee2eea1183ccbfdf3abe8073511a49c3b6f53c57"
+      "bytes": 131433,
+      "sha256": "be6b4189d755d50dcc3433d4649b335cbae6c4caa1bbb4992e6c0ff68cd207c5"
     },
     {
       "tipo": "figs",
@@ -365,8 +365,8 @@
       "par": null,
       "nombre": "intensidad_anual.png",
       "ruta": "outputs/figs/modis/intensidad_anual.png",
-      "bytes": 161292,
-      "sha256": "573115b1e197f642e888668114b383c13b6b054fb79a95f244ac79de5dc50b14"
+      "bytes": 160922,
+      "sha256": "e7696724d5ab6eab0ee151e2e365e6e5f615a1298a0fcd56a87d56bb13cbaf09"
     },
     {
       "tipo": "figs",
@@ -374,8 +374,8 @@
       "par": null,
       "nombre": "serie_mensual.html",
       "ruta": "outputs/figs/modis/serie_mensual.html",
-      "bytes": 3797466,
-      "sha256": "286911b5b0e580629d7122d688a3477d2cf10c36e0bfe7e1ddc6229834a2a1a2"
+      "bytes": 3797488,
+      "sha256": "41c15b9df48418e43db21e6707008cbc8d9ba8e27dc6b2b0e258794bb82fec50"
     },
     {
       "tipo": "figs",
@@ -383,8 +383,8 @@
       "par": null,
       "nombre": "serie_mensual.png",
       "ruta": "outputs/figs/modis/serie_mensual.png",
-      "bytes": 60957,
-      "sha256": "1a8366d3b5b013fbf05a7335245c3b9b97addfe549713e24388f2421ac1a0d5a"
+      "bytes": 61905,
+      "sha256": "cfcfce7d3fcae702e3d139921a15751677b381113ba6f4758bc3429607bb3c10"
     },
     {
       "tipo": "figs",
@@ -392,8 +392,8 @@
       "par": null,
       "nombre": "temporada_ac_anomalia.png",
       "ruta": "outputs/figs/modis/temporada_ac_anomalia.png",
-      "bytes": 306295,
-      "sha256": "57cf7c93edd494eddcb929b5f7a2188cd5627b17a1a3904f66c98f63bd40aa36"
+      "bytes": 307500,
+      "sha256": "812688df1659501ee1f3edcdc74bbb7f0f3e701fe245b38cf303ebddadc45ba6"
     },
     {
       "tipo": "figs",
@@ -401,8 +401,8 @@
       "par": null,
       "nombre": "temporada_ac_lon.png",
       "ruta": "outputs/figs/modis/temporada_ac_lon.png",
-      "bytes": 176472,
-      "sha256": "f2f45f5def9b2adb260081020cb9c4985adc2775d822b3344ef812a97f776af9"
+      "bytes": 176246,
+      "sha256": "36b6e2d3fdd905d3ed565c7decc18694bec92d2682357adc993b3c32425a5676"
     },
     {
       "tipo": "figs",
@@ -410,8 +410,8 @@
       "par": null,
       "nombre": "temporada_ac_mapa_dens.png",
       "ruta": "outputs/figs/modis/temporada_ac_mapa_dens.png",
-      "bytes": 272627,
-      "sha256": "f7289f66cc2f7f5f6e39d9a2c413c2a2020b3626cb68bb026b649649659860d2"
+      "bytes": 271843,
+      "sha256": "28db098fa0b5b1b8cb507dda480c922b52a584dac8263ff36ae0ff8dd318b011"
     },
     {
       "tipo": "figs",
@@ -419,8 +419,8 @@
       "par": null,
       "nombre": "temporada_ac_mapa_ini.png",
       "ruta": "outputs/figs/modis/temporada_ac_mapa_ini.png",
-      "bytes": 277984,
-      "sha256": "e688a0106cc2d4048776a3d9a049542b76575bffd5024aebdedcf3b5f8ee6468"
+      "bytes": 276078,
+      "sha256": "70773fb84a7acc60b15d7880238987b62dca7a9a5fa13682a43a5c5b0f5fe940"
     },
     {
       "tipo": "figs",
@@ -428,8 +428,8 @@
       "par": null,
       "nombre": "temporada_ac_mapa_lon.png",
       "ruta": "outputs/figs/modis/temporada_ac_mapa_lon.png",
-      "bytes": 271406,
-      "sha256": "7be6548bcfd8b3840934950154aa41a820682911fb96586f399690a0a9fadb0f"
+      "bytes": 272513,
+      "sha256": "4f2dcf39583c7e4d7bf2655c0120adf03e430ae0b99ff783469fe92acdb50532"
     },
     {
       "tipo": "figs",
@@ -437,8 +437,8 @@
       "par": null,
       "nombre": "temporada_anual.png",
       "ruta": "outputs/figs/modis/temporada_anual.png",
-      "bytes": 188975,
-      "sha256": "e195460ed12593f9066f4bff76b0b72fc4c87ea666c0551850735be14f572b46"
+      "bytes": 189565,
+      "sha256": "e874005bc0e188c39d648b8eef853540ff1178b00369916e7a65577548cdc840"
     },
     {
       "tipo": "figs",
@@ -446,8 +446,8 @@
       "par": null,
       "nombre": "temporada_celdas_aq.png",
       "ruta": "outputs/figs/modis/temporada_celdas_aq.png",
-      "bytes": 227334,
-      "sha256": "8c5da76ae226ef5383142240cc319c0391f1963399c37c92442de75c96806567"
+      "bytes": 227365,
+      "sha256": "865df586628bc5038d24fd63bc670a4cda0e9760ceefb6b6c6f4214fa3dd8184"
     },
     {
       "tipo": "figs",
@@ -464,8 +464,8 @@
       "par": null,
       "nombre": "temporada_celdas_fin.png",
       "ruta": "outputs/figs/modis/temporada_celdas_fin.png",
-      "bytes": 219964,
-      "sha256": "5aee330fb78104c96d10a3f68f0d83eb4ef3ce3870746c12927e9960a38a76c5"
+      "bytes": 220133,
+      "sha256": "a5d0777f9c42d2b0a2a612ba7d98b64e665b950bec7499217b48f6b49369d411"
     },
     {
       "tipo": "figs",
@@ -482,8 +482,8 @@
       "par": null,
       "nombre": "temporada_celdas_frpi.png",
       "ruta": "outputs/figs/modis/temporada_celdas_frpi.png",
-      "bytes": 223283,
-      "sha256": "d7d771e9612721a317f5157534ba11ac3ff0614be057febf5ca572d2e131fb0a"
+      "bytes": 223311,
+      "sha256": "edb3d3006bbc8e54c156b73632d76d1409dc39b39b3527babec7e9654ee01e22"
     },
     {
       "tipo": "figs",
@@ -491,8 +491,8 @@
       "par": null,
       "nombre": "temporada_celdas_ini.png",
       "ruta": "outputs/figs/modis/temporada_celdas_ini.png",
-      "bytes": 223387,
-      "sha256": "ee6940057bae6c50d7bf26499e9facf8afdbc3296a6857a3707c6f1817a48161"
+      "bytes": 223461,
+      "sha256": "b0a22fe02ae0d696a3199bc20d00483a97fcc06fa87ffa655f028ff7d0dd1f88"
     },
     {
       "tipo": "figs",
@@ -500,8 +500,8 @@
       "par": null,
       "nombre": "temporada_celdas_lon.png",
       "ruta": "outputs/figs/modis/temporada_celdas_lon.png",
-      "bytes": 220456,
-      "sha256": "13d7afbba035f1969bb4b9a0dde3611f654f50d9275f29702c6c27cc5f7f2e63"
+      "bytes": 220736,
+      "sha256": "5c6d208917f69c1df4178d5e6280112ad26f23cf539c12c857339e555683fc39"
     },
     {
       "tipo": "figs",
@@ -509,8 +509,8 @@
       "par": null,
       "nombre": "temporada_celdas_n50f.png",
       "ruta": "outputs/figs/modis/temporada_celdas_n50f.png",
-      "bytes": 221177,
-      "sha256": "0221086490d4328c61cd81e401e110f07538eaa7c141ea0b2b484b6d9da7ff37"
+      "bytes": 221205,
+      "sha256": "0e107cd79dfe3aeee79da6c3f1b5ccd3f22e598957cebc9e23254308c9238db8"
     },
     {
       "tipo": "figs",
@@ -518,8 +518,8 @@
       "par": null,
       "nombre": "video_anomalias_termicas.mp4",
       "ruta": "outputs/figs/modis/video_anomalias_termicas.mp4",
-      "bytes": 3899563,
-      "sha256": "a0efcfa38b887076f67a723ffbe11c684c221c82f757d9b8a8977ef473aa8ed2"
+      "bytes": 3915770,
+      "sha256": "b9d11d071629860fb23136d12ce93434b9fa018cd2e1015d4ebaee07ecfa9baa"
     },
     {
       "tipo": "figs",
@@ -527,8 +527,8 @@
       "par": null,
       "nombre": "animacion_mensual.gif",
       "ruta": "outputs/figs/noaa20/animacion_mensual.gif",
-      "bytes": 1410664,
-      "sha256": "0d1bf2ee4f1c48eec3854cba32901872dce5b47799c8988c3062f63fc01abbd6"
+      "bytes": 1415335,
+      "sha256": "e8046cdc3b8b4183a668370722c14b1968a46bb78ccac00932caccadb2c805c3"
     },
     {
       "tipo": "figs",
@@ -536,8 +536,8 @@
       "par": null,
       "nombre": "animacion_mensual.mp4",
       "ruta": "outputs/figs/noaa20/animacion_mensual.mp4",
-      "bytes": 748207,
-      "sha256": "4a548aceb252a4a7ae598a2eab08dbd26718b1de575687b2a93355cd3e1b9c7a"
+      "bytes": 750378,
+      "sha256": "6f3eaa5a066f2e73db1359ccd8398df05539da6d9254cfa7e8df43443a49df07"
     },
     {
       "tipo": "figs",
@@ -545,8 +545,8 @@
       "par": null,
       "nombre": "area_quemada_mensual.png",
       "ruta": "outputs/figs/noaa20/area_quemada_mensual.png",
-      "bytes": 60420,
-      "sha256": "326ea12e4e8ac1eed0ddeca2e669501477c81b87368f5d3fcb89ab5ba0878518"
+      "bytes": 61555,
+      "sha256": "da3e191130e08ee12606323a3d736661bf0668690c598ad6d5fe2edb11d68f0c"
     },
     {
       "tipo": "figs",
@@ -554,8 +554,8 @@
       "par": null,
       "nombre": "cartel_resumen.png",
       "ruta": "outputs/figs/noaa20/cartel_resumen.png",
-      "bytes": 60372,
-      "sha256": "f16e1bd675378844e11a6c6e436a690d2f33353fba6f04dea2d0dfa5850a0561"
+      "bytes": 59321,
+      "sha256": "2c9d987bfc68fb63a5dc01b22d662e7bde90ed2d442142471fa8e6c41aa11c56"
     },
     {
       "tipo": "figs",
@@ -563,8 +563,8 @@
       "par": null,
       "nombre": "climatologia_comparada.png",
       "ruta": "outputs/figs/noaa20/climatologia_comparada.png",
-      "bytes": 85302,
-      "sha256": "b85fae4f0fcc1c890a6a61cfe45eef26f44210f63b959b4203693966aadf884d"
+      "bytes": 85291,
+      "sha256": "fa2c33638fcf5eb29ec5399ed271e12337777e178de9bc75ef7ec2118b223cf7"
     },
     {
       "tipo": "figs",
@@ -572,8 +572,8 @@
       "par": null,
       "nombre": "climatologia_mensual.html",
       "ruta": "outputs/figs/noaa20/climatologia_mensual.html",
-      "bytes": 3783062,
-      "sha256": "9a54a50f92d813eff10c185a456f4fc7847162790d8814a5dae984ecfde619cd"
+      "bytes": 3783074,
+      "sha256": "88b3c73f7af2f3b3475b98d3e86410253314b0b45e52986b826368da504c476f"
     },
     {
       "tipo": "figs",
@@ -581,8 +581,8 @@
       "par": null,
       "nombre": "climatologia_mensual.png",
       "ruta": "outputs/figs/noaa20/climatologia_mensual.png",
-      "bytes": 65980,
-      "sha256": "79d73d25335402ddc02dc35749151957c2534b94765e013963090d76104202ab"
+      "bytes": 65978,
+      "sha256": "763d34ad707ad8ce84b769335cd390cb18c05f49c4d1c736eedfd7f8218e35f1"
     },
     {
       "tipo": "figs",
@@ -599,8 +599,8 @@
       "par": null,
       "nombre": "cobertura_detecciones.png",
       "ruta": "outputs/figs/noaa20/cobertura_detecciones.png",
-      "bytes": 86936,
-      "sha256": "04574315526278ea165236baf8dcd2174262ce83eeffde8c07efc7de940fbb25"
+      "bytes": 87526,
+      "sha256": "5d59fd4c07eb1a9c1bc7d8a15d372023831dbfd0adf4e9f4bbee48a7deed6a04"
     },
     {
       "tipo": "figs",
@@ -608,8 +608,8 @@
       "par": null,
       "nombre": "concentracion_anual.png",
       "ruta": "outputs/figs/noaa20/concentracion_anual.png",
-      "bytes": 110592,
-      "sha256": "2fd75d344501ca0241ca26697835f081ade89fbd1ee8d57d2f886848d8c4ab92"
+      "bytes": 113899,
+      "sha256": "b98f247c70c78937db08b30b2ffd9733d88b209535bcbf9e6b049e5d9b4e9132"
     },
     {
       "tipo": "figs",
@@ -617,8 +617,8 @@
       "par": null,
       "nombre": "detecciones_por_ac.png",
       "ruta": "outputs/figs/noaa20/detecciones_por_ac.png",
-      "bytes": 62793,
-      "sha256": "5729a1ab98ac5a7797e327e9f3c269550efbe72b74fb7177a5a4855dd85689f4"
+      "bytes": 62812,
+      "sha256": "96090a69760e1ea368739fe89634e3106e2001759c1d60abb6ab1dba6cc72610"
     },
     {
       "tipo": "figs",
@@ -626,8 +626,8 @@
       "par": null,
       "nombre": "detecciones_vs_area_quemada.png",
       "ruta": "outputs/figs/noaa20/detecciones_vs_area_quemada.png",
-      "bytes": 74679,
-      "sha256": "f72c4cc26c2cef34f3aab3219e1ec4f7eadfab59d0dfc4ee152ef7e323038bb7"
+      "bytes": 73843,
+      "sha256": "5ca3e671e77b55bc9d3a7f0fcb7e12ffa82a0407c80b2b8e14f8016ac1a10e06"
     },
     {
       "tipo": "figs",
@@ -662,8 +662,8 @@
       "par": null,
       "nombre": "fuentes_estaticas.png",
       "ruta": "outputs/figs/noaa20/fuentes_estaticas.png",
-      "bytes": 198995,
-      "sha256": "7f043d9a7310e227ac09e4723085de13a029c25b5093969484a421f3b8aa2f44"
+      "bytes": 199394,
+      "sha256": "5dca43261f86eb91fc9404bf55d12a89f0951676eea8b91df797729d55230946"
     },
     {
       "tipo": "figs",
@@ -671,8 +671,8 @@
       "par": null,
       "nombre": "intensidad_anual.png",
       "ruta": "outputs/figs/noaa20/intensidad_anual.png",
-      "bytes": 113317,
-      "sha256": "10deac84b80aa9a70028405dea8f486e51411c89f95059793f5bc89a45ec8f77"
+      "bytes": 113454,
+      "sha256": "bf9ccfaedd1e1fa54900cf71834090123c6513efd38414c074dbaedd36bc6e50"
     },
     {
       "tipo": "figs",
@@ -680,8 +680,8 @@
       "par": null,
       "nombre": "serie_mensual.html",
       "ruta": "outputs/figs/noaa20/serie_mensual.html",
-      "bytes": 3787218,
-      "sha256": "8efdac912aa707cffa764d67ba372323d7aac0f09c38046bb5b0d4e5c9ba91a8"
+      "bytes": 3787293,
+      "sha256": "2c4ebf27f2f146d98e338322145857a45f3b6f675587b3636f8a1677f31673d0"
     },
     {
       "tipo": "figs",
@@ -689,8 +689,8 @@
       "par": null,
       "nombre": "serie_mensual.png",
       "ruta": "outputs/figs/noaa20/serie_mensual.png",
-      "bytes": 57800,
-      "sha256": "570b3e48b6c8159087f61581fe6787890a98e8971134c454cf9c35e446e8b3b3"
+      "bytes": 59825,
+      "sha256": "20cb1298e616327fb20486aa9d1620ba7139de0f06d5630229d0069e420a0d82"
     },
     {
       "tipo": "figs",
@@ -698,8 +698,8 @@
       "par": null,
       "nombre": "temporada_ac_anomalia.png",
       "ruta": "outputs/figs/noaa20/temporada_ac_anomalia.png",
-      "bytes": 185636,
-      "sha256": "74dce496df498b76625935e42cf861a721a478145cd8107c991052a4c1940e14"
+      "bytes": 185778,
+      "sha256": "aec91cbd0057fe09ac2b27849b0eba78487284d2b8b60e7edc541b4c850dc734"
     },
     {
       "tipo": "figs",
@@ -707,8 +707,8 @@
       "par": null,
       "nombre": "temporada_ac_lon.png",
       "ruta": "outputs/figs/noaa20/temporada_ac_lon.png",
-      "bytes": 143741,
-      "sha256": "673c746e5d40a32c291e9077d48d2010fcbbec1d989d1af7083ed7f045c5aac3"
+      "bytes": 143648,
+      "sha256": "86ca418fb2d2edd5278c67f99d4ff79ff12a2a158ff359fc9db3492fe9f0e0c8"
     },
     {
       "tipo": "figs",
@@ -743,8 +743,8 @@
       "par": null,
       "nombre": "temporada_anual.png",
       "ruta": "outputs/figs/noaa20/temporada_anual.png",
-      "bytes": 129377,
-      "sha256": "a93362e787c3908a7d0cf80ff685a0711984b26206bbdff4677371007f0d94b5"
+      "bytes": 127213,
+      "sha256": "4ba9cb8ae0bcc0cc16b1314df5a16f23f6a4a75edd54ded6337b098e425a5e12"
     },
     {
       "tipo": "figs",
@@ -815,8 +815,8 @@
       "par": null,
       "nombre": "video_anomalias_termicas.mp4",
       "ruta": "outputs/figs/noaa20/video_anomalias_termicas.mp4",
-      "bytes": 2347131,
-      "sha256": "54b7284425b66dbafa8b82db9fb776d3a78b26d9de3e5434aa3480ed50e798f9"
+      "bytes": 2368519,
+      "sha256": "6a31f3ab5ea67c67c8f7234f4200404eeefd13be6587633bb7f80782a08c388e"
     },
     {
       "tipo": "figs",
@@ -824,8 +824,8 @@
       "par": null,
       "nombre": "animacion_mensual.gif",
       "ruta": "outputs/figs/noaa21/animacion_mensual.gif",
-      "bytes": 564675,
-      "sha256": "ac4bba868cc54ee3ab8c1c7c9a6fc6d5eb4339c8cbae83283a915ab99f6d681b"
+      "bytes": 569293,
+      "sha256": "82b6a9bc3baa29f43db96c0c423522a0ac2df538f831438a89f9c266a7940ed8"
     },
     {
       "tipo": "figs",
@@ -833,8 +833,8 @@
       "par": null,
       "nombre": "animacion_mensual.mp4",
       "ruta": "outputs/figs/noaa21/animacion_mensual.mp4",
-      "bytes": 367019,
-      "sha256": "32827a9a347fc459a7d14172d1ea50cc73c91f6a41f976fd7f86010c7453bfb3"
+      "bytes": 369153,
+      "sha256": "41528206bc9f4db0f4d4546ad24420db156aa725b90ffe891c2fc80cfbdfd334"
     },
     {
       "tipo": "figs",
@@ -842,8 +842,8 @@
       "par": null,
       "nombre": "area_quemada_mensual.png",
       "ruta": "outputs/figs/noaa21/area_quemada_mensual.png",
-      "bytes": 58885,
-      "sha256": "7d492b2ce53fa70fd8b25569a9ddb0557a06185f6e895af85dd5d0cf9f7b5da1"
+      "bytes": 60154,
+      "sha256": "a7e263c42f9c7a3fcbf23c59a813cf7c607466f8514c97ee297f6f998392d879"
     },
     {
       "tipo": "figs",
@@ -851,8 +851,8 @@
       "par": null,
       "nombre": "cartel_resumen.png",
       "ruta": "outputs/figs/noaa21/cartel_resumen.png",
-      "bytes": 57121,
-      "sha256": "e0c163c25cdf08c160ee480c85306d9de98c64346dfcb80be391aedfb14f71a3"
+      "bytes": 56303,
+      "sha256": "cc570715751d098c7f481c62db1a9eed6d017d77880792245c49c373a268b43c"
     },
     {
       "tipo": "figs",
@@ -860,8 +860,8 @@
       "par": null,
       "nombre": "climatologia_comparada.png",
       "ruta": "outputs/figs/noaa21/climatologia_comparada.png",
-      "bytes": 83328,
-      "sha256": "7186c4b224d8eed374037c4fc4e9adb461ebf6922b8f43ea4d9f8a9741228b8b"
+      "bytes": 83333,
+      "sha256": "2c61f32498265458d3416c96801c23eb77c25ce410dec38df142f3c6be485929"
     },
     {
       "tipo": "figs",
@@ -869,8 +869,8 @@
       "par": null,
       "nombre": "climatologia_mensual.html",
       "ruta": "outputs/figs/noaa21/climatologia_mensual.html",
-      "bytes": 3783025,
-      "sha256": "a19c3d14db529e5793db0c620334e775d0a432a04f3a571a7130dfae5edaf877"
+      "bytes": 3783041,
+      "sha256": "402f5ac42955c60a062f9ba9274481933b4bfed4d39b37d52baacb5269ee542e"
     },
     {
       "tipo": "figs",
@@ -878,8 +878,8 @@
       "par": null,
       "nombre": "climatologia_mensual.png",
       "ruta": "outputs/figs/noaa21/climatologia_mensual.png",
-      "bytes": 65169,
-      "sha256": "e505b5ef268e06390a7f543349d7ebf9b556944f883f59a7b0742577191c866f"
+      "bytes": 65170,
+      "sha256": "f0eeca9fbcd9601de8e5e1b6c7681231ff0da74c5ab4a53949b0e474f6913da8"
     },
     {
       "tipo": "figs",
@@ -896,8 +896,8 @@
       "par": null,
       "nombre": "cobertura_detecciones.png",
       "ruta": "outputs/figs/noaa21/cobertura_detecciones.png",
-      "bytes": 88452,
-      "sha256": "9cb9de7e4a5d221b18a98c4fcc6307e598db80839542e4507342b60d0142f00d"
+      "bytes": 87922,
+      "sha256": "63fad067a6da5baefcc352ac86502a5d2d826358d117f9138faeef5ae5655d30"
     },
     {
       "tipo": "figs",
@@ -905,8 +905,8 @@
       "par": null,
       "nombre": "detecciones_por_ac.png",
       "ruta": "outputs/figs/noaa21/detecciones_por_ac.png",
-      "bytes": 64442,
-      "sha256": "5fecb2bb0baa9d69bee589efd0b0e9bf1307e4b54e9525a4e4cf1deca8e52449"
+      "bytes": 63518,
+      "sha256": "1763a66bcc5e181bd9edbe67992d64a01687f5af35c6a9de6539622956438047"
     },
     {
       "tipo": "figs",
@@ -914,8 +914,8 @@
       "par": null,
       "nombre": "detecciones_vs_area_quemada.png",
       "ruta": "outputs/figs/noaa21/detecciones_vs_area_quemada.png",
-      "bytes": 73250,
-      "sha256": "8985a9cd1700f4d005701d87a19dffa0c5d117e741c0f44ed7d2b19932ca8349"
+      "bytes": 74472,
+      "sha256": "0e2674d3e51349d748e96ace1ee9116482de160736a3e769628896a282512614"
     },
     {
       "tipo": "figs",
@@ -932,8 +932,8 @@
       "par": null,
       "nombre": "serie_mensual.html",
       "ruta": "outputs/figs/noaa21/serie_mensual.html",
-      "bytes": 3783751,
-      "sha256": "bc057182c8dc9e5e2b5f52905a4d8f48beb81bf327892585d27acdcaea3a7ef4"
+      "bytes": 3783800,
+      "sha256": "e4b316380be4220ce7069bd667d79f376e5d61d57d7f5022bfadcaf3d3357bed"
     },
     {
       "tipo": "figs",
@@ -941,8 +941,8 @@
       "par": null,
       "nombre": "serie_mensual.png",
       "ruta": "outputs/figs/noaa21/serie_mensual.png",
-      "bytes": 55149,
-      "sha256": "142f13a0f26e7827872f9019c741b12c900d71b4439b929f1a51bd785ee47a76"
+      "bytes": 56544,
+      "sha256": "f88e55d691cdc8979120c85253682fdd6de3ee790c6d628bf15422621a44b88f"
     },
     {
       "tipo": "figs",
@@ -950,8 +950,8 @@
       "par": null,
       "nombre": "video_anomalias_termicas.mp4",
       "ruta": "outputs/figs/noaa21/video_anomalias_termicas.mp4",
-      "bytes": 913461,
-      "sha256": "738ee3b6d5501065aa2552a08db1a4caee204380a06f47cc61a00f60f733642a"
+      "bytes": 918124,
+      "sha256": "283a95e7918434324342f481095fd03fea5bd8c763c1684c1f92b319d1818648"
     },
     {
       "tipo": "figs",
@@ -959,8 +959,8 @@
       "par": null,
       "nombre": "series_plataformas.png",
       "ruta": "outputs/figs/series_plataformas.png",
-      "bytes": 104173,
-      "sha256": "c3f4cd6b94e118dd5730203275de808ed2649032d45cb57334272667f87671d4"
+      "bytes": 104400,
+      "sha256": "a1559455a9b1b7359b0f9fbccbd0999b1aff9fc6833955b6dd5c9cafcc3c47c6"
     },
     {
       "tipo": "figs",
@@ -968,8 +968,8 @@
       "par": null,
       "nombre": "animacion_mensual.gif",
       "ruta": "outputs/figs/snpp/animacion_mensual.gif",
-      "bytes": 2501116,
-      "sha256": "7806255b965736aa05c8a7ff2979e3d1cd81c4cdbf62efcaf9793d3f6c021923"
+      "bytes": 2515848,
+      "sha256": "21c9226446624b266603a096e7cc9baf6d194949012aa4d2e16a991695e07517"
     },
     {
       "tipo": "figs",
@@ -977,8 +977,8 @@
       "par": null,
       "nombre": "animacion_mensual.mp4",
       "ruta": "outputs/figs/snpp/animacion_mensual.mp4",
-      "bytes": 1244725,
-      "sha256": "7ab2bd13b802ce76b27307e35a0b4489841b611227a766236dd9ed3a798d0086"
+      "bytes": 1253124,
+      "sha256": "b44666e793c90dafcb2a0c4f094d8390a994f496d11fa23c3d252b40205d7b84"
     },
     {
       "tipo": "figs",
@@ -986,8 +986,8 @@
       "par": null,
       "nombre": "area_quemada_mensual.png",
       "ruta": "outputs/figs/snpp/area_quemada_mensual.png",
-      "bytes": 63937,
-      "sha256": "b5430990342610d90924743d6c05af6343068b8ac47a8662d2977d69e7e07569"
+      "bytes": 63489,
+      "sha256": "d1c6ff52288f459666116151a3f0c8121dfb1602da86ab9521d3e77fa98041cd"
     },
     {
       "tipo": "figs",
@@ -995,8 +995,8 @@
       "par": null,
       "nombre": "cartel_resumen.png",
       "ruta": "outputs/figs/snpp/cartel_resumen.png",
-      "bytes": 60474,
-      "sha256": "cbb4fe1377d50873c39aa1f3c114becd170f442b57cdf7087820d5098edfec17"
+      "bytes": 61715,
+      "sha256": "ac9f120592a3022fec5db8993938e09f8a2e6622c80474a54ddd0124252d5ea0"
     },
     {
       "tipo": "figs",
@@ -1004,8 +1004,8 @@
       "par": null,
       "nombre": "climatologia_comparada.png",
       "ruta": "outputs/figs/snpp/climatologia_comparada.png",
-      "bytes": 78909,
-      "sha256": "518fc0d91472851c3d3b816505c101add06f56b971a337038475ac164fd917e4"
+      "bytes": 78918,
+      "sha256": "cfebda1b78b05dab0b737146a74abccb16ae71f1908c9b120db5b288073c69f6"
     },
     {
       "tipo": "figs",
@@ -1013,8 +1013,8 @@
       "par": null,
       "nombre": "climatologia_mensual.html",
       "ruta": "outputs/figs/snpp/climatologia_mensual.html",
-      "bytes": 3783127,
-      "sha256": "968251c6a2829ec426f147709ebfe30354a18abf1244e3be8c08e04594beb181"
+      "bytes": 3783124,
+      "sha256": "5e275a1e054a65d49bcc3cf6957d49f5d8c621f3cc70f1cf703c6ecb5e55bea2"
     },
     {
       "tipo": "figs",
@@ -1022,8 +1022,8 @@
       "par": null,
       "nombre": "climatologia_mensual.png",
       "ruta": "outputs/figs/snpp/climatologia_mensual.png",
-      "bytes": 62241,
-      "sha256": "113839dbeee4875dae16b105f472978ce3ea2ac489ed52dd4ae16105937eab3b"
+      "bytes": 62257,
+      "sha256": "2a0f3a8b53faf11066a2f1d2590af676c1dad83a782229ca10e271518ef2db5c"
     },
     {
       "tipo": "figs",
@@ -1040,8 +1040,8 @@
       "par": null,
       "nombre": "cobertura_detecciones.png",
       "ruta": "outputs/figs/snpp/cobertura_detecciones.png",
-      "bytes": 87979,
-      "sha256": "fbc61a24750c1b30ea5c6106fd57315a98ef433c9dfc2f31c6eadae1a86ee704"
+      "bytes": 87095,
+      "sha256": "2bee3beb1084ea7344227e7743b194130f03ab216877f3d61e7daf0d04854a5a"
     },
     {
       "tipo": "figs",
@@ -1049,8 +1049,8 @@
       "par": null,
       "nombre": "concentracion_anual.png",
       "ruta": "outputs/figs/snpp/concentracion_anual.png",
-      "bytes": 123401,
-      "sha256": "06009f840dd70303b4f84e63283e1948d8a5f8fbaff0ed230ef92559f37c2eed"
+      "bytes": 122679,
+      "sha256": "4024d0accfe0cda4c3027f0f7a97962fb22bd7982f1803eef848c976814dcaf4"
     },
     {
       "tipo": "figs",
@@ -1058,8 +1058,8 @@
       "par": null,
       "nombre": "detecciones_por_ac.png",
       "ruta": "outputs/figs/snpp/detecciones_por_ac.png",
-      "bytes": 60333,
-      "sha256": "68110aeff42ede54759577ffd518ed28abb3c821bea9c47539bae9a0f7bb4b97"
+      "bytes": 60340,
+      "sha256": "766a0efbf160c7ea0f54e44b694debc9b8157ab09e37839db030f78b0f3a1646"
     },
     {
       "tipo": "figs",
@@ -1067,8 +1067,8 @@
       "par": null,
       "nombre": "detecciones_vs_area_quemada.png",
       "ruta": "outputs/figs/snpp/detecciones_vs_area_quemada.png",
-      "bytes": 74657,
-      "sha256": "0fb380143b192af002c7ebfcfbe3887d0f62a4f86c681bb8bd8c47001ee8e6f2"
+      "bytes": 75228,
+      "sha256": "e765da188f2c4b16ed19ec267cd9786975600a9c752b077bfb6073a0a202bbe6"
     },
     {
       "tipo": "figs",
@@ -1085,8 +1085,8 @@
       "par": null,
       "nombre": "evento_catalina_2026.png",
       "ruta": "outputs/figs/snpp/evento_catalina_2026.png",
-      "bytes": 207462,
-      "sha256": "71b5ce0941f98feaccca754ef60885aafdb678f0691c2f19bbc9a6ae68d644ef"
+      "bytes": 227070,
+      "sha256": "d8dee232527e6a55abd10e0c495fd36ea450a0269ebf823ed3f46a39b413b403"
     },
     {
       "tipo": "figs",
@@ -1094,8 +1094,8 @@
       "par": null,
       "nombre": "extremos_anual.png",
       "ruta": "outputs/figs/snpp/extremos_anual.png",
-      "bytes": 123176,
-      "sha256": "6dd6a28fce00cd54b55a08eacc638cc268c77b2c150ef396a53173c922e2579c"
+      "bytes": 123167,
+      "sha256": "049457b54c8d669e5ae24b7702dcd06fdfac46bdf62ddf32c39adc26754a6edc"
     },
     {
       "tipo": "figs",
@@ -1103,8 +1103,8 @@
       "par": null,
       "nombre": "fuentes_estaticas.png",
       "ruta": "outputs/figs/snpp/fuentes_estaticas.png",
-      "bytes": 197593,
-      "sha256": "330eb4c59b3ecb4687621175c47707d9298e9d13162b4baf087173349241070f"
+      "bytes": 197360,
+      "sha256": "c9e438880ee516bf16f207c01665cb0e3dbaaff0db68e397c0b2e41d1f590ab5"
     },
     {
       "tipo": "figs",
@@ -1112,8 +1112,8 @@
       "par": null,
       "nombre": "intensidad_anual.png",
       "ruta": "outputs/figs/snpp/intensidad_anual.png",
-      "bytes": 123513,
-      "sha256": "2cf3d09aa20756d70022bb662ad031a9a6fdd6ec5a56c43b6029e21f9b5667e7"
+      "bytes": 122911,
+      "sha256": "143cdac3f55b450bd033b7cfb4cfca42fd1d65a04a9c874acb95986b40bd9984"
     },
     {
       "tipo": "figs",
@@ -1121,8 +1121,8 @@
       "par": null,
       "nombre": "serie_mensual.html",
       "ruta": "outputs/figs/snpp/serie_mensual.html",
-      "bytes": 3791086,
-      "sha256": "c5f57bc83d6e9681b47b16cb05b33145dcffdc0ae5f45107419f41bc253f2f0a"
+      "bytes": 3791140,
+      "sha256": "e44e704469b25f8119b179c946e630e4b1a57ede2fa3f21a03607fcdd0c8f6d8"
     },
     {
       "tipo": "figs",
@@ -1130,8 +1130,8 @@
       "par": null,
       "nombre": "serie_mensual.png",
       "ruta": "outputs/figs/snpp/serie_mensual.png",
-      "bytes": 58292,
-      "sha256": "ec776a135061c94be85b6d3f0e11a68f5c8c9ca2d036ebf195452af384dcfd38"
+      "bytes": 57121,
+      "sha256": "29e2e9df05f2b6545cf22af499eb21339a88b9485e53087f5a56286da53b838a"
     },
     {
       "tipo": "figs",
@@ -1139,8 +1139,8 @@
       "par": null,
       "nombre": "temporada_ac_anomalia.png",
       "ruta": "outputs/figs/snpp/temporada_ac_anomalia.png",
-      "bytes": 234677,
-      "sha256": "d46aa4b4f08cdb3a6fdb01b8ece1e85bdfe767a03f2a45b8c3e7cbbb83afaf01"
+      "bytes": 234817,
+      "sha256": "83694e6be4974fafb6558c800eeb9bcd8e2ffb456ec5cbb3f2e7e73291bc5a24"
     },
     {
       "tipo": "figs",
@@ -1148,8 +1148,8 @@
       "par": null,
       "nombre": "temporada_ac_lon.png",
       "ruta": "outputs/figs/snpp/temporada_ac_lon.png",
-      "bytes": 180905,
-      "sha256": "167b1c3974c74bdfccd6de4e733c9e53dc79dfdb51c5f815b1ae494e4df7c87e"
+      "bytes": 181313,
+      "sha256": "6e5df9b17a23bf8adc4be15ac419704bcdc39e69990e966193429fe40a9fda68"
     },
     {
       "tipo": "figs",
@@ -1184,8 +1184,8 @@
       "par": null,
       "nombre": "temporada_anual.png",
       "ruta": "outputs/figs/snpp/temporada_anual.png",
-      "bytes": 147426,
-      "sha256": "2c33c9c033ac81562bf360bffb95993f81e32c66cee0e712ef16290c836dcba8"
+      "bytes": 147651,
+      "sha256": "99270f6656dabddb56f2ca0f7c9f3a7de0ff5f7790c90bad8694f62ae4a27524"
     },
     {
       "tipo": "figs",
@@ -1256,8 +1256,8 @@
       "par": null,
       "nombre": "video_anomalias_termicas.mp4",
       "ruta": "outputs/figs/snpp/video_anomalias_termicas.mp4",
-      "bytes": 4101109,
-      "sha256": "953aa76031d3edf840cf235a28bf6f3c7bed8e86d4275041297e565daf184f64"
+      "bytes": 4114589,
+      "sha256": "a9a622273136521aced456d24d18a47800b0aed6ad03df6d37cc489b0575b77e"
     },
     {
       "tipo": "geometrias",
@@ -1292,8 +1292,8 @@
       "par": null,
       "nombre": "mapa_temporal.html",
       "ruta": "outputs/maps/modis/mapa_temporal.html",
-      "bytes": 4868411,
-      "sha256": "e1d6212c5afe8b3802c7996c53cbcf931630df8c4d2bab454c4fc9607aef3db8"
+      "bytes": 4873496,
+      "sha256": "b53ff24f88ced0b16775d2c134d0634eddd472326c540ad3850fff615b381894"
     },
     {
       "tipo": "maps",
@@ -1301,8 +1301,8 @@
       "par": null,
       "nombre": "mapa_temporal.html",
       "ruta": "outputs/maps/noaa20/mapa_temporal.html",
-      "bytes": 10153464,
-      "sha256": "209e7c2e101c9a6ffcd1c309a2e3235cbcc483ef221f5c07167dd11079da6a58"
+      "bytes": 10180934,
+      "sha256": "f837d7327b8b3259fcb3f5f23d041e9cc6c121999d6b737227bd7b568ca75318"
     },
     {
       "tipo": "maps",
@@ -1310,8 +1310,8 @@
       "par": null,
       "nombre": "mapa_temporal.html",
       "ruta": "outputs/maps/noaa21/mapa_temporal.html",
-      "bytes": 8954244,
-      "sha256": "9ecee07711003c02f212e89eadbc9db98b812a559cb0b78eb7c9bf446e778db3"
+      "bytes": 8988433,
+      "sha256": "93493851726609f68e849478250bb7aad8b9bda10ac71204d94e92d8d3274c33"
     },
     {
       "tipo": "maps",
@@ -1319,8 +1319,8 @@
       "par": null,
       "nombre": "mapa_temporal.html",
       "ruta": "outputs/maps/snpp/mapa_temporal.html",
-      "bytes": 10955421,
-      "sha256": "b79f1ad13013deae64caad375f53b44072e5031868e8842157c2aa8696ce585c"
+      "bytes": 11331595,
+      "sha256": "83033343fcc696e4c55769e6c8eadb2b1ba667323f1b1d375bc8c1498a257c92"
     },
     {
       "tipo": "rasters",
@@ -1364,8 +1364,8 @@
       "par": null,
       "nombre": "temporada_celdas.tif",
       "ruta": "outputs/rasters/modis/temporada_celdas.tif",
-      "bytes": 15558,
-      "sha256": "b81a30d8c4dc28e0a6244f76c163d757076963426d2587b0ce67222e212310f8"
+      "bytes": 15574,
+      "sha256": "79da378224edf2e0f002bf80f0ad9f855d5d9f8b789d9a5f821e0a50b0794aa6"
     },
     {
       "tipo": "rasters",
@@ -1473,7 +1473,7 @@
       "nombre": "cobertura_detecciones.csv",
       "ruta": "outputs/tables/modis/cobertura_detecciones.csv",
       "bytes": 262,
-      "sha256": "6fda022c40898629a466863f91e2225daafd96f75e9e34b78009e2c08f2bfd4a"
+      "sha256": "db6b8a98a121dee09c7f6c8ef2f048ddcfba504c62273f369071b3913f6f6c18"
     },
     {
       "tipo": "tables",
@@ -1482,7 +1482,7 @@
       "nombre": "contraste_humedales.csv",
       "ruta": "outputs/tables/modis/contraste_humedales.csv",
       "bytes": 465,
-      "sha256": "a5e768b0e638780963fbe77ed7bf6b7b2d82541bb5279c63d7be1956b5fe8901"
+      "sha256": "13463c4b3aa812b2c8a2966314a5338586213b0d9319f80e344f1a52f95b781d"
     },
     {
       "tipo": "tables",
@@ -1490,8 +1490,8 @@
       "par": null,
       "nombre": "detecciones_por_ac.csv",
       "ruta": "outputs/tables/modis/detecciones_por_ac.csv",
-      "bytes": 8711,
-      "sha256": "3638aa069a07eff2183e4b98ffd78546b6eb7ef9b26c1464a58dded5d9e1a756"
+      "bytes": 8712,
+      "sha256": "42515445acf5451a932ff0ecd00d659f2adce99198a42795221eecb502fac5d1"
     },
     {
       "tipo": "tables",
@@ -1499,8 +1499,8 @@
       "par": null,
       "nombre": "detecciones_por_tipo.csv",
       "ruta": "outputs/tables/modis/detecciones_por_tipo.csv",
-      "bytes": 661,
-      "sha256": "838879790a83c52c020e246159c3bf64d25f0f66996f080ef71f0fd0fd1b8a84"
+      "bytes": 662,
+      "sha256": "18a3d07be7eb2e4836ac6c1972aa1c8aa2e1ee101c84527d1dc7653c43884d45"
     },
     {
       "tipo": "tables",
@@ -1508,8 +1508,8 @@
       "par": null,
       "nombre": "enso_anual.csv",
       "ruta": "outputs/tables/modis/enso_anual.csv",
-      "bytes": 1928,
-      "sha256": "59c228992c71ab694b7264926f45df9b5e72820cde06ad0a920a7002d4daf561"
+      "bytes": 2004,
+      "sha256": "a4c076f561444f6c6bb515e210f70677db4dfab9d2e6af8df4aba8cedf6f29cb"
     },
     {
       "tipo": "tables",
@@ -1517,8 +1517,8 @@
       "par": null,
       "nombre": "enso_resumen.csv",
       "ruta": "outputs/tables/modis/enso_resumen.csv",
-      "bytes": 497,
-      "sha256": "2478385b42d838ad1ef182526a28b7a50590bb00461491ec886ff9ffe95ad202"
+      "bytes": 522,
+      "sha256": "8246fb3e66bec74272d3cf305d9762742aa7222ecbf3e052317d39b138e9c4ff"
     },
     {
       "tipo": "tables",
@@ -1527,7 +1527,7 @@
       "nombre": "fuentes_estaticas.csv",
       "ruta": "outputs/tables/modis/fuentes_estaticas.csv",
       "bytes": 4462,
-      "sha256": "eb007343fca5efe6e80c6094630826bcf60ef00422abe3f94d26b6d57d365982"
+      "sha256": "498743f29c57c817ad35482e67a9bf8c101969d4ef92ab1d2fc354b510ebb700"
     },
     {
       "tipo": "tables",
@@ -1536,7 +1536,7 @@
       "nombre": "resumen_anual.csv",
       "ruta": "outputs/tables/modis/resumen_anual.csv",
       "bytes": 730,
-      "sha256": "c056a1c276ff7cb2513bce373b09ea0b90b95cd5f97af96b87f6d5227f15c6a6"
+      "sha256": "7bd5946fbec2af8145b0633eff780725e7ddd78d54bc32d61774ad55d2ee6da0"
     },
     {
       "tipo": "tables",
@@ -1545,7 +1545,7 @@
       "nombre": "resumen_anual.html",
       "ruta": "outputs/tables/modis/resumen_anual.html",
       "bytes": 318080,
-      "sha256": "3a4eb8ee7d6c9c412692dd878b100b6a15a62fca920d5a26a48bd692ca85817f"
+      "sha256": "fba0815f7c9afdf3d20812dd21ecb3653eac73d4a760e419e76662324da594b0"
     },
     {
       "tipo": "tables",
@@ -1553,8 +1553,8 @@
       "par": null,
       "nombre": "temporada_ac_anual.csv",
       "ruta": "outputs/tables/modis/temporada_ac_anual.csv",
-      "bytes": 32170,
-      "sha256": "aabafbd5ab8623a078f7d8ae38fc37da334657685a9084357f1c63cd17040094"
+      "bytes": 32179,
+      "sha256": "9be68a1541d05378d35ba25c6fb73d59010614cbfcdad8af6fadf4f2d3ecd199"
     },
     {
       "tipo": "tables",
@@ -1562,8 +1562,8 @@
       "par": null,
       "nombre": "temporada_ac_consolidado.csv",
       "ruta": "outputs/tables/modis/temporada_ac_consolidado.csv",
-      "bytes": 1350,
-      "sha256": "fd9c5b5bd53db93c7bc17e29310ec75338066fdd8b5e12dd85076d109a513aef"
+      "bytes": 1354,
+      "sha256": "f394a8453d655278edf4066bfb1fff2b93a1dc3dafb4d1cb0a0d386304f8d21a"
     },
     {
       "tipo": "tables",
@@ -1571,8 +1571,8 @@
       "par": null,
       "nombre": "temporada_anual.csv",
       "ruta": "outputs/tables/modis/temporada_anual.csv",
-      "bytes": 3185,
-      "sha256": "2c7839b82ffc263f1de1d2a0f4a666bf7d1cef06775d050d067ba51e25ef69e2"
+      "bytes": 3190,
+      "sha256": "7a8290bb6a509d2f7502e0157697111b51926a0ae1fa4cfba59ac2651bf7c6fa"
     },
     {
       "tipo": "tables",
@@ -1580,8 +1580,8 @@
       "par": null,
       "nombre": "temporada_celdas.csv",
       "ruta": "outputs/tables/modis/temporada_celdas.csv",
-      "bytes": 55874,
-      "sha256": "adb3ad3dc094d61d994c0433ac8b68509f104edae35f7df26d05e7a0ef215481"
+      "bytes": 55876,
+      "sha256": "e056a8841139495eadade9e40987e0495fe8b6ddcb56c321d617fa115f7aa9a3"
     },
     {
       "tipo": "tables",
@@ -1599,7 +1599,7 @@
       "nombre": "cobertura_detecciones.csv",
       "ruta": "outputs/tables/noaa20/cobertura_detecciones.csv",
       "bytes": 281,
-      "sha256": "80c492f6bc8f79ffcc158657cdfe12d6993f6abf9d5f914f85b7950454e44515"
+      "sha256": "0e6dce8ac62168c315a62478e45f5d850c17334160b75040a469e980121c9884"
     },
     {
       "tipo": "tables",
@@ -1607,8 +1607,8 @@
       "par": null,
       "nombre": "contraste_humedales.csv",
       "ruta": "outputs/tables/noaa20/contraste_humedales.csv",
-      "bytes": 456,
-      "sha256": "c5e52da37ee897518dc536882634bfb8d5b485cbfb387c106c1f4928f0735a60"
+      "bytes": 457,
+      "sha256": "1f4e542ed31e0f43f2519317aae58734b40963f118cb21ace1e1fd780a07bba0"
     },
     {
       "tipo": "tables",
@@ -1617,7 +1617,7 @@
       "nombre": "detecciones_por_ac.csv",
       "ruta": "outputs/tables/noaa20/detecciones_por_ac.csv",
       "bytes": 3134,
-      "sha256": "cdb17ffe9d6f3872a7f9e0efc84597e9bc4732cbb36ed6db8fb001f96184825a"
+      "sha256": "575fc5b290ba86db26f844f8c2dfa587b4317a40143ae8e6f4249074a5d3b9fa"
     },
     {
       "tipo": "tables",
@@ -1626,7 +1626,7 @@
       "nombre": "detecciones_por_tipo.csv",
       "ruta": "outputs/tables/noaa20/detecciones_por_tipo.csv",
       "bytes": 298,
-      "sha256": "e9a6061ce17c10dfe3261358764c261b4e64845e4d6a1a029446575c8a40c281"
+      "sha256": "9ecc98c9b197465716d26d1e501e376e8b771515938f391356546cbcf3018188"
     },
     {
       "tipo": "tables",
@@ -1653,7 +1653,7 @@
       "nombre": "fuentes_estaticas.csv",
       "ruta": "outputs/tables/noaa20/fuentes_estaticas.csv",
       "bytes": 926,
-      "sha256": "ce84bce0c99e8c95c1fd80a4286f15b6dc9386e871a7d54f4d2c8a5533de18e0"
+      "sha256": "70e55f1af0bb89e2823be395e5d28f054de908f167a9e777c258100f29a7ec4a"
     },
     {
       "tipo": "tables",
@@ -1662,7 +1662,7 @@
       "nombre": "resumen_anual.csv",
       "ruta": "outputs/tables/noaa20/resumen_anual.csv",
       "bytes": 288,
-      "sha256": "fc7e6f818fb4a6510d785245b3208eee955bc029ef104dd70c221a413c3dadf4"
+      "sha256": "6cd5c4bd55ca8e4ceacc3ea82598653d0c45ff7aee1649d5c9a0ea55416aef55"
     },
     {
       "tipo": "tables",
@@ -1671,7 +1671,7 @@
       "nombre": "resumen_anual.html",
       "ruta": "outputs/tables/noaa20/resumen_anual.html",
       "bytes": 317653,
-      "sha256": "a81e069ef1735fc2203fea65be39d685b3df354c1f80c5bd4bc6360bf7081af8"
+      "sha256": "81d9bf5e9c21c4b98f3c4e5b06d0a8fcfd71641128d25bf69508a009a3bb7b83"
     },
     {
       "tipo": "tables",
@@ -1679,8 +1679,8 @@
       "par": null,
       "nombre": "temporada_ac_anual.csv",
       "ruta": "outputs/tables/noaa20/temporada_ac_anual.csv",
-      "bytes": 12607,
-      "sha256": "ac5e6ffa987a3936cb1da94046561b35d4f59cdc77bd23a1015b8de13a86da22"
+      "bytes": 12612,
+      "sha256": "ec8ee7de465f9f8998e19f287c59377d725210c50ee531712192ad9f27c791c5"
     },
     {
       "tipo": "tables",
@@ -1697,8 +1697,8 @@
       "par": null,
       "nombre": "temporada_anual.csv",
       "ruta": "outputs/tables/noaa20/temporada_anual.csv",
-      "bytes": 1250,
-      "sha256": "2d9d66c75aed41986758b4d2bbf4d7c68bc1689b20c582d058be2f1fcb96509e"
+      "bytes": 1251,
+      "sha256": "5550ae58f87b6ba0b17589d82f75e01606b31895f4e65151d37956a353451a49"
     },
     {
       "tipo": "tables",
@@ -1725,7 +1725,7 @@
       "nombre": "cobertura_detecciones.csv",
       "ruta": "outputs/tables/noaa21/cobertura_detecciones.csv",
       "bytes": 277,
-      "sha256": "0f040079998ed5b5256bb4330ed16afa3bbccb256ede3b0a26e5473f3852184d"
+      "sha256": "91945f57cda00f2619e66be7815d76cd2920a3faad9212c2051f17415cdc8aad"
     },
     {
       "tipo": "tables",
@@ -1733,8 +1733,8 @@
       "par": null,
       "nombre": "contraste_humedales.csv",
       "ruta": "outputs/tables/noaa21/contraste_humedales.csv",
-      "bytes": 454,
-      "sha256": "6a6ae8a564be6d687df64814ab2b0877fd4a9d8096b96a01ea2d9b5a92b35f38"
+      "bytes": 453,
+      "sha256": "e30aa0093dc82af9ff8bb55e80fcada47dcce7b04c9bc94b1c80fe567a927e49"
     },
     {
       "tipo": "tables",
@@ -1743,7 +1743,7 @@
       "nombre": "detecciones_por_ac.csv",
       "ruta": "outputs/tables/noaa21/detecciones_por_ac.csv",
       "bytes": 1075,
-      "sha256": "d940e3872c4af8b97f4a1153b710a3446f0ca69672c6ee2d810e08e883eded3f"
+      "sha256": "3eb1da4885f571921a450482d7486fe2a361aec078e4bc08984be404e5eaf3f0"
     },
     {
       "tipo": "tables",
@@ -1752,7 +1752,7 @@
       "nombre": "resumen_anual.csv",
       "ruta": "outputs/tables/noaa21/resumen_anual.csv",
       "bytes": 130,
-      "sha256": "77cd9a7f67307168dbf5239f7910c699d65ad4e79d510f665c7599b1090f454c"
+      "sha256": "50ae34eb1bce733be4d3e823b34fc43f9dc2bd3adeb8bb0791a3e9328f86b598"
     },
     {
       "tipo": "tables",
@@ -1761,7 +1761,7 @@
       "nombre": "resumen_anual.html",
       "ruta": "outputs/tables/noaa21/resumen_anual.html",
       "bytes": 317495,
-      "sha256": "237883012f9a2a5b1a7a6855b4ca83243ba6555f966958cd14989ccac07df976"
+      "sha256": "6a3017ba46a6832905008d765acac27fccf08358dece93e02c228cd60214ff69"
     },
     {
       "tipo": "tables",
@@ -1778,8 +1778,8 @@
       "par": null,
       "nombre": "cobertura_detecciones.csv",
       "ruta": "outputs/tables/snpp/cobertura_detecciones.csv",
-      "bytes": 285,
-      "sha256": "3b8a5c32076ec6090a3bb694872c292dfadeb57da330d96991d21239203d820e"
+      "bytes": 286,
+      "sha256": "990c0f32f21f4a2921c916ca63c36793e1b92da61413189084ea1ae94cf1b636"
     },
     {
       "tipo": "tables",
@@ -1787,8 +1787,8 @@
       "par": null,
       "nombre": "contraste_humedales.csv",
       "ruta": "outputs/tables/snpp/contraste_humedales.csv",
-      "bytes": 473,
-      "sha256": "326db818a2925cfac39bee91669957092d117c477a3ca56018337fb966047fb1"
+      "bytes": 474,
+      "sha256": "713ce0bc13e9772dadd1639f7aa79028623971e45df13dfc9ac9e0eacfa66895"
     },
     {
       "tipo": "tables",
@@ -1796,8 +1796,8 @@
       "par": null,
       "nombre": "detecciones_por_ac.csv",
       "ruta": "outputs/tables/snpp/detecciones_por_ac.csv",
-      "bytes": 5245,
-      "sha256": "5c2c8e9bfeaf852e48e778faa3f7be0c36cfa58637425eb303156c0968adacb3"
+      "bytes": 5247,
+      "sha256": "4557acbb571499dcf8540f4f53dd00deedfeeba9a13bc12c2fc3bc8ae63533fe"
     },
     {
       "tipo": "tables",
@@ -1806,7 +1806,7 @@
       "nombre": "detecciones_por_tipo.csv",
       "ruta": "outputs/tables/snpp/detecciones_por_tipo.csv",
       "bytes": 433,
-      "sha256": "0e1867f83ebef591a839ab6d8d940e9bebd501799c34aeb2e7d3c528ce7876eb"
+      "sha256": "b5a07feb4ea2639044fbd04de6fff464ecc668d3fccd81a743f0bebf067433d7"
     },
     {
       "tipo": "tables",
@@ -1833,7 +1833,7 @@
       "nombre": "fuentes_estaticas.csv",
       "ruta": "outputs/tables/snpp/fuentes_estaticas.csv",
       "bytes": 932,
-      "sha256": "5b082e87a7c52b2b9629d6cf1641f5fde45885ce8d68be6d36aa5e0a6f75a43a"
+      "sha256": "e079f9c5e92662b063db1574d282fa4aef7f95f21b7d9173f228e2aa1d59b216"
     },
     {
       "tipo": "tables",
@@ -1842,7 +1842,7 @@
       "nombre": "resumen_anual.csv",
       "ruta": "outputs/tables/snpp/resumen_anual.csv",
       "bytes": 455,
-      "sha256": "a853c0510776525c9c182750c33694106fd01a35d1b1279ceca2b546d133e60f"
+      "sha256": "febfbaf0c862541e176145792a4edfd08e5828cd5bd34dafa5e00fc3717e9d78"
     },
     {
       "tipo": "tables",
@@ -1851,7 +1851,7 @@
       "nombre": "resumen_anual.html",
       "ruta": "outputs/tables/snpp/resumen_anual.html",
       "bytes": 317811,
-      "sha256": "370887569072d0956be81d16cae5fdf70b30c9a7f84bef830e17bd8879e46675"
+      "sha256": "83ea8080d8adffc9d26ee605b5f221cb40c9817fc129a7b46b6b9c46ee826865"
     },
     {
       "tipo": "tables",
@@ -1859,8 +1859,8 @@
       "par": null,
       "nombre": "temporada_ac_anual.csv",
       "ruta": "outputs/tables/snpp/temporada_ac_anual.csv",
-      "bytes": 20660,
-      "sha256": "19e7b105a6b17f004974f76de25053759e555e2ac2dd4317c9499346176747a0"
+      "bytes": 20670,
+      "sha256": "70e78c91861c5199b25c4305bd6f8ca4be45d6dbd836bc75c37e05c26a2f8bc1"
     },
     {
       "tipo": "tables",
@@ -1877,8 +1877,8 @@
       "par": null,
       "nombre": "temporada_anual.csv",
       "ruta": "outputs/tables/snpp/temporada_anual.csv",
-      "bytes": 1968,
-      "sha256": "6cfb421fb035041bf307e015ddd81af2ba5b59762e6e312876f419695d28bcab"
+      "bytes": 1966,
+      "sha256": "2f012cbb4c3101aa5b758f45ca280797940ca0baa2ab23eafe9b08bd2e39b80b"
     },
     {
       "tipo": "tables",

@@ -1,10 +1,10 @@
 clase,detecciones,en_humedal,pct_en_humedal,fraccion_humedal_promedio,hectareas_quemadas,pct_quemado_en_humedal
-Bosque,29067,907,3.1,0.01,133813,1
-Pastizal,9234,1083,11.7,0.072,58965,11.4
-Cultivos,1996,148,7.4,0.032,64373,3
-Zonas construidas,472,3,0.6,0,107,0
-Suelo desnudo / vegetación escasa,113,59,52.2,0.174,0,NA
-Cuerpos de agua,84,36,42.9,0.24,299,50
+Bosque,29097,908,3.1,0.01,133813,1
+Pastizal,9247,1083,11.7,0.072,58965,11.4
+Cultivos,2001,148,7.4,0.032,64373,3
+Zonas construidas,477,3,0.6,0,107,0
+Suelo desnudo / vegetación escasa,115,60,52.2,0.178,0,NA
+Cuerpos de agua,85,37,43.5,0.245,299,50
 Manglar,69,39,56.5,0.261,513,62.5
 Humedal herbáceo,38,34,89.5,0.783,214,100
 Matorral,2,0,0,0,0,NA
